@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "GHS-pictogram-pollu.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

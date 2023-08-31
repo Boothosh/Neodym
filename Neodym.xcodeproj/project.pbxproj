@@ -1,0 +1,714 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4B3E899A2AC9DF350070679B /* ErrorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3E89992AC9DF350070679B /* ErrorHelper.swift */; };
+		4B3E89B62ACC451A0070679B /* ElementAuswahlGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3E89B52ACC451A0070679B /* ElementAuswahlGrid.swift */; };
+		4B47D7402AA0A28B00A60B05 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D73F2AA0A28B00A60B05 /* App.swift */; };
+		4B47D7442AA0A28D00A60B05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B47D7432AA0A28D00A60B05 /* Assets.xcassets */; };
+		4B47D7472AA0A28D00A60B05 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B47D7462AA0A28D00A60B05 /* Preview Assets.xcassets */; };
+		4B47D74F2AA0A35C00A60B05 /* Setting in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D74E2AA0A35C00A60B05 /* Setting */; };
+		4B47D7522AA0AEE400A60B05 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4B47D7512AA0AEE400A60B05 /* GoogleService-Info.plist */; };
+		4B47D7552AA1A54800A60B05 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D7542AA1A54800A60B05 /* FirebaseAppCheck */; };
+		4B47D7572AA1A54800A60B05 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D7562AA1A54800A60B05 /* FirebaseAuth */; };
+		4B47D7592AA1A54800A60B05 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D7582AA1A54800A60B05 /* FirebaseFirestore */; };
+		4B47D75B2AA1A54800A60B05 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D75A2AA1A54800A60B05 /* FirebaseStorage */; };
+		4B47D7602AA1A66800A60B05 /* elemente.json in Resources */ = {isa = PBXBuildFile; fileRef = 4B47D75F2AA1A66800A60B05 /* elemente.json */; };
+		4B47D7652AA1A68600A60B05 /* iPadOSMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7642AA1A68600A60B05 /* iPadOSMain.swift */; };
+		4B47D7682AA1A69600A60B05 /* iOSMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7672AA1A69600A60B05 /* iOSMain.swift */; };
+		4B47D7982AA1A6A900A60B05 /* gleichung_Ausgleichen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D76B2AA1A6A900A60B05 /* gleichung_Ausgleichen.swift */; };
+		4B47D7992AA1A6A900A60B05 /* Vektor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D76D2AA1A6A900A60B05 /* Vektor.swift */; };
+		4B47D79A2AA1A6A900A60B05 /* EPeriode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D76E2AA1A6A900A60B05 /* EPeriode.swift */; };
+		4B47D79B2AA1A6A900A60B05 /* CanvasBindung.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D76F2AA1A6A900A60B05 /* CanvasBindung.swift */; };
+		4B47D79D2AA1A6A900A60B05 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7712AA1A6A900A60B05 /* Element.swift */; };
+		4B47D79E2AA1A6A900A60B05 /* CanvasObjekt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7722AA1A6A900A60B05 /* CanvasObjekt.swift */; };
+		4B47D79F2AA1A6A900A60B05 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7732AA1A6A900A60B05 /* Experiment.swift */; };
+		4B47D7A12AA1A6A900A60B05 /* IUPACNomenklatur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7752AA1A6A900A60B05 /* IUPACNomenklatur.swift */; };
+		4B47D7A22AA1A6A900A60B05 /* ElementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7762AA1A6A900A60B05 /* ElementManager.swift */; };
+		4B47D7A32AA1A6A900A60B05 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7782AA1A6A900A60B05 /* StorageManager.swift */; };
+		4B47D7A42AA1A6A900A60B05 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7792AA1A6A900A60B05 /* AuthManager.swift */; };
+		4B47D7A52AA1A6A900A60B05 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77A2AA1A6A900A60B05 /* FirestoreManager.swift */; };
+		4B47D7A72AA1A6A900A60B05 /* Einstellungen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */; };
+		4B47D7A82AA1A6A900A60B05 /* PremiumKauf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */; };
+		4B47D7A92AA1A6A900A60B05 /* KontoVerwalten.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */; };
+		4B47D7AA2AA1A6A900A60B05 /* Elemente.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7822AA1A6A900A60B05 /* Elemente.swift */; };
+		4B47D7AB2AA1A6A900A60B05 /* Liste.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7832AA1A6A900A60B05 /* Liste.swift */; };
+		4B47D7AC2AA1A6A900A60B05 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7842AA1A6A900A60B05 /* System.swift */; };
+		4B47D7AD2AA1A6A900A60B05 /* ElementDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */; };
+		4B47D7AE2AA1A6A900A60B05 /* ElementAuswahlListe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7862AA1A6A900A60B05 /* ElementAuswahlListe.swift */; };
+		4B47D7AF2AA1A6A900A60B05 /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7882AA1A6A900A60B05 /* QuizView.swift */; };
+		4B47D7B12AA1A6A900A60B05 /* Anmeldung.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D78B2AA1A6A900A60B05 /* Anmeldung.swift */; };
+		4B47D7B22AA1A6A900A60B05 /* Willkommen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D78C2AA1A6A900A60B05 /* Willkommen.swift */; };
+		4B47D7B32AA1A6A900A60B05 /* GleichungenAusgleichen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D78E2AA1A6A900A60B05 /* GleichungenAusgleichen.swift */; };
+		4B47D7B42AA1A6A900A60B05 /* Molekuelzeichner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D78F2AA1A6A900A60B05 /* Molekuelzeichner.swift */; };
+		4B47D7B52AA1A6A900A60B05 /* GroesseBestimmen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7902AA1A6A900A60B05 /* GroesseBestimmen.swift */; };
+		4B47D7B62AA1A6A900A60B05 /* MolekuelmasseRechner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7912AA1A6A900A60B05 /* MolekuelmasseRechner.swift */; };
+		4B47D7B72AA1A6A900A60B05 /* Werkzeuge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7922AA1A6A900A60B05 /* Werkzeuge.swift */; };
+		4B47D7B92AA1A6A900A60B05 /* IonengruppenBilden.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7942AA1A6A900A60B05 /* IonengruppenBilden.swift */; };
+		4B47D7BA2AA1A6A900A60B05 /* Experimente.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7962AA1A6A900A60B05 /* Experimente.swift */; };
+		4B47D7BB2AA1A6A900A60B05 /* Wissen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7972AA1A6A900A60B05 /* Wissen.swift */; };
+		4B47D7BF2AA50EBF00A60B05 /* Platzhalter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7BE2AA50EBF00A60B05 /* Platzhalter.swift */; };
+		4B7367FE2AA71DD30069B4FC /* EArtikelSektion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7367FD2AA71DD30069B4FC /* EArtikelSektion.swift */; };
+		4B7368022AAC88400069B4FC /* Temperatur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7368012AAC88400069B4FC /* Temperatur.swift */; };
+		4BEFA3572AF6A87D00A3BCCF /* QuizThema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEFA3562AF6A87D00A3BCCF /* QuizThema.swift */; };
+		4BEFA3592AF6A8ED00A3BCCF /* Quiz.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEFA3582AF6A8ED00A3BCCF /* Quiz.swift */; };
+		4BEFA35B2AF6A97300A3BCCF /* QuizSeite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEFA35A2AF6A97300A3BCCF /* QuizSeite.swift */; };
+		4BEFA3772AFABBB700A3BCCF /* QuizSeitenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEFA3762AFABBB700A3BCCF /* QuizSeitenView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4B3E89992AC9DF350070679B /* ErrorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHelper.swift; sourceTree = "<group>"; };
+		4B3E89B52ACC451A0070679B /* ElementAuswahlGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementAuswahlGrid.swift; sourceTree = "<group>"; };
+		4B47D73C2AA0A28B00A60B05 /* Neodym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Neodym.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B47D73F2AA0A28B00A60B05 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		4B47D7432AA0A28D00A60B05 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B47D7462AA0A28D00A60B05 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4B47D7512AA0AEE400A60B05 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4B47D75F2AA1A66800A60B05 /* elemente.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = elemente.json; sourceTree = "<group>"; };
+		4B47D7642AA1A68600A60B05 /* iPadOSMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iPadOSMain.swift; sourceTree = "<group>"; };
+		4B47D7672AA1A69600A60B05 /* iOSMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSMain.swift; sourceTree = "<group>"; };
+		4B47D76B2AA1A6A900A60B05 /* gleichung_Ausgleichen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gleichung_Ausgleichen.swift; sourceTree = "<group>"; };
+		4B47D76D2AA1A6A900A60B05 /* Vektor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vektor.swift; sourceTree = "<group>"; };
+		4B47D76E2AA1A6A900A60B05 /* EPeriode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EPeriode.swift; sourceTree = "<group>"; };
+		4B47D76F2AA1A6A900A60B05 /* CanvasBindung.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasBindung.swift; sourceTree = "<group>"; };
+		4B47D7712AA1A6A900A60B05 /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
+		4B47D7722AA1A6A900A60B05 /* CanvasObjekt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasObjekt.swift; sourceTree = "<group>"; };
+		4B47D7732AA1A6A900A60B05 /* Experiment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experiment.swift; sourceTree = "<group>"; };
+		4B47D7752AA1A6A900A60B05 /* IUPACNomenklatur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IUPACNomenklatur.swift; sourceTree = "<group>"; };
+		4B47D7762AA1A6A900A60B05 /* ElementManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementManager.swift; sourceTree = "<group>"; };
+		4B47D7782AA1A6A900A60B05 /* StorageManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		4B47D7792AA1A6A900A60B05 /* AuthManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		4B47D77A2AA1A6A900A60B05 /* FirestoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
+		4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Einstellungen.swift; sourceTree = "<group>"; };
+		4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumKauf.swift; sourceTree = "<group>"; };
+		4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KontoVerwalten.swift; sourceTree = "<group>"; };
+		4B47D7822AA1A6A900A60B05 /* Elemente.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Elemente.swift; sourceTree = "<group>"; };
+		4B47D7832AA1A6A900A60B05 /* Liste.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Liste.swift; sourceTree = "<group>"; };
+		4B47D7842AA1A6A900A60B05 /* System.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
+		4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementDetail.swift; sourceTree = "<group>"; };
+		4B47D7862AA1A6A900A60B05 /* ElementAuswahlListe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementAuswahlListe.swift; sourceTree = "<group>"; };
+		4B47D7882AA1A6A900A60B05 /* QuizView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
+		4B47D78B2AA1A6A900A60B05 /* Anmeldung.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Anmeldung.swift; sourceTree = "<group>"; };
+		4B47D78C2AA1A6A900A60B05 /* Willkommen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Willkommen.swift; sourceTree = "<group>"; };
+		4B47D78E2AA1A6A900A60B05 /* GleichungenAusgleichen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GleichungenAusgleichen.swift; sourceTree = "<group>"; };
+		4B47D78F2AA1A6A900A60B05 /* Molekuelzeichner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Molekuelzeichner.swift; sourceTree = "<group>"; };
+		4B47D7902AA1A6A900A60B05 /* GroesseBestimmen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroesseBestimmen.swift; sourceTree = "<group>"; };
+		4B47D7912AA1A6A900A60B05 /* MolekuelmasseRechner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MolekuelmasseRechner.swift; sourceTree = "<group>"; };
+		4B47D7922AA1A6A900A60B05 /* Werkzeuge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Werkzeuge.swift; sourceTree = "<group>"; };
+		4B47D7942AA1A6A900A60B05 /* IonengruppenBilden.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IonengruppenBilden.swift; sourceTree = "<group>"; };
+		4B47D7962AA1A6A900A60B05 /* Experimente.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experimente.swift; sourceTree = "<group>"; };
+		4B47D7972AA1A6A900A60B05 /* Wissen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wissen.swift; sourceTree = "<group>"; };
+		4B47D7BC2AA1AD7600A60B05 /* Neodym.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Neodym.entitlements; sourceTree = "<group>"; };
+		4B47D7BE2AA50EBF00A60B05 /* Platzhalter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Platzhalter.swift; sourceTree = "<group>"; };
+		4B7367FD2AA71DD30069B4FC /* EArtikelSektion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EArtikelSektion.swift; sourceTree = "<group>"; };
+		4B7368012AAC88400069B4FC /* Temperatur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temperatur.swift; sourceTree = "<group>"; };
+		4BEFA3562AF6A87D00A3BCCF /* QuizThema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizThema.swift; sourceTree = "<group>"; };
+		4BEFA3582AF6A8ED00A3BCCF /* Quiz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quiz.swift; sourceTree = "<group>"; };
+		4BEFA35A2AF6A97300A3BCCF /* QuizSeite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizSeite.swift; sourceTree = "<group>"; };
+		4BEFA3762AFABBB700A3BCCF /* QuizSeitenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizSeitenView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4B47D7392AA0A28B00A60B05 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B47D7552AA1A54800A60B05 /* FirebaseAppCheck in Frameworks */,
+				4B47D7592AA1A54800A60B05 /* FirebaseFirestore in Frameworks */,
+				4B47D7572AA1A54800A60B05 /* FirebaseAuth in Frameworks */,
+				4B47D75B2AA1A54800A60B05 /* FirebaseStorage in Frameworks */,
+				4B47D74F2AA0A35C00A60B05 /* Setting in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4B47D7332AA0A28B00A60B05 = {
+			isa = PBXGroup;
+			children = (
+				4B47D73E2AA0A28B00A60B05 /* Neodym */,
+				4B47D73D2AA0A28B00A60B05 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4B47D73D2AA0A28B00A60B05 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D73C2AA0A28B00A60B05 /* Neodym.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4B47D73E2AA0A28B00A60B05 /* Neodym */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7BC2AA1AD7600A60B05 /* Neodym.entitlements */,
+				4B47D73F2AA0A28B00A60B05 /* App.swift */,
+				4B47D7692AA1A6A900A60B05 /* Geteilt */,
+				4B47D7662AA1A69600A60B05 /* iOS */,
+				4B47D7632AA1A68600A60B05 /* iPadOS */,
+				4B47D75E2AA1A65400A60B05 /* Statisch */,
+				4B47D7432AA0A28D00A60B05 /* Assets.xcassets */,
+				4B47D7452AA0A28D00A60B05 /* Preview Content */,
+			);
+			path = Neodym;
+			sourceTree = "<group>";
+		};
+		4B47D7452AA0A28D00A60B05 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7462AA0A28D00A60B05 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		4B47D75E2AA1A65400A60B05 /* Statisch */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7512AA0AEE400A60B05 /* GoogleService-Info.plist */,
+				4B47D75F2AA1A66800A60B05 /* elemente.json */,
+			);
+			path = Statisch;
+			sourceTree = "<group>";
+		};
+		4B47D7632AA1A68600A60B05 /* iPadOS */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7642AA1A68600A60B05 /* iPadOSMain.swift */,
+			);
+			path = iPadOS;
+			sourceTree = "<group>";
+		};
+		4B47D7662AA1A69600A60B05 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7672AA1A69600A60B05 /* iOSMain.swift */,
+			);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		4B47D7692AA1A6A900A60B05 /* Geteilt */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D76A2AA1A6A900A60B05 /* Logik */,
+				4B47D77C2AA1A6A900A60B05 /* Views */,
+			);
+			path = Geteilt;
+			sourceTree = "<group>";
+		};
+		4B47D76A2AA1A6A900A60B05 /* Logik */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D76B2AA1A6A900A60B05 /* gleichung_Ausgleichen.swift */,
+				4B47D76C2AA1A6A900A60B05 /* Datentypen */,
+				4B47D7752AA1A6A900A60B05 /* IUPACNomenklatur.swift */,
+				4B47D7762AA1A6A900A60B05 /* ElementManager.swift */,
+				4B47D7772AA1A6A900A60B05 /* Datenbank */,
+				4B3E89992AC9DF350070679B /* ErrorHelper.swift */,
+			);
+			path = Logik;
+			sourceTree = "<group>";
+		};
+		4B47D76C2AA1A6A900A60B05 /* Datentypen */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D76D2AA1A6A900A60B05 /* Vektor.swift */,
+				4B47D76E2AA1A6A900A60B05 /* EPeriode.swift */,
+				4B47D76F2AA1A6A900A60B05 /* CanvasBindung.swift */,
+				4B47D7712AA1A6A900A60B05 /* Element.swift */,
+				4B47D7722AA1A6A900A60B05 /* CanvasObjekt.swift */,
+				4B47D7732AA1A6A900A60B05 /* Experiment.swift */,
+				4B7367FD2AA71DD30069B4FC /* EArtikelSektion.swift */,
+				4B7368012AAC88400069B4FC /* Temperatur.swift */,
+				4BEFA3562AF6A87D00A3BCCF /* QuizThema.swift */,
+				4BEFA3582AF6A8ED00A3BCCF /* Quiz.swift */,
+				4BEFA35A2AF6A97300A3BCCF /* QuizSeite.swift */,
+			);
+			path = Datentypen;
+			sourceTree = "<group>";
+		};
+		4B47D7772AA1A6A900A60B05 /* Datenbank */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7782AA1A6A900A60B05 /* StorageManager.swift */,
+				4B47D7792AA1A6A900A60B05 /* AuthManager.swift */,
+				4B47D77A2AA1A6A900A60B05 /* FirestoreManager.swift */,
+			);
+			path = Datenbank;
+			sourceTree = "<group>";
+		};
+		4B47D77C2AA1A6A900A60B05 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D77D2AA1A6A900A60B05 /* Einstellungen */,
+				4B47D7812AA1A6A900A60B05 /* Elemente */,
+				4B47D7862AA1A6A900A60B05 /* ElementAuswahlListe.swift */,
+				4B3E89B52ACC451A0070679B /* ElementAuswahlGrid.swift */,
+				4B47D7872AA1A6A900A60B05 /* Quiz */,
+				4B47D7892AA1A6A900A60B05 /* Start */,
+				4B47D78D2AA1A6A900A60B05 /* Werkzeuge */,
+				4B47D7952AA1A6A900A60B05 /* Wissen */,
+				4B47D7BD2AA50E9F00A60B05 /* Bausteine */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4B47D77D2AA1A6A900A60B05 /* Einstellungen */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */,
+				4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */,
+				4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */,
+			);
+			path = Einstellungen;
+			sourceTree = "<group>";
+		};
+		4B47D7812AA1A6A900A60B05 /* Elemente */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7822AA1A6A900A60B05 /* Elemente.swift */,
+				4B47D7832AA1A6A900A60B05 /* Liste.swift */,
+				4B47D7842AA1A6A900A60B05 /* System.swift */,
+				4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */,
+			);
+			path = Elemente;
+			sourceTree = "<group>";
+		};
+		4B47D7872AA1A6A900A60B05 /* Quiz */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7882AA1A6A900A60B05 /* QuizView.swift */,
+				4BEFA3762AFABBB700A3BCCF /* QuizSeitenView.swift */,
+			);
+			path = Quiz;
+			sourceTree = "<group>";
+		};
+		4B47D7892AA1A6A900A60B05 /* Start */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D78B2AA1A6A900A60B05 /* Anmeldung.swift */,
+				4B47D78C2AA1A6A900A60B05 /* Willkommen.swift */,
+			);
+			path = Start;
+			sourceTree = "<group>";
+		};
+		4B47D78D2AA1A6A900A60B05 /* Werkzeuge */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D78E2AA1A6A900A60B05 /* GleichungenAusgleichen.swift */,
+				4B47D78F2AA1A6A900A60B05 /* Molekuelzeichner.swift */,
+				4B47D7902AA1A6A900A60B05 /* GroesseBestimmen.swift */,
+				4B47D7912AA1A6A900A60B05 /* MolekuelmasseRechner.swift */,
+				4B47D7922AA1A6A900A60B05 /* Werkzeuge.swift */,
+				4B47D7942AA1A6A900A60B05 /* IonengruppenBilden.swift */,
+			);
+			path = Werkzeuge;
+			sourceTree = "<group>";
+		};
+		4B47D7952AA1A6A900A60B05 /* Wissen */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7962AA1A6A900A60B05 /* Experimente.swift */,
+				4B47D7972AA1A6A900A60B05 /* Wissen.swift */,
+			);
+			path = Wissen;
+			sourceTree = "<group>";
+		};
+		4B47D7BD2AA50E9F00A60B05 /* Bausteine */ = {
+			isa = PBXGroup;
+			children = (
+				4B47D7BE2AA50EBF00A60B05 /* Platzhalter.swift */,
+			);
+			path = Bausteine;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4B47D73B2AA0A28B00A60B05 /* Neodym */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B47D74A2AA0A28D00A60B05 /* Build configuration list for PBXNativeTarget "Neodym" */;
+			buildPhases = (
+				4B47D7382AA0A28B00A60B05 /* Sources */,
+				4B47D7392AA0A28B00A60B05 /* Frameworks */,
+				4B47D73A2AA0A28B00A60B05 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Neodym;
+			packageProductDependencies = (
+				4B47D74E2AA0A35C00A60B05 /* Setting */,
+				4B47D7542AA1A54800A60B05 /* FirebaseAppCheck */,
+				4B47D7562AA1A54800A60B05 /* FirebaseAuth */,
+				4B47D7582AA1A54800A60B05 /* FirebaseFirestore */,
+				4B47D75A2AA1A54800A60B05 /* FirebaseStorage */,
+			);
+			productName = Neodym;
+			productReference = 4B47D73C2AA0A28B00A60B05 /* Neodym.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4B47D7342AA0A28B00A60B05 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					4B47D73B2AA0A28B00A60B05 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 4B47D7372AA0A28B00A60B05 /* Build configuration list for PBXProject "Neodym" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = de;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				de,
+				Base,
+			);
+			mainGroup = 4B47D7332AA0A28B00A60B05;
+			packageReferences = (
+				4B47D74D2AA0A35C00A60B05 /* XCRemoteSwiftPackageReference "Setting" */,
+				4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
+			productRefGroup = 4B47D73D2AA0A28B00A60B05 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4B47D73B2AA0A28B00A60B05 /* Neodym */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4B47D73A2AA0A28B00A60B05 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B47D7602AA1A66800A60B05 /* elemente.json in Resources */,
+				4B47D7472AA0A28D00A60B05 /* Preview Assets.xcassets in Resources */,
+				4B47D7442AA0A28D00A60B05 /* Assets.xcassets in Resources */,
+				4B47D7522AA0AEE400A60B05 /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4B47D7382AA0A28B00A60B05 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B47D7BA2AA1A6A900A60B05 /* Experimente.swift in Sources */,
+				4B47D7AA2AA1A6A900A60B05 /* Elemente.swift in Sources */,
+				4B7368022AAC88400069B4FC /* Temperatur.swift in Sources */,
+				4B47D7682AA1A69600A60B05 /* iOSMain.swift in Sources */,
+				4B47D7AC2AA1A6A900A60B05 /* System.swift in Sources */,
+				4BEFA3772AFABBB700A3BCCF /* QuizSeitenView.swift in Sources */,
+				4B47D79E2AA1A6A900A60B05 /* CanvasObjekt.swift in Sources */,
+				4B47D7B92AA1A6A900A60B05 /* IonengruppenBilden.swift in Sources */,
+				4BEFA35B2AF6A97300A3BCCF /* QuizSeite.swift in Sources */,
+				4B47D7B72AA1A6A900A60B05 /* Werkzeuge.swift in Sources */,
+				4B47D7A12AA1A6A900A60B05 /* IUPACNomenklatur.swift in Sources */,
+				4B47D7B42AA1A6A900A60B05 /* Molekuelzeichner.swift in Sources */,
+				4B47D79D2AA1A6A900A60B05 /* Element.swift in Sources */,
+				4B7367FE2AA71DD30069B4FC /* EArtikelSektion.swift in Sources */,
+				4B47D7B32AA1A6A900A60B05 /* GleichungenAusgleichen.swift in Sources */,
+				4B47D7A82AA1A6A900A60B05 /* PremiumKauf.swift in Sources */,
+				4B47D7A22AA1A6A900A60B05 /* ElementManager.swift in Sources */,
+				4B47D7992AA1A6A900A60B05 /* Vektor.swift in Sources */,
+				4B47D79A2AA1A6A900A60B05 /* EPeriode.swift in Sources */,
+				4B47D7B22AA1A6A900A60B05 /* Willkommen.swift in Sources */,
+				4BEFA3572AF6A87D00A3BCCF /* QuizThema.swift in Sources */,
+				4B47D7A42AA1A6A900A60B05 /* AuthManager.swift in Sources */,
+				4B47D7B52AA1A6A900A60B05 /* GroesseBestimmen.swift in Sources */,
+				4B47D7BB2AA1A6A900A60B05 /* Wissen.swift in Sources */,
+				4B47D7BF2AA50EBF00A60B05 /* Platzhalter.swift in Sources */,
+				4B47D79B2AA1A6A900A60B05 /* CanvasBindung.swift in Sources */,
+				4B47D7AD2AA1A6A900A60B05 /* ElementDetail.swift in Sources */,
+				4B3E899A2AC9DF350070679B /* ErrorHelper.swift in Sources */,
+				4B47D7A92AA1A6A900A60B05 /* KontoVerwalten.swift in Sources */,
+				4B47D7AB2AA1A6A900A60B05 /* Liste.swift in Sources */,
+				4B47D7AF2AA1A6A900A60B05 /* QuizView.swift in Sources */,
+				4B47D79F2AA1A6A900A60B05 /* Experiment.swift in Sources */,
+				4B47D7652AA1A68600A60B05 /* iPadOSMain.swift in Sources */,
+				4B47D7B62AA1A6A900A60B05 /* MolekuelmasseRechner.swift in Sources */,
+				4B3E89B62ACC451A0070679B /* ElementAuswahlGrid.swift in Sources */,
+				4B47D7A32AA1A6A900A60B05 /* StorageManager.swift in Sources */,
+				4B47D7402AA0A28B00A60B05 /* App.swift in Sources */,
+				4BEFA3592AF6A8ED00A3BCCF /* Quiz.swift in Sources */,
+				4B47D7B12AA1A6A900A60B05 /* Anmeldung.swift in Sources */,
+				4B47D7AE2AA1A6A900A60B05 /* ElementAuswahlListe.swift in Sources */,
+				4B47D7A72AA1A6A900A60B05 /* Einstellungen.swift in Sources */,
+				4B47D7A52AA1A6A900A60B05 /* FirestoreManager.swift in Sources */,
+				4B47D7982AA1A6A900A60B05 /* gleichung_Ausgleichen.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4B47D7482AA0A28D00A60B05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4B47D7492AA0A28D00A60B05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4B47D74B2AA0A28D00A60B05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Neodym/Neodym.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Neodym/Preview Content\"";
+				DEVELOPMENT_TEAM = JWNMYGMKR3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Neodym;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Um Atome in AR darstellen zu können, brauchen wir Zugriff auf deine Kamera";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.max.eckstein.Neodym;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B47D74C2AA0A28D00A60B05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Neodym/Neodym.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Neodym/Preview Content\"";
+				DEVELOPMENT_TEAM = JWNMYGMKR3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Neodym;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Um Atome in AR darstellen zu können, brauchen wir Zugriff auf deine Kamera";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.max.eckstein.Neodym;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4B47D7372AA0A28B00A60B05 /* Build configuration list for PBXProject "Neodym" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B47D7482AA0A28D00A60B05 /* Debug */,
+				4B47D7492AA0A28D00A60B05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B47D74A2AA0A28D00A60B05 /* Build configuration list for PBXNativeTarget "Neodym" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B47D74B2AA0A28D00A60B05 /* Debug */,
+				4B47D74C2AA0A28D00A60B05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B47D74D2AA0A35C00A60B05 /* XCRemoteSwiftPackageReference "Setting" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aheze/Setting";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B47D74E2AA0A35C00A60B05 /* Setting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B47D74D2AA0A35C00A60B05 /* XCRemoteSwiftPackageReference "Setting" */;
+			productName = Setting;
+		};
+		4B47D7542AA1A54800A60B05 /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		4B47D7562AA1A54800A60B05 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		4B47D7582AA1A54800A60B05 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		4B47D75A2AA1A54800A60B05 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4B47D7342AA0A28B00A60B05 /* Project object */;
+}

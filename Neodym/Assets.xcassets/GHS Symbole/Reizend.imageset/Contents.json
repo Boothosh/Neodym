@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "GHS-pictogram-exclam.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

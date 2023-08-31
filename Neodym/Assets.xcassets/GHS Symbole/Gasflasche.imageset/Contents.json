@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "GHS-pictogram-bottle.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
