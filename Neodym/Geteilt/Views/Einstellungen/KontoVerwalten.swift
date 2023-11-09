@@ -51,7 +51,7 @@ struct KontoVerwalten: View {
                     }
                 }
                 .frame(width: 150, height: 150)
-            }.onChange(of: profilBildPicker) { _ in
+            }.onChange(of: profilBildPicker) {
                 Task {
                     if let daten = try? await profilBildPicker?.loadTransferable(type: Data.self) {
                         if let uiImage = UIImage(data: daten) {
@@ -71,7 +71,7 @@ struct KontoVerwalten: View {
                 }
                 Section {
                     TextField("Dein Vorname", text: $name)
-                        .onChange(of: name) { neuerName in
+                        .onChange(of: name) {
                             benutzerHatEtwasVeraendert = true
                         }
                 }

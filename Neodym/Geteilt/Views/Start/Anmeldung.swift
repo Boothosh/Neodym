@@ -39,23 +39,23 @@ struct Anmeldung: View {
                 if anmeldeArt == .schule {
                     TextField("Lizenz-Schlüssel", text: $lizenz)
                         .modifier(CustomTextFeld(error: $fehlenderLizenzSchluessel))
-                        .onChange(of: lizenz, perform: { _ in
+                        .onChange(of: lizenz) {
                             fehlenderLizenzSchluessel = false
-                        })
+                        }
                 } else {
                     TextField("Deine E-Mail", text: $email)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .modifier(CustomTextFeld(error: $fehlendeEmail))
-                        .onChange(of: email, perform: { _ in
+                        .onChange(of: email) {
                             fehlendeEmail = false
-                        })
+                        }
                     SecureField("Dein Passwort", text: $passwort)
                         .textContentType(anmeldeArt == .registrieren ? .newPassword : .password)
                         .modifier(CustomTextFeld(error: $fehlendesPasswort))
-                        .onChange(of: passwort, perform: { _ in
+                        .onChange(of: passwort) {
                             fehlendesPasswort = false
-                        })
+                        }
                         .onSubmit {
                             if anmeldeArt == .anmelden {
                                 anmeldenOderRegistrieren()
@@ -70,9 +70,9 @@ struct Anmeldung: View {
                     
                     TextField("Wie sollen wir dich nennen?", text: $vorname)
                         .modifier(CustomTextFeld(error: $fehlenderVorname))
-                        .onChange(of: vorname, perform: { _ in
+                        .onChange(of: vorname) {
                             fehlenderVorname = false
-                        })
+                        }
                         .onSubmit {
                             anmeldenOderRegistrieren()
                         }

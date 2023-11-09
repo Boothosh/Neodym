@@ -144,7 +144,7 @@ struct System: View {
                 print(geoD)
             }
         }
-            .onChange(of: suchBegriff) { _ in
+            .onChange(of: suchBegriff) {
                 zeigeLanthanoide = true
                 zeigeActinoide = true
             }

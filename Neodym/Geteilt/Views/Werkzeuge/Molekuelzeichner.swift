@@ -376,16 +376,20 @@ struct Molekuelzeichner: View {
                         Form {
                             Section("Ausblenden"){
                                 Toggle("Wasserstoffatome einblenden", isOn: $wasserstoffEinblenden)
-                                    .onChange(of: wasserstoffEinblenden) {UserDefaults.standard.set(!$0, forKey: "wasserstoffAusblenden")}
+                                    .onChange(of: wasserstoffEinblenden) { _, neuerWert in
+                                        UserDefaults.standard.set(!neuerWert, forKey: "wasserstoffAusblenden")
+                                    }
                                 Toggle("Oxidationszahlen einblenden", isOn: $oxidationszahlenEinblenden)
-                                    .onChange(of: oxidationszahlenEinblenden) {UserDefaults.standard.set(!$0, forKey: "oxidationszahlenAusblenden")}
+                                    .onChange(of: oxidationszahlenEinblenden) { _, neuerWert in
+                                        UserDefaults.standard.set(!neuerWert, forKey: "oxidationszahlenAusblenden")
+                                    }
                             }
                             Section("Anzeige") {
                                 VStack (alignment: .leading, spacing: 0){
                                     Slider(value: $zoom, in: 0.5...2.0)
                                     Text("Aktuell: \(zoom * 100, specifier: "%.0f")%")
                                         .font(.caption2)
-                                }.onChange(of: zoom) { _ in
+                                }.onChange(of: zoom) {
                                     UserDefaults.standard.setValue(zoom, forKey: "zoom")
                                 }
                             }
