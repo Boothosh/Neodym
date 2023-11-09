@@ -10,5 +10,5 @@ import Foundation
 struct QuizThema: Identifiable {
     let id = UUID()
     let titel: String
-    let quizes: [Quiz]
+    var quizes: [Quiz]
 }

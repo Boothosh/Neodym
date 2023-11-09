@@ -18,7 +18,7 @@ struct QuizSeitenView: View {
     var seite: QuizSeite {
         quiz.inhalt[seitenIndex]
     }
-    let quiz: Quiz
+    @Binding var quiz: Quiz
     
     var body: some View {
         GeometryReader { geo in
@@ -168,38 +168,44 @@ struct QuizSeitenView: View {
                     }.padding()
                 } else {
                     // Schluss Seite
-                    VStack(spacing: 0){
+                    let richtigeAnworten = beantworteteFragen.keys.filter({beantworteteFragen[$0]!}).count
+                    let prozent = richtigeAnworten * 100 / beantworteteFragen.keys.count
+                    HStack {
                         Spacer()
-                        HStack {
+                        VStack(spacing: 0){
                             Spacer()
-                        }
-                        Image(systemName: "flag.checkered.2.crossed")
-                            .foregroundStyle(.blue, .blue)
-                            .font(.system(size: 60))
-                        Text("Geschafft!")
-                            .font(.largeTitle)
-                            .fontWeight(.black)
+                            Image(systemName: "flag.checkered.2.crossed")
+                                .foregroundStyle(.blue, .blue)
+                                .font(.system(size: 60))
+                            Text("Geschafft!")
+                                .font(.largeTitle)
+                                .fontWeight(.black)
+                                .padding()
+                            Text("Dein Ergebnis:")
+                                .underline()
+                                .padding()
+                            Text("Du hattest \(richtigeAnworten) Fragen von insgesamt \(beantworteteFragen.keys.count) Fragen richtig, was \(prozent)% entspricht!")
+                                .multilineTextAlignment(.center)
+                            Button(action: {
+                                UserDefaults.standard.setValue(prozent, forKey: quiz.titel)
+                                quiz.fortschritt = prozent
+                                schließen()
+                            }, label: {
+                                HStack {
+                                    Spacer()
+                                    Text("Schließen")
+                                        .font(.title2)
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                }
+                                .frame(minHeight: 45)
+                                .background(.blue)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            })
+                            .keyboardShortcut(.defaultAction)
                             .padding()
-                        Text("Dein Ergebnis:")
-                            .underline()
-                            .padding()
-                        Text("Du hattest \(beantworteteFragen.keys.filter({beantworteteFragen[$0]!}).count) Fragen von insgesamt \(beantworteteFragen.keys.count) Fragen richtig!")
-                        Button(action: {
-                            schließen()
-                        }, label: {
-                            HStack {
-                                Spacer()
-                                Text("Schließen")
-                                    .font(.title2)
-                                    .foregroundStyle(.white)
-                                Spacer()
-                            }
-                            .frame(maxWidth: 350, minHeight: 45)
-                            .background(.blue)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        })
-                        .keyboardShortcut(.defaultAction)
-                        .padding()
+                            Spacer()
+                        }.frame(maxWidth: 350)
                         Spacer()
                     }
                 }

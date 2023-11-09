@@ -10,15 +10,18 @@ import SwiftUI
 struct QuizView: View {
     @State var themen: [QuizThema] = [
         QuizThema(titel: "Säuren und Basen", quizes: [
-            Quiz(titel: "Einstieg in Brønsted-Basen", fortschritt: 75, schwierigkeit: .einfach, bildName: "broensted", inhalt: [
+            Quiz(titel: "Einstieg in Brønsted-Basen", schwierigkeit: .einfach, bildName: "broensted", inhalt: [
                 QuizSeite(frage: "Welche Aussage(n) trifft/treffen auf eine Brønsted-Base zu?", anwortMoeglichkeiten: ["Sie gibt Protonen ab.", "Sie nimmt Elektronen auf.", "Sie nimmt Protonen auf.", "Sie gibt Elektronen ab."], richtigeAnworten: ["Sie nimmt Protonen auf."]),
                 QuizSeite(frage: "Wobei handelt es sich um eine Brønsted-Base?", anwortMoeglichkeiten: ["CO2", "NH3", "NaOH-", "H3O+"], richtigeAnworten: ["NH3", "NaOH-"])
             ]),
-            Quiz(titel: "Einstieg in Brønsted-Säuren", fortschritt: 50, schwierigkeit: .mittel, bildName: "broensted", inhalt: []),
-            Quiz(titel: "Ionenprodukt des Wassers", fortschritt: 78, schwierigkeit: .schwierig, bildName: "wasser", inhalt: []),
+            Quiz(titel: "Einstieg in Brønsted-Säuren", schwierigkeit: .mittel, bildName: "broensted", inhalt: []),
+            Quiz(titel: "Ionenprodukt des Wassers", schwierigkeit: .schwierig, bildName: "wasser", inhalt: []),
         ])
     ]
+    
     @State var ausgewaeltesQuiz: Quiz? = nil
+    @State var themenIndex = 0
+    @State var quizIndex = 0
     
     let gridItems = [
         GridItem(.adaptive(minimum: 300, maximum: 350), spacing: 30)
@@ -82,6 +85,14 @@ struct QuizView: View {
                         ForEach(thema.quizes) { quiz in
                             kachel(quiz)
                                 .onTapGesture {
+                                    for i in themen.enumerated() {
+                                        for j in i.element.quizes.enumerated() {
+                                            if j.element == quiz {
+                                                themenIndex = i.offset
+                                                quizIndex = j.offset
+                                            }
+                                        }
+                                    }
                                     ausgewaeltesQuiz = quiz
                                 }
                         }
@@ -100,7 +111,7 @@ struct QuizView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .fullScreenCover(item: $ausgewaeltesQuiz) { quiz in
-            QuizSeitenView(quiz: quiz)
+            QuizSeitenView(quiz: $themen[themenIndex].quizes[quizIndex])
         }
     }
 }
