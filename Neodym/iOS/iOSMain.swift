@@ -36,6 +36,7 @@ struct iOSMain: View {
             }
             .tabItem {
                 Label("Quiz", systemImage: "brain")
+                    .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
             }
             NavigationStack {
                 Einstellungen()
