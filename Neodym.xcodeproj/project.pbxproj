@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B2ADD012B0FEB8700D2E23C /* iOSElementListe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2ADD002B0FEB8700D2E23C /* iOSElementListe.swift */; };
 		4B3E899A2AC9DF350070679B /* ErrorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3E89992AC9DF350070679B /* ErrorHelper.swift */; };
 		4B3E89B62ACC451A0070679B /* ElementAuswahlGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3E89B52ACC451A0070679B /* ElementAuswahlGrid.swift */; };
 		4B47D7402AA0A28B00A60B05 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D73F2AA0A28B00A60B05 /* App.swift */; };
@@ -36,8 +37,6 @@
 		4B47D7A72AA1A6A900A60B05 /* Einstellungen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */; };
 		4B47D7A82AA1A6A900A60B05 /* PremiumKauf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */; };
 		4B47D7A92AA1A6A900A60B05 /* KontoVerwalten.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */; };
-		4B47D7AA2AA1A6A900A60B05 /* Elemente.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7822AA1A6A900A60B05 /* Elemente.swift */; };
-		4B47D7AB2AA1A6A900A60B05 /* Liste.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7832AA1A6A900A60B05 /* Liste.swift */; };
 		4B47D7AC2AA1A6A900A60B05 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7842AA1A6A900A60B05 /* System.swift */; };
 		4B47D7AD2AA1A6A900A60B05 /* ElementDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */; };
 		4B47D7AE2AA1A6A900A60B05 /* ElementAuswahlListe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7862AA1A6A900A60B05 /* ElementAuswahlListe.swift */; };
@@ -62,6 +61,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B2ADD002B0FEB8700D2E23C /* iOSElementListe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSElementListe.swift; sourceTree = "<group>"; };
 		4B3E89992AC9DF350070679B /* ErrorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHelper.swift; sourceTree = "<group>"; };
 		4B3E89B52ACC451A0070679B /* ElementAuswahlGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementAuswahlGrid.swift; sourceTree = "<group>"; };
 		4B47D73C2AA0A28B00A60B05 /* Neodym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Neodym.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,8 +87,6 @@
 		4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Einstellungen.swift; sourceTree = "<group>"; };
 		4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumKauf.swift; sourceTree = "<group>"; };
 		4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KontoVerwalten.swift; sourceTree = "<group>"; };
-		4B47D7822AA1A6A900A60B05 /* Elemente.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Elemente.swift; sourceTree = "<group>"; };
-		4B47D7832AA1A6A900A60B05 /* Liste.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Liste.swift; sourceTree = "<group>"; };
 		4B47D7842AA1A6A900A60B05 /* System.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementDetail.swift; sourceTree = "<group>"; };
 		4B47D7862AA1A6A900A60B05 /* ElementAuswahlListe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementAuswahlListe.swift; sourceTree = "<group>"; };
@@ -272,10 +270,9 @@
 		4B47D7812AA1A6A900A60B05 /* Elemente */ = {
 			isa = PBXGroup;
 			children = (
-				4B47D7822AA1A6A900A60B05 /* Elemente.swift */,
-				4B47D7832AA1A6A900A60B05 /* Liste.swift */,
 				4B47D7842AA1A6A900A60B05 /* System.swift */,
 				4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */,
+				4B2ADD002B0FEB8700D2E23C /* iOSElementListe.swift */,
 			);
 			path = Elemente;
 			sourceTree = "<group>";
@@ -412,7 +409,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B47D7BA2AA1A6A900A60B05 /* Experimente.swift in Sources */,
-				4B47D7AA2AA1A6A900A60B05 /* Elemente.swift in Sources */,
 				4B7368022AAC88400069B4FC /* Temperatur.swift in Sources */,
 				4B47D7682AA1A69600A60B05 /* iOSMain.swift in Sources */,
 				4B47D7AC2AA1A6A900A60B05 /* System.swift in Sources */,
@@ -429,6 +425,7 @@
 				4B47D7A82AA1A6A900A60B05 /* PremiumKauf.swift in Sources */,
 				4B47D7A22AA1A6A900A60B05 /* ElementManager.swift in Sources */,
 				4B47D7992AA1A6A900A60B05 /* Vektor.swift in Sources */,
+				4B2ADD012B0FEB8700D2E23C /* iOSElementListe.swift in Sources */,
 				4B47D79A2AA1A6A900A60B05 /* EPeriode.swift in Sources */,
 				4B47D7B22AA1A6A900A60B05 /* Willkommen.swift in Sources */,
 				4BEFA3572AF6A87D00A3BCCF /* QuizThema.swift in Sources */,
@@ -440,7 +437,6 @@
 				4B47D7AD2AA1A6A900A60B05 /* ElementDetail.swift in Sources */,
 				4B3E899A2AC9DF350070679B /* ErrorHelper.swift in Sources */,
 				4B47D7A92AA1A6A900A60B05 /* KontoVerwalten.swift in Sources */,
-				4B47D7AB2AA1A6A900A60B05 /* Liste.swift in Sources */,
 				4B47D7AF2AA1A6A900A60B05 /* QuizView.swift in Sources */,
 				4B47D79F2AA1A6A900A60B05 /* Experiment.swift in Sources */,
 				4B47D7652AA1A68600A60B05 /* iPadOSMain.swift in Sources */,

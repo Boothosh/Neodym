@@ -22,7 +22,7 @@ struct System: View {
     ]
     
     @Binding var suchBegriff: String
-    @State var ausgewaeltesElement: Element? = nil
+    @Binding var ausgewaeltesElement: Element?
     
     @State var zeigeLanthanoide = false
     @State var zeigeActinoide = false
@@ -148,6 +148,7 @@ struct System: View {
                 zeigeLanthanoide = true
                 zeigeActinoide = true
             }
+            .searchable(text: $suchBegriff, placement: .navigationBarDrawer(displayMode: .always))
     }
     
     private struct ElementKarte: View, Equatable {

@@ -14,7 +14,7 @@ struct iOSMain: View {
     var body: some View {
         TabView {
             NavigationStack {
-                ElementeBetrachter(elementeManager: $elementeManager)
+                iOSElementListe(elementeManager: $elementeManager)
             }.tabItem {
                 Label("Elemente", systemImage: "atom")
             }
