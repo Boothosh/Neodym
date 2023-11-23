@@ -10,11 +10,7 @@ import SwiftUI
 struct Wissen: View {
     var body: some View {
         List {
-            Text("Elemente ->")
-            Text("Moleküle ->")
-            Text("Experimente ->")
-            Text("Begrifflichkeiten ->")
-            Text("Konzepte ->")
+            Text("Kommt bald!")
         }.navigationTitle("Wissen")
     }
 }
