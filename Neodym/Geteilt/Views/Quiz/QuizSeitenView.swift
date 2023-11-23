@@ -121,25 +121,34 @@ struct QuizSeitenView: View {
                                     .frame(width: 500)
                                     .multilineTextAlignment(.center)
                                 LazyVGrid(columns: [GridItem(.fixed(300), spacing: 25), GridItem(.fixed(300), spacing: 25)], spacing: 25, content: {
-                                    ForEach(seite.anwortMoeglichkeiten, id: \.self) { antwort in
+                                    ForEach(Array(zip(seite.anwortMoeglichkeiten.indices, seite.anwortMoeglichkeiten)), id: \.0) { antwort in
                                         Button(action: {
                                             withAnimation {
-                                                if ausgewaelteAntworten.contains(antwort) {
-                                                    ausgewaelteAntworten.removeAll(where: {$0 == antwort})
+                                                if ausgewaelteAntworten.contains(antwort.1) {
+                                                    ausgewaelteAntworten.removeAll(where: {$0 == antwort.1})
                                                 } else {
-                                                    ausgewaelteAntworten.append(antwort)
+                                                    ausgewaelteAntworten.append(antwort.1)
                                                 }
                                             }
                                         }, label: {
-                                            Text(antwort)
+                                            Text(antwort.1)
                                                 .frame(width: 300, height: 100)
-                                                .background(ausgewaelteAntworten.contains(antwort) ? Color.green.opacity(0.5) : Color(uiColor: .systemBackground))
+                                                .background(ausgewaelteAntworten.contains(antwort.1) ? Color.green.opacity(0.5) : Color(uiColor: .systemBackground))
                                                 .cornerRadius(25)
                                                 .overlay(
                                                     RoundedRectangle(cornerRadius: 25.0)
-                                                        .stroke(ausgewaelteAntworten.contains(antwort) ? .green : .primary, lineWidth: 1)
+                                                        .stroke(ausgewaelteAntworten.contains(antwort.1) ? .green : .primary, lineWidth: 1)
                                                 )
-                                        })
+                                        }).buttonStyle(NoTapAnimationStyle())
+                                            .keyboardShortcut(KeyboardShortcut(KeyEquivalent((antwort.0 + 1).description.first!)))
+                                            .overlay(alignment: .bottomTrailing) {
+                                                Text("\(Image(systemName: "command.square"))\(antwort.0 + 1)")
+                                                    .font(.system(size: 17, weight: .semibold))
+                                                    .frame(width: 50, height: 30)
+                                                    .foregroundStyle(.white)
+                                                    .background(RoundedRectangle(cornerRadius: 5).fill(.gray))
+                                                    .offset(x: 7, y: 7)
+                                            }
                                     }
                                 })
                             }
@@ -211,5 +220,13 @@ struct QuizSeitenView: View {
                 }
             }
         }
+    }
+}
+
+struct NoTapAnimationStyle: PrimitiveButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .contentShape(Rectangle())
+            .onTapGesture(perform: configuration.trigger)
     }
 }
