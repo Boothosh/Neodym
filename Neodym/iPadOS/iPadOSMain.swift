@@ -6,36 +6,79 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct iPadOSMain: View {
     
     @Binding var elementeManager: ElementManager
-    @State private var ausgewaelterAppBereich: String? = "Elemente"
+    @State private var ausgewaelterAppBereich: iPadAppBereich? = .elemente
     @State private var systemIstAusgewaelt = true
     
     @State private var suchBegriff: String = ""
     @State private var ausgewaeltesElement: Element? = nil
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @State private var name = Auth.auth().currentUser?.displayName ?? "Fehler"
+    @State private var profilbild: UIImage?
+    @State private var zeigeEinstellungen = false
     
     var sideBar: some View {
-        List(selection: $ausgewaelterAppBereich){
-            Label("Elemente", systemImage: "square.grid.4x3.fill")
-                .tag("Elemente")
-            Label("Wissen", systemImage: "graduationcap")
-                .tag("Wissen")
-            Label("Werkzeuge", systemImage: "wrench.and.screwdriver")
-                .tag("Werkzeuge")
-            Label("Quiz", systemImage: "brain")
-                .tag("Quiz")
-            Label("Einstellungen", systemImage: "gearshape.2")
-                .tag("Einstellungen")
+        VStack {
+            List(selection: $ausgewaelterAppBereich){
+                Label("Elemente", systemImage: "square.grid.4x3.fill")
+                    .tag(iPadAppBereich.elemente)
+                DisclosureGroup(content: {
+                    Label("Stöchiometrie", systemImage: "x.squareroot")
+                        .tag(iPadAppBereich.wissen_stoechometrie)
+                    Label("Moleküle", systemImage: "circle.hexagonpath.fill")
+                        .tag(iPadAppBereich.wissen_molekuele)
+                }, label: {
+                    Label("Wissen", systemImage: "graduationcap")
+                })
+                DisclosureGroup(content: {
+                    Label("Moleküle zeichnen", systemImage: "pencil.and.ruler")
+                        .tag(iPadAppBereich.werkzeug_zeichnen)
+                    Label("Molekülmasse ausrechnen", systemImage: "scalemass")
+                        .tag(iPadAppBereich.werkzeug_molmasse)
+                    Label("Ionengruppe bilden", systemImage: "circle.grid.3x3")
+                        .tag(iPadAppBereich.werkzeug_ionengruppe)
+                }, label: {
+                    Label("Werkzeuge", systemImage: "wrench.and.screwdriver")
+                })
+                Label("Quiz", systemImage: "brain")
+                    .tag(iPadAppBereich.quiz)
+            }
+            HStack {
+                Button {
+                    zeigeEinstellungen = true
+                } label: {
+                    if let profilbild {
+                        Image(uiImage: profilbild)
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                    } else {
+                        ProgressView()
+                            .frame(width: 40, height: 40)
+                    }
+                    Text(name)
+                    Spacer()
+                    Image(systemName: "gearshape.2")
+                }.foregroundStyle(Color(uiColor: .label))
+            }.padding(.horizontal)
+                .padding(.top)
+            .background(Color(.listenHintergrundFarbe))
         }.navigationTitle("Neodym")
+            .task {
+                profilbild = await StorageManager.ladeProfilbild()
+            }
+            .sheet(isPresented: $zeigeEinstellungen, content: {
+                Einstellungen()
+            })
     }
     
     var hauptcontent: some View {
         NavigationStack {
             switch ausgewaelterAppBereich {
-                case "Elemente":
+                case .elemente:
                     VStack(alignment: .center){
                         if elementeManager.perioden.isEmpty {
                             Spacer()
@@ -66,22 +109,26 @@ struct iPadOSMain: View {
                                 .pickerStyle(.segmented)
                             }
                         }
-                case "Wissen":
+                case .wissen_stoechometrie:
                     Wissen()
-                case "Werkzeuge":
-                    Werkzeuge(elementeManager: $elementeManager)
-                case "Quiz":
+                case .wissen_molekuele:
+                    Wissen()
+                case .werkzeug_zeichnen:
+                    Molekuelzeichner(elementeManager: $elementeManager)
+                case .werkzeug_molmasse:
+                    MolekuelmasseRechner(elementManager: $elementeManager)
+                case .werkzeug_ionengruppe:
+                    IonengruppenBilden(elementManager: $elementeManager)
+                case .quiz:
                     QuizView()
-                case "Einstellungen":
-                    Einstellungen()
-                default:
+                case nil:
                     Text("Wähle einen Bereich der App aus, den du nutzen möchtest!")
             }
         }
     }
     
     var body: some View {
-        if ausgewaelterAppBereich == "Elemente" && !systemIstAusgewaelt {
+        if ausgewaelterAppBereich == .elemente && !systemIstAusgewaelt {
             NavigationSplitView(columnVisibility: $columnVisibility){
                 sideBar
             } content: {
@@ -136,5 +183,12 @@ struct iPadOSMain: View {
                 await elementeManager.ladeDatei()
             }
         }
+    }
+    
+    enum iPadAppBereich: Hashable {
+        case elemente
+        case wissen_stoechometrie, wissen_molekuele
+        case werkzeug_zeichnen, werkzeug_molmasse, werkzeug_ionengruppe
+        case quiz
     }
 }

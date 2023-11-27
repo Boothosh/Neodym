@@ -20,7 +20,7 @@ struct Einstellungen: View {
     @State private var emailOderSchulaccount = Auth.auth().currentUser?.email ?? "Schul-Account"
     
     var body: some View {
-        SettingStack(embedInNavigationStack: false) {
+        SettingStack {
             SettingPage(title: "Einstellungen") {
                 SettingGroup{
                     SettingCustomView (titleForSearch: "Konto"){

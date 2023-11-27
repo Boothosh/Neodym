@@ -38,9 +38,7 @@ struct iOSMain: View {
                 Label("Quiz", systemImage: "brain")
                     .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
             }
-            NavigationStack {
-                Einstellungen()
-            }.tabItem {
+            Einstellungen().tabItem {
                 Label("Einstellungen", systemImage: "gearshape.2")
                     .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
             }

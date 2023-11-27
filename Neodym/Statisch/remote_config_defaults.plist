@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>quizze</key>
+  <string>[{"titel":"Grundlagen der Chemie","quizes":[{"titel":"Elementarteilchen","schwierigkeit":"einfach"},{"titel":"Das Periodensystem","schwierigkeit":"einfach"},{"titel":"Metalle und Nichtmetalle","schwierigkeit":"einfach"}]},{"titel":"Säuren und Basen","quizes":[{"titel":"Einstieg in die Brønsted-Säuren","schwierigkeit":"mittel"},{"titel":"Einstieg in die Brønsted-Basen","schwierigkeit":"mittel"},{"titel":"Das Ionenprodukt des Wassers","schwierigkeit":"mittel"},{"titel":"pH-Wert und pOH-Wert","schwierigkeit":"mittel"},{"titel":"Einstieg in die Indikatoren","schwierigkeit":"mittel"}]}]</string>
+</dict>
+</plist>
