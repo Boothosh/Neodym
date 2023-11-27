@@ -51,14 +51,14 @@ struct QuizSeitenView: View {
                                             .multilineTextAlignment(.leading)
                                         Spacer()
                                     }.frame(width: geo.size.width / 2)
-                                    Image(quiz.bildName)
+                                    Image(quiz.titel)
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
                                 }.frame(height: 4 * (geo.size.height / 5))
                                     .clipped()
                                 HStack(spacing: 0){
                                     HStack {
-                                        Text(quiz.schwierigkeit.rawValue)
+                                        Text(quiz.schwierigkeit.rawValue.capitalized)
                                             .padding(.leading)
                                             .foregroundStyle(.white)
                                             .fontWeight(.bold)
@@ -79,15 +79,20 @@ struct QuizSeitenView: View {
                         }, label: {
                             HStack {
                                 Spacer()
-                                Text("Starten")
-                                    .font(.title2)
-                                    .foregroundStyle(.white)
+                                if quiz.inhalt.isEmpty {
+                                     ProgressView()
+                                } else {
+                                    Text("Starten")
+                                        .font(.title2)
+                                }
                                 Spacer()
                             }
+                            .foregroundStyle(.white)
                             .frame(maxWidth: 350, minHeight: 45)
                             .background(.blue)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }).keyboardShortcut(.defaultAction)
+                        }).disabled(quiz.inhalt.isEmpty)
+                        .keyboardShortcut(.defaultAction)
                         .padding()
                         Spacer()
                     }
@@ -132,7 +137,9 @@ struct QuizSeitenView: View {
                                             }
                                         }, label: {
                                             Text(antwort.1)
-                                                .frame(width: 300, height: 100)
+                                                .multilineTextAlignment(.center)
+                                                .frame(width: 250, height: 100)
+                                                .padding(.horizontal, 25)
                                                 .background(ausgewaelteAntworten.contains(antwort.1) ? Color.green.opacity(0.5) : Color(uiColor: .systemBackground))
                                                 .cornerRadius(25)
                                                 .overlay(
@@ -219,6 +226,9 @@ struct QuizSeitenView: View {
                     }
                 }
             }
+        }
+        .task {
+            quiz.inhalt = await FirestoreManager.ladeQuizSeiten(fuer: quiz.titel)
         }
     }
 }

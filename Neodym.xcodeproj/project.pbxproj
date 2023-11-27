@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4B2ADD012B0FEB8700D2E23C /* iOSElementListe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2ADD002B0FEB8700D2E23C /* iOSElementListe.swift */; };
+		4B2ADD042B13BADC00D2E23C /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 4B2ADD032B13BADC00D2E23C /* FirebaseRemoteConfig */; };
+		4B2ADD062B13C23A00D2E23C /* remote_config_defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4B2ADD052B13C23A00D2E23C /* remote_config_defaults.plist */; };
 		4B3E899A2AC9DF350070679B /* ErrorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3E89992AC9DF350070679B /* ErrorHelper.swift */; };
 		4B3E89B62ACC451A0070679B /* ElementAuswahlGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3E89B52ACC451A0070679B /* ElementAuswahlGrid.swift */; };
 		4B47D7402AA0A28B00A60B05 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D73F2AA0A28B00A60B05 /* App.swift */; };
@@ -62,6 +64,7 @@
 
 /* Begin PBXFileReference section */
 		4B2ADD002B0FEB8700D2E23C /* iOSElementListe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSElementListe.swift; sourceTree = "<group>"; };
+		4B2ADD052B13C23A00D2E23C /* remote_config_defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = remote_config_defaults.plist; sourceTree = "<group>"; };
 		4B3E89992AC9DF350070679B /* ErrorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHelper.swift; sourceTree = "<group>"; };
 		4B3E89B52ACC451A0070679B /* ElementAuswahlGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElementAuswahlGrid.swift; sourceTree = "<group>"; };
 		4B47D73C2AA0A28B00A60B05 /* Neodym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Neodym.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +122,7 @@
 				4B47D7552AA1A54800A60B05 /* FirebaseAppCheck in Frameworks */,
 				4B47D7592AA1A54800A60B05 /* FirebaseFirestore in Frameworks */,
 				4B47D7572AA1A54800A60B05 /* FirebaseAuth in Frameworks */,
+				4B2ADD042B13BADC00D2E23C /* FirebaseRemoteConfig in Frameworks */,
 				4B47D75B2AA1A54800A60B05 /* FirebaseStorage in Frameworks */,
 				4B47D74F2AA0A35C00A60B05 /* Setting in Frameworks */,
 			);
@@ -127,11 +131,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B2ADD022B13BADC00D2E23C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4B47D7332AA0A28B00A60B05 = {
 			isa = PBXGroup;
 			children = (
 				4B47D73E2AA0A28B00A60B05 /* Neodym */,
 				4B47D73D2AA0A28B00A60B05 /* Products */,
+				4B2ADD022B13BADC00D2E23C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -169,6 +181,7 @@
 		4B47D75E2AA1A65400A60B05 /* Statisch */ = {
 			isa = PBXGroup;
 			children = (
+				4B2ADD052B13C23A00D2E23C /* remote_config_defaults.plist */,
 				4B47D7512AA0AEE400A60B05 /* GoogleService-Info.plist */,
 				4B47D75F2AA1A66800A60B05 /* elemente.json */,
 			);
@@ -347,6 +360,7 @@
 				4B47D7562AA1A54800A60B05 /* FirebaseAuth */,
 				4B47D7582AA1A54800A60B05 /* FirebaseFirestore */,
 				4B47D75A2AA1A54800A60B05 /* FirebaseStorage */,
+				4B2ADD032B13BADC00D2E23C /* FirebaseRemoteConfig */,
 			);
 			productName = Neodym;
 			productReference = 4B47D73C2AA0A28B00A60B05 /* Neodym.app */;
@@ -394,6 +408,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B2ADD062B13C23A00D2E23C /* remote_config_defaults.plist in Resources */,
 				4B47D7602AA1A66800A60B05 /* elemente.json in Resources */,
 				4B47D7472AA0A28D00A60B05 /* Preview Assets.xcassets in Resources */,
 				4B47D7442AA0A28D00A60B05 /* Assets.xcassets in Resources */,
@@ -679,6 +694,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4B2ADD032B13BADC00D2E23C /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
 		4B47D74E2AA0A35C00A60B05 /* Setting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4B47D74D2AA0A35C00A60B05 /* XCRemoteSwiftPackageReference "Setting" */;

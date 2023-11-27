@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct QuizSeite {
+struct QuizSeite: Codable {
     let frage: String
     let anwortMoeglichkeiten: [String]
     let richtigeAnworten: [String]
