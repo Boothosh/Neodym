@@ -31,7 +31,7 @@ struct System: View {
     var body: some View {
         GeometryReader { geoD in
             ScrollView {
-                let breite: CGFloat = (geoD.size.width - 18*1 - 5 - 20)/19
+                let breite: CGFloat = abs((geoD.size.width - 18*1 - 5 - 20)/19)
                 VStack(spacing: 1){
                     // Normales Periodensystem
                     HStack(spacing: 1){
