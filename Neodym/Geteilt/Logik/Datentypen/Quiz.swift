@@ -10,13 +10,14 @@ import SwiftUI
 struct Quiz: Identifiable, Equatable, Codable {
     
     static func == (lhs: Quiz, rhs: Quiz) -> Bool {
-        lhs.id == rhs.id && lhs.fortschritt == rhs.fortschritt
+        lhs.id == rhs.id && lhs.fortschritt == rhs.fortschritt && lhs.inhalt == rhs.inhalt
     }
     
     let id = UUID()
     let titel: String
     var fortschritt: Int // In Prozent
     let schwierigkeit: Schwierigkeit
+    let bildID: String
         
     var inhalt: [QuizSeite] = []
     
@@ -25,11 +26,13 @@ struct Quiz: Identifiable, Equatable, Codable {
         self.titel = try container.decode(String.self, forKey: .titel)
         self.fortschritt = UserDefaults.standard.integer(forKey: titel)
         self.schwierigkeit = Schwierigkeit(rawValue: try container.decode(String.self, forKey: .schwierigkeit)) ?? .einfach
+        self.bildID = try container.decode(String.self, forKey: .bildID)
     }
     
     enum CodingKeys: String, CodingKey {
         case titel = "titel"
         case schwierigkeit = "schwierigkeit"
+        case bildID = "bildID"
     }
 }
 

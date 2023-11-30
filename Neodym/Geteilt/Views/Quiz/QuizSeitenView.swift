@@ -81,6 +81,7 @@ struct QuizSeitenView: View {
                                 Spacer()
                                 if quiz.inhalt.isEmpty {
                                      ProgressView()
+                                        .tint(.white)
                                 } else {
                                     Text("Starten")
                                         .font(.title2)

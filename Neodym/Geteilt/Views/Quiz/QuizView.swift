@@ -34,7 +34,7 @@ struct QuizView: View {
             self.themen = try JSONDecoder().decode([QuizThema].self, from: try JSONSerialization.data(withJSONObject: remoteConfig.configValue(forKey: "quizze").jsonValue as! NSArray, options: []))
             try await remoteConfig.fetch()
         } catch let error {
-            print("Fehler: \(error.localizedDescription)")
+            print(error)
         }
     }
     
@@ -156,7 +156,7 @@ struct QuizKachel: View {
         .modifier(Begrenzung())
         .aspectRatio(1.75, contentMode: .fill)
         .task {
-            bild = await StorageManager.quizBild(quizName: quiz.titel)
+            bild = await StorageManager.quizBild(quizName: quiz.titel, bildID: quiz.bildID)
         }
     }
     
