@@ -147,7 +147,7 @@ struct Anmeldung: View {
                 case .schule:
                     // Prüfen, dass alle benötigten Felder ausgefüllt sind
                     guard lizenz != "" else { fehlenderLizenzSchluessel = true; break }
-                    guard vorname != "" else { fehlenderVorname = true; break }
+                    guard vorname.trimmingCharacters(in: [" "]) != "" else { fehlenderVorname = true; break }
                     // Anmeldung versuchen, ansonsten Fehler anzeigen
                     errorNachricht = await AuthManager.registrieren(mitLizenz: lizenz, vorname: vorname, benutzer: benutzer)
                 case .anmelden:
@@ -160,7 +160,7 @@ struct Anmeldung: View {
                     // Prüfen, dass alle benötigten Felder ausgefüllt sind
                     guard email != "" else { fehlendeEmail = true; break }
                     guard passwort != "" else { fehlendesPasswort = true; break }
-                    guard vorname != "" else { fehlenderVorname = true; break }
+                    guard vorname.trimmingCharacters(in: [" "]) != "" else { fehlenderVorname = true; break }
                     // Anmeldung versuchen, ansonsten Fehler anzeigen
                     errorNachricht = await AuthManager.registrieren(email: email, passwort: passwort, vorname: vorname, benutzer: benutzer)
             }
