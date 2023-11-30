@@ -122,6 +122,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B47D7552AA1A54800A60B05 /* FirebaseAppCheck in Frameworks */,
+				4BA42D202B17B68500EA613F /* FirebaseFunctions in Frameworks */,
 				4B47D7592AA1A54800A60B05 /* FirebaseFirestore in Frameworks */,
 				4B47D7572AA1A54800A60B05 /* FirebaseAuth in Frameworks */,
 				4B2ADD042B13BADC00D2E23C /* FirebaseRemoteConfig in Frameworks */,
@@ -251,6 +252,7 @@
 				4B47D7782AA1A6A900A60B05 /* StorageManager.swift */,
 				4B47D7792AA1A6A900A60B05 /* AuthManager.swift */,
 				4B47D77A2AA1A6A900A60B05 /* FirestoreManager.swift */,
+				4BA42D3D2B1901BB00EA613F /* Benutzer.swift */,
 			);
 			path = Datenbank;
 			sourceTree = "<group>";
@@ -361,6 +363,7 @@
 				4B47D7582AA1A54800A60B05 /* FirebaseFirestore */,
 				4B47D75A2AA1A54800A60B05 /* FirebaseStorage */,
 				4B2ADD032B13BADC00D2E23C /* FirebaseRemoteConfig */,
+				4BA42D1F2B17B68500EA613F /* FirebaseFunctions */,
 			);
 			productName = Neodym;
 			productReference = 4B47D73C2AA0A28B00A60B05 /* Neodym.app */;
@@ -427,6 +430,7 @@
 				4B7368022AAC88400069B4FC /* Temperatur.swift in Sources */,
 				4B47D7682AA1A69600A60B05 /* iOSMain.swift in Sources */,
 				4B47D7AC2AA1A6A900A60B05 /* System.swift in Sources */,
+				4BA42D3E2B1901BB00EA613F /* Benutzer.swift in Sources */,
 				4BEFA3772AFABBB700A3BCCF /* QuizSeitenView.swift in Sources */,
 				4B47D79E2AA1A6A900A60B05 /* CanvasObjekt.swift in Sources */,
 				4B47D7B92AA1A6A900A60B05 /* IonengruppenBilden.swift in Sources */,
@@ -718,6 +722,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		4BA42D1F2B17B68500EA613F /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

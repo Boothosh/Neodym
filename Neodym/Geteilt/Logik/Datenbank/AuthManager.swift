@@ -7,6 +7,7 @@
 
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseFunctions
 
 struct AuthManager {
     
@@ -15,9 +16,9 @@ struct AuthManager {
         guard let user = Auth.auth().currentUser else { return "Benutzer ist nicht korrekt angemeldet." }
         do {
             if user.isAnonymous || kontoLoeschen {
-                // TODO: Alle Daten des Benutzers löschen
-                // - Eintrag im Benutzer-Verzeichnis
-                // - Profilbild
+                if let lizenz = UserDefaults.standard.string(forKey: "lizenz") {
+                    _ = try await Functions.functions().httpsCallable("gebeLizenzFrei").call(["text": lizenz])
+                }
                 try await user.delete()
             } else {
                 try Auth.auth().signOut()
@@ -49,9 +50,20 @@ struct AuthManager {
     /// Gibt die Fehlerbeschreibung zurück, falls es einen gab
     static func registrieren(mitLizenz lizenz: String? = nil, email: String? = nil, passwort: String? = nil, vorname: String, benutzer: Benutzer) async -> String? {
         do {
-            if lizenz != nil {
-                // Checke, ob die Lizenz gültig ist
-                try await Auth.auth().signInAnonymously()
+            if let lizenz {
+                let ergebnis = try await Functions.functions().httpsCallable("validiereLizenz").call(["text": lizenz]).data as? String ?? "Funktion ist fehlgeschlagen"
+                if ergebnis == "Inaktiv" {
+                    try await Auth.auth().signInAnonymously()
+                    UserDefaults.standard.setValue(lizenz, forKey: "lizenz")
+                } else {
+                    if ergebnis == "Aktiv" {
+                        return "Diese Lizenz ist schon aktiviert worden."
+                    } else if ergebnis == "Invalide"{
+                        return "Diese Lizenz konnte nicht gefunden werden."
+                    } else {
+                        return ergebnis
+                    }
+                }
             } else {
                 guard let email = email, let passwort = passwort else { return "Fehler bei der Übergabe von Argumenten." }
                 try await Auth.auth().createUser(withEmail: email, password: passwort)
