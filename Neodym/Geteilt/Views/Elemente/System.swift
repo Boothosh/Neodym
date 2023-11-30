@@ -140,8 +140,6 @@ struct System: View {
                             }
                     }
                 }
-            }.onAppear {
-                print(geoD)
             }
         }
             .onChange(of: suchBegriff) {

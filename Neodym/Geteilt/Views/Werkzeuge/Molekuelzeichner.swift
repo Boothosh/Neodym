@@ -446,7 +446,6 @@ struct Molekuelzeichner: View {
             canvasBindungen.append(neueBindung)
         }
         ausgewaelteObjekte = Array(neueIDs.values)
-        print(canvasObjekte)
     }
     
     private func temporaereBindungWegenGezogenemElektron() -> (some View)? {

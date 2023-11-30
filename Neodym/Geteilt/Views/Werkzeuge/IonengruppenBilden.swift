@@ -18,7 +18,6 @@ struct IonengruppenBilden: View {
         guard let metall = metall, let nichtMetall = nichtMetall, let metallElektronenBisEdelgas = metall.elektronenBisEdelgas, let nichtMetallElektronenBisEdelgas = nichtMetall.elektronenBisEdelgas else { return nil }
         
         // Finde den größten gemeinsamen Teiler
-        print(metallElektronenBisEdelgas)
         var x = 0
         var y: Int = max(abs(metallElektronenBisEdelgas), nichtMetallElektronenBisEdelgas)
         var z: Int = min(abs(metallElektronenBisEdelgas), nichtMetallElektronenBisEdelgas)

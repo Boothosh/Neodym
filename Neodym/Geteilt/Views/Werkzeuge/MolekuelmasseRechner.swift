@@ -210,7 +210,6 @@ struct MolekuelmasseRechner: View {
             var multiplikator = pow(10.0, Double(anzahlAlsString.first?.count ?? 0) - 1.0)
             for i in anzahlAlsString.first ?? "" {
                 let aktuelleAnzahl = Double(String(i)) ?? 0
-                print(multiplikator)
                 anzahl += multiplikator * aktuelleAnzahl
                 multiplikator /= 10
             }
