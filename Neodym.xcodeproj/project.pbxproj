@@ -56,6 +56,9 @@
 		4B47D7BF2AA50EBF00A60B05 /* Platzhalter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7BE2AA50EBF00A60B05 /* Platzhalter.swift */; };
 		4B7367FE2AA71DD30069B4FC /* EArtikelSektion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7367FD2AA71DD30069B4FC /* EArtikelSektion.swift */; };
 		4B7368022AAC88400069B4FC /* Temperatur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7368012AAC88400069B4FC /* Temperatur.swift */; };
+		4BA42D202B17B68500EA613F /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 4BA42D1F2B17B68500EA613F /* FirebaseFunctions */; };
+		4BA42D222B18D7AC00EA613F /* PasswortZuruecksetzen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA42D212B18D7AC00EA613F /* PasswortZuruecksetzen.swift */; };
+		4BA42D3E2B1901BB00EA613F /* Benutzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA42D3D2B1901BB00EA613F /* Benutzer.swift */; };
 		4BEFA3572AF6A87D00A3BCCF /* QuizThema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEFA3562AF6A87D00A3BCCF /* QuizThema.swift */; };
 		4BEFA3592AF6A8ED00A3BCCF /* Quiz.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEFA3582AF6A8ED00A3BCCF /* Quiz.swift */; };
 		4BEFA35B2AF6A97300A3BCCF /* QuizSeite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BEFA35A2AF6A97300A3BCCF /* QuizSeite.swift */; };
@@ -108,6 +111,8 @@
 		4B47D7BE2AA50EBF00A60B05 /* Platzhalter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Platzhalter.swift; sourceTree = "<group>"; };
 		4B7367FD2AA71DD30069B4FC /* EArtikelSektion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EArtikelSektion.swift; sourceTree = "<group>"; };
 		4B7368012AAC88400069B4FC /* Temperatur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temperatur.swift; sourceTree = "<group>"; };
+		4BA42D212B18D7AC00EA613F /* PasswortZuruecksetzen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswortZuruecksetzen.swift; sourceTree = "<group>"; };
+		4BA42D3D2B1901BB00EA613F /* Benutzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Benutzer.swift; sourceTree = "<group>"; };
 		4BEFA3562AF6A87D00A3BCCF /* QuizThema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizThema.swift; sourceTree = "<group>"; };
 		4BEFA3582AF6A8ED00A3BCCF /* Quiz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quiz.swift; sourceTree = "<group>"; };
 		4BEFA35A2AF6A97300A3BCCF /* QuizSeite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizSeite.swift; sourceTree = "<group>"; };
@@ -304,6 +309,7 @@
 			children = (
 				4B47D78B2AA1A6A900A60B05 /* Anmeldung.swift */,
 				4B47D78C2AA1A6A900A60B05 /* Willkommen.swift */,
+				4BA42D212B18D7AC00EA613F /* PasswortZuruecksetzen.swift */,
 			);
 			path = Start;
 			sourceTree = "<group>";
@@ -447,6 +453,7 @@
 				4B47D7A42AA1A6A900A60B05 /* AuthManager.swift in Sources */,
 				4B47D7B52AA1A6A900A60B05 /* GroesseBestimmen.swift in Sources */,
 				4B47D7BB2AA1A6A900A60B05 /* Wissen.swift in Sources */,
+				4BA42D222B18D7AC00EA613F /* PasswortZuruecksetzen.swift in Sources */,
 				4B47D7BF2AA50EBF00A60B05 /* Platzhalter.swift in Sources */,
 				4B47D79B2AA1A6A900A60B05 /* CanvasBindung.swift in Sources */,
 				4B47D7AD2AA1A6A900A60B05 /* ElementDetail.swift in Sources */,

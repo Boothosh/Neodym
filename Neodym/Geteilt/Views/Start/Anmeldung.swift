@@ -23,6 +23,8 @@ struct Anmeldung: View {
     @State private var fehlendesPasswort = false
     @State private var fehlenderVorname = false
     
+    @State private var zeigePasswortZuruecksetzen = false
+    
     let anmeldeArt: AnmeldeArt
     
     var body: some View {
@@ -76,8 +78,19 @@ struct Anmeldung: View {
                         .onSubmit {
                             anmeldenOderRegistrieren()
                         }
+                } else {
+                    HStack {
+                        Spacer()
+                        Button {
+                            zeigePasswortZuruecksetzen = true
+                        } label: {
+                            Text("Passwort vergessen?")
+                                .foregroundStyle(.blue)
+                        }.sheet(isPresented: $zeigePasswortZuruecksetzen) {
+                            PasswortZuruecksetzen(email: $email)
+                        }
+                    }
                 }
-                
                 Spacer()
                 Button {
                     anmeldenOderRegistrieren()
