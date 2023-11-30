@@ -70,6 +70,7 @@ struct iPadOSMain: View {
             .sheet(isPresented: $zeigeEinstellungen, content: {
                 Einstellungen(name: benutzer.name, profilbild: benutzer.bild, benutzer: benutzer)
             })
+            .ignoresSafeArea(.keyboard)
     }
     
     var hauptcontent: some View {
@@ -84,12 +85,6 @@ struct iPadOSMain: View {
                         } else if systemIstAusgewaelt {
                             System(elementManager: $elementeManager, suchBegriff: $suchBegriff, ausgewaeltesElement: $ausgewaeltesElement)
                                 .navigationTitle("Elemente")
-                                .task {
-                                    if columnVisibility == .doubleColumn {
-                                        columnVisibility = .detailOnly
-                                    }
-                                    ausgewaeltesElement = nil
-                                }
                         } else {
                             // DetailView wegen Liste
                             if let ausgewaeltesElement {
@@ -99,7 +94,7 @@ struct iPadOSMain: View {
                     }
                         .toolbar {
                             ToolbarItem {
-                                Picker("Ansicht", selection: $systemIstAusgewaelt) {
+                                Picker("Ansicht", selection: $systemIstAusgewaelt.onChange(setzteNeuenSystemIstAusgewaeltWert)) {
                                     Text("Periodensystem").tag(true)
                                     Text("Liste").tag(false)
                                 }
@@ -120,6 +115,22 @@ struct iPadOSMain: View {
                     QuizView()
                 case nil:
                     Text("Wähle einen Bereich der App aus, den du nutzen möchtest!")
+            }
+        }
+    }
+    
+    func setzteNeuenSystemIstAusgewaeltWert(_ neuerWert: Bool) {
+        if neuerWert {
+            if columnVisibility == .doubleColumn {
+                columnVisibility = .detailOnly
+            }
+            ausgewaeltesElement = nil
+        } else {
+            if columnVisibility == .detailOnly {
+                columnVisibility = .doubleColumn
+            }
+            withAnimation {
+                ausgewaeltesElement = elementeManager.alleElemente.first!
             }
         }
     }
@@ -155,15 +166,6 @@ struct iPadOSMain: View {
                     }
                 }.searchable(text: $suchBegriff)
                     .navigationTitle("Elemente")
-                    .task {
-                        print(columnVisibility)
-                        if columnVisibility == .detailOnly {
-                            columnVisibility = .doubleColumn
-                        }
-                        withAnimation {
-                            ausgewaeltesElement = elementeManager.alleElemente.first!
-                        }
-                    }
             } detail: {
                 hauptcontent
             }.navigationSplitViewStyle(.balanced)
@@ -181,5 +183,17 @@ struct iPadOSMain: View {
         case wissen_stoechometrie, wissen_molekuele
         case werkzeug_zeichnen, werkzeug_molmasse, werkzeug_ionengruppe
         case quiz
+    }
+}
+
+// Wokraround, weil .onChange nicht normal gecallt wird
+extension Binding {
+    func onChange(_ handler: @escaping (Value) -> Void) -> Binding<Value> {
+        return Binding(
+            get: { self.wrappedValue },
+            set: { selection in
+                self.wrappedValue = selection
+                handler(selection)
+        })
     }
 }
