@@ -30,6 +30,15 @@ struct AuthManager {
         return nil
     }
     
+    static func passwortZuruecksetzen(_ email: String) async -> String? {
+        do {
+            try await Auth.auth().sendPasswordReset(withEmail: email)
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
+    }
+    
     /// Gibt die Fehlerbeschreibung zurück, falls es einen gab
     static func aendereNamen(zu name: String) async -> String? {
         let nameTrimmed = name.trimmingCharacters(in: [" "])
