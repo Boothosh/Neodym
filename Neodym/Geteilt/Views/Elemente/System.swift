@@ -163,7 +163,7 @@ struct System: View {
             return Text(element.symbol)
                 .font(.system(size: 18, weight: .black))
                 .shadow(radius: 5)
-                .frame(width: breite - 10, height: breite * 1.1 - 10)
+                .frame(width: abs(breite - 10), height: abs(breite * 1.1 - 10))
                 .overlay(breite > 55 ? Text(element.name)
                     .font(.system(size: 8))
                     .lineLimit(1) : nil, alignment: .bottom)
