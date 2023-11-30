@@ -17,8 +17,7 @@ struct iPadOSMain: View {
     @State private var suchBegriff: String = ""
     @State private var ausgewaeltesElement: Element? = nil
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
-    @State private var name = Auth.auth().currentUser?.displayName ?? "Fehler"
-    @State private var profilbild: UIImage?
+    @ObservedObject var benutzer: Benutzer
     @State private var zeigeEinstellungen = false
     
     var sideBar: some View {
@@ -51,15 +50,16 @@ struct iPadOSMain: View {
                 Button {
                     zeigeEinstellungen = true
                 } label: {
-                    if let profilbild {
+                    if let profilbild = benutzer.bild {
                         Image(uiImage: profilbild)
                             .resizable()
+                            .cornerRadius(20)
                             .frame(width: 40, height: 40)
                     } else {
                         ProgressView()
                             .frame(width: 40, height: 40)
                     }
-                    Text(name)
+                    Text(benutzer.name)
                     Spacer()
                     Image(systemName: "gearshape.2")
                 }.foregroundStyle(Color(uiColor: .label))
@@ -67,11 +67,8 @@ struct iPadOSMain: View {
                 .padding(.top)
             .background(Color(.listenHintergrundFarbe))
         }.navigationTitle("Neodym")
-            .task {
-                profilbild = await StorageManager.ladeProfilbild()
-            }
             .sheet(isPresented: $zeigeEinstellungen, content: {
-                Einstellungen()
+                Einstellungen(name: benutzer.name, profilbild: benutzer.bild, benutzer: benutzer)
             })
     }
     

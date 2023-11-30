@@ -10,6 +10,7 @@ import SwiftUI
 struct iOSMain: View {
     
     @Binding var elementeManager: ElementManager
+    @ObservedObject var benutzer: Benutzer
     
     var body: some View {
         TabView {
@@ -38,7 +39,7 @@ struct iOSMain: View {
                 Label("Quiz", systemImage: "brain")
                     .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
             }
-            Einstellungen().tabItem {
+            Einstellungen(name: benutzer.name, profilbild: benutzer.bild, benutzer: benutzer).tabItem {
                 Label("Einstellungen", systemImage: "gearshape.2")
                     .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
             }

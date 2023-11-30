@@ -45,8 +45,9 @@ struct AuthManager {
         }
     }
     
+    @MainActor
     /// Gibt die Fehlerbeschreibung zurück, falls es einen gab
-    static func registrieren(mitLizenz lizenz: String? = nil, email: String? = nil, passwort: String? = nil, vorname: String) async -> String? {
+    static func registrieren(mitLizenz lizenz: String? = nil, email: String? = nil, passwort: String? = nil, vorname: String, benutzer: Benutzer) async -> String? {
         do {
             if lizenz != nil {
                 // Checke, ob die Lizenz gültig ist
@@ -61,6 +62,7 @@ struct AuthManager {
             print(error)
             return error.localizedDescription
         }
+        benutzer.name = vorname
         return await aendereNamen(zu: vorname)
     }
     

@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct Willkommen: View {
+    
+    var benutzer: Benutzer
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -40,16 +43,16 @@ struct Willkommen: View {
                 Spacer()
                 
                 VStack(spacing: 15){
-                    NavigationLink(destination: Anmeldung(anmeldeArt: .schule)) {
+                    NavigationLink(destination: Anmeldung(anmeldeArt: .schule, benutzer: benutzer)) {
                         anmeldeButton("Über Schule anmelden", bildName: "Schule")
                     }
                     Divider()
                         .background(.pink)
                         .padding(.horizontal, 20)
-                    NavigationLink(destination: Anmeldung(anmeldeArt: .anmelden)) {
+                    NavigationLink(destination: Anmeldung(anmeldeArt: .anmelden, benutzer: benutzer)) {
                         anmeldeButton("Normal anmelden", bildName: "Mann")
                     }
-                    NavigationLink(destination: Anmeldung(anmeldeArt: .registrieren)) {
+                    NavigationLink(destination: Anmeldung(anmeldeArt: .registrieren, benutzer: benutzer)) {
                         anmeldeButton("Neu registrieren", bildName: "Frau")
                     }
                 }

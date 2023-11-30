@@ -38,6 +38,7 @@ struct NeodymApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @State var elementeManager = ElementManager()
     @State var benutzerIstAngemeldet: Bool? = nil
+    @StateObject var benutzer = Benutzer()
     
     var body: some Scene {
         WindowGroup {
@@ -48,13 +49,13 @@ struct NeodymApp: App {
                     }
             } else if benutzerIstAngemeldet == false {
                 // Benutzer ist nicht angemeldet
-                Willkommen()
+                Willkommen(benutzer: benutzer)
             } else if UIDevice.current.userInterfaceIdiom == .phone {
                 // iPhone
-                iOSMain(elementeManager: $elementeManager)
+                iOSMain(elementeManager: $elementeManager, benutzer: benutzer)
             } else {
                 // iPad oder Mac
-                iPadOSMain(elementeManager: $elementeManager)
+                iPadOSMain(elementeManager: $elementeManager, benutzer: benutzer)
             }
         }
     }

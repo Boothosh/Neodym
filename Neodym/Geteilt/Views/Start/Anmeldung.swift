@@ -26,6 +26,7 @@ struct Anmeldung: View {
     @State private var zeigePasswortZuruecksetzen = false
     
     let anmeldeArt: AnmeldeArt
+    var benutzer: Benutzer
     
     var body: some View {
         VStack {
@@ -148,7 +149,7 @@ struct Anmeldung: View {
                     guard lizenz != "" else { fehlenderLizenzSchluessel = true; break }
                     guard vorname != "" else { fehlenderVorname = true; break }
                     // Anmeldung versuchen, ansonsten Fehler anzeigen
-                    errorNachricht = await AuthManager.registrieren(mitLizenz: lizenz, vorname: vorname)
+                    errorNachricht = await AuthManager.registrieren(mitLizenz: lizenz, vorname: vorname, benutzer: benutzer)
                 case .anmelden:
                     // Prüfen, dass alle benötigten Felder ausgefüllt sind
                     guard email != "" else { fehlendeEmail = true; break }
@@ -161,7 +162,7 @@ struct Anmeldung: View {
                     guard passwort != "" else { fehlendesPasswort = true; break }
                     guard vorname != "" else { fehlenderVorname = true; break }
                     // Anmeldung versuchen, ansonsten Fehler anzeigen
-                    errorNachricht = await AuthManager.registrieren(email: email, passwort: passwort, vorname: vorname)
+                    errorNachricht = await AuthManager.registrieren(email: email, passwort: passwort, vorname: vorname, benutzer: benutzer)
             }
             // Zeige Fehler, wenn es einen gegeben hat
             if errorNachricht != nil {
