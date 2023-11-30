@@ -15,7 +15,6 @@
 		4B47D7402AA0A28B00A60B05 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D73F2AA0A28B00A60B05 /* App.swift */; };
 		4B47D7442AA0A28D00A60B05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B47D7432AA0A28D00A60B05 /* Assets.xcassets */; };
 		4B47D7472AA0A28D00A60B05 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B47D7462AA0A28D00A60B05 /* Preview Assets.xcassets */; };
-		4B47D74F2AA0A35C00A60B05 /* Setting in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D74E2AA0A35C00A60B05 /* Setting */; };
 		4B47D7522AA0AEE400A60B05 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4B47D7512AA0AEE400A60B05 /* GoogleService-Info.plist */; };
 		4B47D7552AA1A54800A60B05 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D7542AA1A54800A60B05 /* FirebaseAppCheck */; };
 		4B47D7572AA1A54800A60B05 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4B47D7562AA1A54800A60B05 /* FirebaseAuth */; };
@@ -38,7 +37,6 @@
 		4B47D7A52AA1A6A900A60B05 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77A2AA1A6A900A60B05 /* FirestoreManager.swift */; };
 		4B47D7A72AA1A6A900A60B05 /* Einstellungen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */; };
 		4B47D7A82AA1A6A900A60B05 /* PremiumKauf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */; };
-		4B47D7A92AA1A6A900A60B05 /* KontoVerwalten.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */; };
 		4B47D7AC2AA1A6A900A60B05 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7842AA1A6A900A60B05 /* System.swift */; };
 		4B47D7AD2AA1A6A900A60B05 /* ElementDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */; };
 		4B47D7AE2AA1A6A900A60B05 /* ElementAuswahlListe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B47D7862AA1A6A900A60B05 /* ElementAuswahlListe.swift */; };
@@ -92,7 +90,6 @@
 		4B47D77A2AA1A6A900A60B05 /* FirestoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Einstellungen.swift; sourceTree = "<group>"; };
 		4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumKauf.swift; sourceTree = "<group>"; };
-		4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KontoVerwalten.swift; sourceTree = "<group>"; };
 		4B47D7842AA1A6A900A60B05 /* System.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = System.swift; sourceTree = "<group>"; };
 		4B47D7852AA1A6A900A60B05 /* ElementDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementDetail.swift; sourceTree = "<group>"; };
 		4B47D7862AA1A6A900A60B05 /* ElementAuswahlListe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementAuswahlListe.swift; sourceTree = "<group>"; };
@@ -129,7 +126,6 @@
 				4B47D7572AA1A54800A60B05 /* FirebaseAuth in Frameworks */,
 				4B2ADD042B13BADC00D2E23C /* FirebaseRemoteConfig in Frameworks */,
 				4B47D75B2AA1A54800A60B05 /* FirebaseStorage in Frameworks */,
-				4B47D74F2AA0A35C00A60B05 /* Setting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +276,6 @@
 			children = (
 				4B47D77E2AA1A6A900A60B05 /* Einstellungen.swift */,
 				4B47D77F2AA1A6A900A60B05 /* PremiumKauf.swift */,
-				4B47D7802AA1A6A900A60B05 /* KontoVerwalten.swift */,
 			);
 			path = Einstellungen;
 			sourceTree = "<group>";
@@ -361,7 +356,6 @@
 			);
 			name = Neodym;
 			packageProductDependencies = (
-				4B47D74E2AA0A35C00A60B05 /* Setting */,
 				4B47D7542AA1A54800A60B05 /* FirebaseAppCheck */,
 				4B47D7562AA1A54800A60B05 /* FirebaseAuth */,
 				4B47D7582AA1A54800A60B05 /* FirebaseFirestore */,
@@ -458,7 +452,6 @@
 				4B47D79B2AA1A6A900A60B05 /* CanvasBindung.swift in Sources */,
 				4B47D7AD2AA1A6A900A60B05 /* ElementDetail.swift in Sources */,
 				4B3E899A2AC9DF350070679B /* ErrorHelper.swift in Sources */,
-				4B47D7A92AA1A6A900A60B05 /* KontoVerwalten.swift in Sources */,
 				4B47D7AF2AA1A6A900A60B05 /* QuizView.swift in Sources */,
 				4B47D79F2AA1A6A900A60B05 /* Experiment.swift in Sources */,
 				4B47D7652AA1A68600A60B05 /* iPadOSMain.swift in Sources */,
@@ -705,11 +698,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4B47D7532AA1A54800A60B05 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfig;
-		};
-		4B47D74E2AA0A35C00A60B05 /* Setting */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4B47D74D2AA0A35C00A60B05 /* XCRemoteSwiftPackageReference "Setting" */;
-			productName = Setting;
 		};
 		4B47D7542AA1A54800A60B05 /* FirebaseAppCheck */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -6,213 +6,290 @@
 //
 
 import SwiftUI
-import Setting
 import FirebaseAuth
 import FirebaseStorage
+import PhotosUI
 
 struct Einstellungen: View {
     
-    @State private var zeigeAccountEinstellungen = false
+    @State var name: String
+    @State var profilbild: UIImage?
     
-    @State private var profilbild: UIImage?
-    @State private var profilbildGeladen = false
-    @State private var name = Auth.auth().currentUser?.displayName ?? "Fehler"
-    @State private var emailOderSchulaccount = Auth.auth().currentUser?.email ?? "Schul-Account"
+    @State private var meldetAb = false
+    @State private var loescht = false
+    
+    @State private var zeigeAlert = false
+    @State private var titel = ""
+    @State private var nachricht = ""
+    
+    @ObservedObject var benutzer: Benutzer
+    @State private var profilBildPicker: PhotosPickerItem?
+    @AppStorage("temperaturFormat") var temperaturFormat = "kelvin"
     
     var body: some View {
-        SettingStack {
-            SettingPage(title: "Einstellungen") {
-                SettingGroup{
-                    SettingCustomView (titleForSearch: "Konto"){
-                        HStack {
-                            if let profilbild {
+        NavigationStack {
+            List {
+                Section {
+                    HStack {
+                        if let profilbild {
+                            PhotosPicker(selection: $profilBildPicker, matching: .images) {
                                 Image(uiImage: profilbild)
                                     .resizable()
                                     .frame(width: 70, height: 70)
                                     .cornerRadius(35)
-                            } else if profilbildGeladen {
-                                Image(.warnung)
-                                    .resizable()
-                                    .frame(width: 70, height: 70)
-                            } else {
-                                Color.gray
-                                    .frame(width: 70, height: 70)
-                                    .cornerRadius(35)
-                                    .redacted(reason: .placeholder)
-                                    .animierterPlatzhalter(isLoading: Binding.constant(true))
                             }
-                            VStack(alignment: .leading){
-                                Text(name)
-                                    .font(.title)
-                                Text(emailOderSchulaccount)
-                                    .font(.caption)
+                            .frame(width: 70, height: 70)
+                            .onChange(of: profilBildPicker) {
+                                Task {
+                                    if let daten = try? await profilBildPicker?.loadTransferable(type: Data.self) {
+                                        if let uiImage = UIImage(data: daten) {
+                                            self.profilbild = uiImage
+                                        }
+                                        await sichereBild()
+                                    }
+                                }
                             }
-                            Spacer()
-                            Text("PREMIUM")
-                                .font(.system(size: 18, weight: .black, design: .rounded))
-                                .foregroundStyle(LinearGradient(colors: [.blue, .green], startPoint: .leading, endPoint: .trailing))
-                        }.padding()
-                            .onTapGesture {
-                                zeigeAccountEinstellungen = true
-                            }
+                        } else {
+                            Color.gray
+                                .frame(width: 70, height: 70)
+                                .cornerRadius(35)
+                                .redacted(reason: .placeholder)
+                                .animierterPlatzhalter(isLoading: Binding.constant(true))
+                        }
+                        VStack(alignment: .leading){
+                            TextField("Name", text: $name, onEditingChanged: sichereNamen)
+                                .font(.title)
+                                .underline(color: Color.gray.opacity(0.5))
+                                .textFieldStyle(.plain)
+                            Text(benutzer.email ?? "Schul-Account")
+                                .font(.caption)
+                        }
+                        Spacer()
+                        Image(.krone)
+                            .resizable()
+                            .frame(width: 30, height: 30)
                     }
                 }
-                SettingGroup{
-                    SettingPage(title: "Impressum") {
-                        SettingCustomView {
-                            VStack(alignment: .leading){
-                                Text("Aironex GmbH")
-                                    .padding(.bottom, 5)
-                                Text("Verantworlich")
-                                    .underline()
-                                    .padding(.bottom, 1)
-                                Text("Max Eckstein")
-                                Text("Matteo Zanolli")
-                                    .padding(.bottom, 5)
-                                Text("Kontakt")
-                                    .underline()
-                                    .padding(.bottom, 1)
-                                Text("0761 5904611")
-                                    .foregroundColor(.blue)
-                                    .onTapGesture {
-                                        guard let url = URL(string: "tel:07615904611") else { return }
-                                        UIApplication.shared.open(url)
-                                    }
-                                Text("team@chemie.app")
-                                    .foregroundColor(.blue)
-                                    .onTapGesture {
-                                        guard let url = URL(string: "mailto:team@chemie.app") else { return }
-                                        UIApplication.shared.open(url)
-                                    }
-                            }.padding(.leading, 20)
-                                .padding(.top, 10)
-                        }
-                    }.previewIcon("person")
-                    SettingPage(title: "AGB") {
-                        
-                    }.previewIcon("scroll")
-                    SettingPage(title: "Credits") {
-                        SettingGroup (header: "Einstellungen-PlugIn"){
-                            SettingText(title: """
-                            MIT License
-
-                            Copyright (c) 2023 A. Zheng
-
-                            Permission is hereby granted, free of charge, to any person obtaining a copy
-                            of this software and associated documentation files (the "Software"), to deal
-                            in the Software without restriction, including without limitation the rights
-                            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-                            copies of the Software, and to permit persons to whom the Software is
-                            furnished to do so, subject to the following conditions:
-
-                            The above copyright notice and this permission notice shall be included in all
-                            copies or substantial portions of the Software.
-
-                            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-                            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-                            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-                            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-                            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-                            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                            SOFTWARE.
-                            """)
-                        }
-                        SettingGroup (header: "Bildquellen") {
-                            SettingCustomView(titleForSearch: "GHS Ätzend"){
+                Section {
+                    NavigationLink {
+                        List {
+                            Section("Verantwortlich"){
+                                VStack(alignment: .leading){
+                                    Text("Max Eckstein")
+                                    Text("Erwinstraße 56")
+                                }
+                            }
+                            Section("Kontakt"){
+                                if let url = URL(string: "tel:07615904611") {
+                                    Link(destination: url, label: {Text("0761 5904611")})
+                                }
+                                if let url = URL(string: "mailto:team@chemie.app") {
+                                    Link(destination: url, label: {Text("team@chemie.app")})
+                                }
+                            }
+                        }.navigationTitle("Impressum")
+                            .navigationBarTitleDisplayMode(.inline)
+                    } label: {
+                        Label(title: {Text("Impressum")}, icon: {Image(systemName: "person")})
+                    }
+                    NavigationLink {
+                        List {
+                            Text("Sehr rechtlich korrekter Text.")
+                        }.navigationTitle("ABG")
+                        .navigationBarTitleDisplayMode(.inline)
+                    } label: {
+                        Label(title: {Text("ABG")}, icon: {Image(systemName: "scroll")})
+                    }
+                    NavigationLink {
+                        List {
+                            Section("Bildquellen"){
                                 HStack{
                                     Image(.ätzend)
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                     Text("https://de.wikipedia.org/wiki/Datei:GHS-pictogram-acid.svg")
                                         .font(.caption)
-                                }.padding()
-                            }
-                            SettingCustomView(titleForSearch: "GHS Brandfördernd"){
+                                }
                                 HStack{
                                     Image(.brandfördernd)
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                     Text("https://de.wikipedia.org/wiki/Datei:GHS-pictogram-rondflam.svg")
                                         .font(.caption)
-                                }.padding()
-                            }
-                            SettingCustomView(titleForSearch: "GHS Entzündlich"){
+                                }
                                 HStack{
                                     Image(.entzündlich)
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                     Text("https://de.wikipedia.org/wiki/Datei:GHS-pictogram-flamme.svg")
                                         .font(.caption)
-                                }.padding()
-                            }
-                            SettingCustomView(titleForSearch: "GHS Gasflasche"){
+                                }
                                 HStack{
                                     Image(.gasflasche)
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                     Text("https://de.wikipedia.org/wiki/Datei:GHS-pictogram-bottle.svg")
                                         .font(.caption)
-                                }.padding()
-                            }
-                            SettingCustomView(titleForSearch: "GHS Gesundheitsschädlich"){
+                                }
                                 HStack{
                                     Image(.gesundheitsschädlich)
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                     Text("https://de.wikipedia.org/wiki/Datei:GHS-pictogram-silhouette.svg")
                                         .font(.caption)
-                                }.padding()
-                            }
-                            SettingCustomView(titleForSearch: "GHS Reizend"){
+                                }
                                 HStack{
                                     Image(.reizend)
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                     Text("https://de.wikipedia.org/wiki/Datei:GHS-pictogram-exclam.svg")
                                         .font(.caption)
-                                }.padding()
-                            }
-                            SettingCustomView(titleForSearch: "GHS Umweltschädlich"){
+                                }
                                 HStack{
                                     Image(.umweltschädlich)
                                         .resizable()
                                         .frame(width: 40, height: 40)
                                     Text("https://de.wikipedia.org/wiki/Datei:GHS-pictogram-pollu.svg")
                                         .font(.caption)
-                                }.padding()
+                                }
+                            }
+                        }.navigationTitle("Credits")
+                        .navigationBarTitleDisplayMode(.inline)
+                    } label: {
+                        Label(title: {Text("Credits")}, icon: {Image(systemName: "square.on.square.badge.person.crop")})
+                    }
+                }
+                Section {
+                    NavigationLink {
+                        Form {
+                            Picker("Temperatur", selection: $temperaturFormat) {
+                                Text("Kelvin").tag("kelvin")
+                                Text("Celsius").tag("celsius")
+                                Text("Fahrenheit").tag("fahrenheit")
+                            }
+                        }.navigationTitle("Darstellung")
+                        .navigationBarTitleDisplayMode(.inline)
+                    } label: {
+                        Label(title: {Text("Darstellung")}, icon: {Image(systemName: "a.magnify")})
+                    }
+                }
+                Section {
+                    Button(role: .destructive){
+                        Task {
+                            meldetAb = true
+                            if let fehler = await AuthManager.abmelden() {
+                                titel = "Abmeldevorgang fehlgeschlagen"
+                                nachricht = fehler
+                                zeigeAlert = true
+                            }
+                            meldetAb = false
+                        }
+                    } label: {
+                        HStack {
+                            Text("Abmelden")
+                            Spacer()
+                            if meldetAb {
+                                ProgressView()
+                                    .tint(.pink)
+                            } else {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
                             }
                         }
                     }
-                        .previewIcon("square.on.square.badge.person.crop")
-                }
-                SettingGroup {
-                    SettingPage(title: "Darstellung"){
-                        SettingGroup {
-                            
+                    Button(role: .destructive){
+                        Task {
+                            loescht = true
+                            if let fehler = await AuthManager.abmelden(kontoLoeschen: true) {
+                                titel = "Abmeldevorgang fehlgeschlagen"
+                                nachricht = fehler
+                                zeigeAlert = true
+                            }
+                            loescht = false
                         }
-                    }.previewIcon("a.magnify")
+                    } label: {
+                        HStack {
+                            Text("Konto löschen")
+                            Spacer()
+                            if loescht {
+                                ProgressView()
+                                    .tint(.pink)
+                            } else {
+                                Image(systemName: "trash")
+                            }
+                        }
+                    }
                 }
-                SettingGroup {
-                    SettingButton(title: "Feedback") {
-                        guard let url = URL(string: "https://appstore.com") else { return }
-                        UIApplication.shared.open(url)
+                Section {
+                    if let url = URL(string: "https://appstore.com") {
+                        Link(destination: url) {
+                            HStack {
+                                Text("Feedback")
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                            }
+                        }
                     }
-                    SettingButton(title: "Website") {
-                        guard let url = URL(string: "https://chemie.app") else { return }
-                        UIApplication.shared.open(url)
+                    if let url = URL(string: "https://neodym.com") {
+                        Link(destination: url) {
+                            HStack {
+                                Text("Website")
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                            }
+                        }
                     }
-                    SettingButton(title: "Quellcode") {
-                        guard let url = URL(string: "https://github.com") else { return }
-                        UIApplication.shared.open(url)
+                    if let url = URL(string: "https://github.com") {
+                        Link(destination: url) {
+                            HStack {
+                                Text("Quellcode")
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                            }
+                        }
                     }
                 }
             }
-        }.sheet(isPresented: $zeigeAccountEinstellungen) {
-            KontoVerwalten(name: name, profilbild: profilbild, alterName: $name, altesProfilbild: $profilbild)
+            .navigationTitle("Einstellungen")
+            .listStyle(.insetGrouped)
+            .task {
+                profilbild = await StorageManager.ladeProfilbild()
+            }
+            .alert(titel, isPresented: $zeigeAlert, actions: {
+                Button {
+                    zeigeAlert = false
+                } label: {
+                    Text("Okay")
+                }
+            }, message: {Text(nachricht)})
         }
-        .task {
-            profilbild = await StorageManager.ladeProfilbild()
-            profilbildGeladen = true
+    }
+    
+    func sichereBild() async {
+        guard let profilbild else { return }
+        self.profilbild = nil
+        if let fehler = await StorageManager.speichereProfilbild(profilbild) {
+            self.profilbild = benutzer.bild
+            titel = "Sicherungsvorgang fehlgeschlagen"
+            nachricht = fehler
+            zeigeAlert = true
+            return
+        }
+        self.profilbild = profilbild
+        benutzer.bild = profilbild
+    }
+    
+    func sichereNamen(gradeErstFokussiert: Bool) {
+        if !gradeErstFokussiert && benutzer.name != name {
+            Task {
+                // Sichere Namen
+                if let nachricht = await AuthManager.aendereNamen(zu: name) {
+                    self.nachricht = nachricht
+                    self.titel = "Fehler beim Sichern des neuen Namens"
+                    self.zeigeAlert = true
+                } else {
+                    benutzer.name = name
+                }
+            }
         }
     }
 }
