@@ -44,8 +44,5 @@ struct iOSMain: View {
                     .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
             }
         }
-        .task {
-            await elementeManager.ladeDatei()
-        }
     }
 }

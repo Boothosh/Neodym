@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ElementManager {
+class ElementManager {
     
     // Normale Elemente
     var perioden: [EPeriode] = []
@@ -19,7 +19,13 @@ struct ElementManager {
     // Alle Elemente
     var alleElemente: [Element] = []
     
-    mutating func ladeDatei() async {
+    init(){
+        Task {
+            await self.ladeDatei()
+        }
+    }
+    
+    func ladeDatei() async {
         guard perioden.isEmpty else { return }
         if let url = Bundle.main.url(forResource: "elemente", withExtension: "json") {
             do {

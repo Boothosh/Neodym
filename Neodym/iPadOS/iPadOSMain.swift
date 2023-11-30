@@ -167,18 +167,12 @@ struct iPadOSMain: View {
             } detail: {
                 hauptcontent
             }.navigationSplitViewStyle(.balanced)
-            .task {
-                await elementeManager.ladeDatei()
-            }
         } else {
             NavigationSplitView(columnVisibility: $columnVisibility){
                 sideBar
             } detail: {
                 hauptcontent
             }.navigationSplitViewStyle(.balanced)
-            .task {
-                await elementeManager.ladeDatei()
-            }
         }
     }
     
