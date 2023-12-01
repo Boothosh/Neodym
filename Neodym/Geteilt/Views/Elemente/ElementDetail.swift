@@ -180,7 +180,7 @@ struct ElementDetail: View {
         .cornerRadius(10)
         .padding(5)
         .onTapGesture {
-            url = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(element.name).usdz")
+            url = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("modelle/\(element.name).usdz")
         }
         .quickLookPreview($url)
     }
