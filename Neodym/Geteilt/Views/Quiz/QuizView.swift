@@ -156,7 +156,11 @@ struct QuizKachel: View {
         .modifier(Begrenzung())
         .aspectRatio(1.75, contentMode: .fill)
         .task {
-            bild = await StorageManager.quizBild(quizName: quiz.titel, bildID: quiz.bildID)
+            do {
+                bild = try await NeoStorage.quizBild(quizName: quiz.titel, bildID: quiz.bildID)
+            } catch {
+                print(error)
+            }
         }
     }
     

@@ -19,6 +19,18 @@ struct Temperatur: Equatable {
         self.celsius = kelvin - 273.15
     }
     
+    init(gC celsius: Float) {
+        self.kelvin = celsius + 273.15
+        self.fahrenheit = celsius * 9/5 + 32
+        self.celsius = celsius
+    }
+    
+    init(gF fahrenheit: Float) {
+        self.kelvin = fahrenheit * 5/9 - 32 + 273.15
+        self.fahrenheit = fahrenheit
+        self.celsius = fahrenheit * 5/9 - 32
+    }
+    
     static func < (lhs: Temperatur, rhs: Temperatur) -> Bool {
         return lhs.kelvin < rhs.kelvin
     }
@@ -38,4 +50,6 @@ struct Temperatur: Equatable {
             return "Fehler"
         }
     }
+    
+    static var standard: Temperatur { return Temperatur(gC: 25) }
 }

@@ -23,7 +23,7 @@ struct CanvasBindung: Identifiable, Equatable {
     
     // Gibt Bool zurück, ob das Erhöhen erfolgreich war
     mutating func erhoeheWertigkeit(_ positionen: [(UUID, Int)]) throws {
-        guard wertigkeit < 3 else { throw ErrorHelper.InternerError(debugInfos: "Es wurde versucht die Wertigkeit eine Bindung zu erhöhen, obwohl diese schon 3-bindig war.") }
+        guard wertigkeit < 3 else { throw NutzerFehler.schonDreiBindungen }
         for i in positionen {
             if i.0 == erstesCanvasObjekt {
                 ersteElPositionen.append(i.1)

@@ -20,6 +20,8 @@ struct Element: Hashable, Codable, Equatable, Identifiable, Comparable {
     let kernladungszahl: Int
     let atommasse: Float // Einheit: Atomare Masseeinheit (u)
     let elektroNegativität: Float? // Pauli-Skala
+    let orbitale: String
+    let radius: Int? // In Picometer
     
     // TODO: Eigentlich sollten Schmelz- und Siedepunkt Temperatur-Datentypen sein
     let schmelzpunkt: Float? // Einheit: Kelvin (K)
@@ -29,11 +31,11 @@ struct Element: Hashable, Codable, Equatable, Identifiable, Comparable {
     let valenzElektronen: Int
     
     let klassifikation: String
+    let entdeckt: Int
     
     // Für die Berechnung von Ionengruppen
     // Ist bei Metallen negativ
     let elektronenBisEdelgas: Int?
-    
     
     // Für das Identifiable Protokoll
     var id: Int {

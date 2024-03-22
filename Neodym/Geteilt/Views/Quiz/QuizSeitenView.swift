@@ -14,6 +14,7 @@ struct QuizSeitenView: View {
     @State var loesungAnzeigen = false
     @State var beantworteteFragen: [Int: Bool] = [:]
     @State var ausgewaelteAntworten: [String] = []
+    @State var fehler = false
     @State var bounceEffekt = 0
     var seite: QuizSeite {
         quiz.inhalt[seitenIndex]
@@ -79,7 +80,10 @@ struct QuizSeitenView: View {
                         }, label: {
                             HStack {
                                 Spacer()
-                                if quiz.inhalt.isEmpty {
+                                if fehler {
+                                    Text("Quiz ist nicht verfügbar")
+                                        .font(.title2)
+                                } else if quiz.inhalt.isEmpty {
                                      ProgressView()
                                         .tint(.white)
                                 } else {
@@ -229,7 +233,16 @@ struct QuizSeitenView: View {
             }
         }
         .task {
-            quiz.inhalt = await FirestoreManager.ladeQuizSeiten(fuer: quiz.titel)
+            do {
+                if let inhalt = try await NeoFire.ladeQuizSeiten(fuer: quiz.titel) {
+                    quiz.inhalt = inhalt
+                } else {
+                    fehler = true
+                }
+            } catch {
+                fehler = true
+                print(error)
+            }
         }
     }
 }

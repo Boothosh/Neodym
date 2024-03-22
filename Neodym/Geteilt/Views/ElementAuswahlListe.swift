@@ -9,9 +9,10 @@ import SwiftUI
 
 struct ElementAuswahlListe: View {
     
-    @State var suchBegriff = ""
-    @Binding var elemente: ElementManager
+    @Environment(Elemente.self) private var elemente
     @Environment(\.dismiss) var schließen
+    
+    @State var suchBegriff = ""
     let hinzufuegen: (Element)->(Void)
     
     var body: some View {

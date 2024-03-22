@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
+import Charts
 
 struct MolekuelmasseRechner: View {
     
     // Zugriff auf die Elemente
-    @Binding var elementManager: ElementManager
+    @Environment(Elemente.self) private var elemente
     
     // Status des Rechners
     @State private var elementeMitAnzahl: [Element: Int] = [:]
@@ -20,7 +21,6 @@ struct MolekuelmasseRechner: View {
             $0 + $1.atommasse * Float(elementeMitAnzahl[$1]!)
         }
     }
-    @State private var kuchenDiagrammAnteile: [KuchenDiagrammAnteil]?
     
     // Summenformel-Eingabe
     @State private var summenformel = ""
@@ -42,18 +42,27 @@ struct MolekuelmasseRechner: View {
             Section("Eingabe via Summenformel"){
                 TextField("Bspw. C2H5OH", text: $summenformel)
                     .autocorrectionDisabled()
+                    .onSubmit {
+                        withAnimation{
+                            let ergebnis = summenformelEinlesen()
+                            if ergebnis.count != 0 {
+                                elementeMitAnzahl = ergebnis
+                            }
+                            summenformel = ""
+                        }
+                    }
                 Button {
                     withAnimation{
                         let ergebnis = summenformelEinlesen()
                         if ergebnis.count != 0 {
                             elementeMitAnzahl = ergebnis
-                            kuchenDiagrammAnteile = errechneKuchenDiagrammAnteile()
                         }
                         summenformel = ""
                     }
                 } label: {
                     Text("Berechnen")
-                }
+                }.keyboardShortcut(.defaultAction)
+                .disabled(summenformel.isEmpty)
             }
             Section("Manuelle Eingabe"){
                 if elementeMitAnzahl.count == 0 {
@@ -70,7 +79,6 @@ struct MolekuelmasseRechner: View {
                                 } else {
                                     elementeMitAnzahl[element] = nil
                                 }
-                                kuchenDiagrammAnteile = errechneKuchenDiagrammAnteile()
                             } label: {
                                 Image(systemName: "minus.circle")
                             }
@@ -83,7 +91,6 @@ struct MolekuelmasseRechner: View {
                             Button {
                                 guard let anzahl = elementeMitAnzahl[element] else { return }
                                 elementeMitAnzahl[element] = anzahl + 1
-                                kuchenDiagrammAnteile = errechneKuchenDiagrammAnteile()
                             } label: {
                                 Image(systemName: "plus.circle")
                             }.buttonStyle(.plain)
@@ -94,7 +101,6 @@ struct MolekuelmasseRechner: View {
                         for i in indexSet {
                             let geloeschtesElement = elementeAlsArray[i]
                             elementeMitAnzahl.removeValue(forKey: geloeschtesElement)
-                            kuchenDiagrammAnteile = errechneKuchenDiagrammAnteile()
                         }
                     }
                 }
@@ -106,31 +112,48 @@ struct MolekuelmasseRechner: View {
             }
             if elementeAlsArray.count != 0 {
                 Section("Anteil am Gesamtgewicht"){
-                    if elementeAlsArray.count == 1 {
-                        Text("Ist halt 100% \(elementeAlsArray[0].name)...")
-                    } else if let kuchenDiagrammAnteile {
-                        // Kuchendiagramm
-                        ZStack {
-                            // Inspiriert von "Build Pie Charts in SwiftUI von Nazar Ilamanov". Verfügbar unter https://betterprogramming.pub/build-pie-charts-in-swiftui-822651fbf3f2
-                            ForEach(kuchenDiagrammAnteile) { anteil in
-                                Path { pfad in
-                                    let groesse = 300.0
-                                    let zentrum = CGPoint(x: groesse * 0.5, y: groesse * 0.5)
-                                    pfad.move(to: zentrum)
-                                    pfad.addArc(center: zentrum, radius: groesse * 0.5, startAngle: anteil.startetBei, endAngle: anteil.endedBei, clockwise: false)
-                                }.fill(Color(uiColor: anteil.farbe))
+                    if elementeAlsArray.count > 1 {
+                        if UIDevice.current.userInterfaceIdiom == .phone {
+                            Chart(elementeAlsArray) { element in
+                                SectorMark(
+                                    angle: .value("Value", Float(elementeMitAnzahl[element] ?? 0)*element.atommasse),
+                                    innerRadius: .ratio(0.618),
+                                    outerRadius: .inset(10),
+                                    angularInset: 1
+                                )
+                                .foregroundStyle(by: .value("Element", element.name))
+                                .cornerRadius(4)
+                            }.frame(width: 300, height: 300)
+                            ForEach(elementeAlsArray) { element in
+                                HStack{
+                                    Text(element.name)
+                                    Spacer()
+                                    Text("\((Float(elementeMitAnzahl[element] ?? 0)*element.atommasse) / molekuelmasse, specifier: "%.2f") %")
+                                }
                             }
-                        }.frame(width: 300, height: 300)
-                        ForEach(kuchenDiagrammAnteile) { anteil in
-                            HStack{
-                                Circle()
-                                    .fill(Color(uiColor: anteil.farbe))
-                                    .frame(width: 15, height: 15)
-                                Text(anteil.name)
-                                Spacer()
-                                Text("\(anteil.prozentzahl, specifier: "%.2f") %")
+                        } else {
+                            HStack(spacing: 30){
+                                Chart(elementeAlsArray) { element in
+                                    SectorMark(
+                                        angle: .value("Value", Float(elementeMitAnzahl[element] ?? 0)*element.atommasse),
+                                        innerRadius: .ratio(0.618),
+                                        outerRadius: .inset(10),
+                                        angularInset: 1
+                                    )
+                                    .foregroundStyle(by: .value("Element", element.name))
+                                    .cornerRadius(4)
+                                }.frame(width: 350, height: 350)
+                                List(elementeAlsArray) { element in
+                                    HStack{
+                                        Text(element.name)
+                                        Spacer()
+                                        Text("\((Float(elementeMitAnzahl[element] ?? 0)*element.atommasse) / molekuelmasse, specifier: "%.2f") %")
+                                    }
+                                }.cornerRadius(15)
                             }
                         }
+                    } else if elementeAlsArray.count == 1 {
+                        Text("100% \(elementeAlsArray[0].name)...")
                     }
                 }
             }
@@ -158,48 +181,17 @@ struct MolekuelmasseRechner: View {
         }.navigationTitle("Molekülmasse berechnen")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $zeigeHinzufuegenPopUp) {
-                ElementAuswahlListe(elemente: $elementManager, hinzufuegen: { element in
+                ElementAuswahlListe(hinzufuegen: { element in
                     if let vorherigeAnzahl = elementeMitAnzahl[element] {
                         elementeMitAnzahl[element] = vorherigeAnzahl + 1
                     } else {
                         elementeMitAnzahl[element] = 1
                     }
-                    kuchenDiagrammAnteile = errechneKuchenDiagrammAnteile()
-                })
+                }).environment(elemente)
             }
     }
     
-    private struct KuchenDiagrammAnteil: Identifiable, Equatable {
-        let id = UUID()
-        let startetBei: Angle
-        let endedBei: Angle
-        let farbe: UIColor
-        let symbol: String
-        let prozentzahl: Float
-        let name: String
-    }
-    
-    private func errechneKuchenDiagrammAnteile() -> [KuchenDiagrammAnteil]? {
-        guard elementeAlsArray.count > 1 else { return nil }
-        var startWinkel = -90.0
-        var neueKuchenDiagrammAnteile = [KuchenDiagrammAnteil]()
-        for i in elementeAlsArray {
-            let anteilAmGanzen = (Float(elementeMitAnzahl[i]!) * i.atommasse) / molekuelmasse
-            let neuerWinkel = Double(anteilAmGanzen * 360.0)
-            let endWinkel = startWinkel + neuerWinkel
-            if let alterAnteil = kuchenDiagrammAnteile?.first(where: { ii in
-                ii.name == i.name
-            }) {
-                neueKuchenDiagrammAnteile.append(KuchenDiagrammAnteil(startetBei: Angle(degrees: startWinkel), endedBei: Angle(degrees: endWinkel), farbe: alterAnteil.farbe, symbol: i.symbol, prozentzahl: anteilAmGanzen * 100, name: i.name))
-            } else {
-                neueKuchenDiagrammAnteile.append(KuchenDiagrammAnteil(startetBei: Angle(degrees: startWinkel), endedBei: Angle(degrees: endWinkel), farbe: UIColor.zufaellig, symbol: i.symbol, prozentzahl: anteilAmGanzen * 100, name: i.name))
-            }
-            startWinkel = endWinkel
-        }
-        return neueKuchenDiagrammAnteile
-    }
-    
-    private func summenformelEinlesen() -> [Element: Int] {
+    @MainActor private func summenformelEinlesen() -> [Element: Int] {
         var eingeleseneElementeMitZahlen = [Element: Int]()
         let extrahierteBausteine = matches(for: "[A-Z][a-z]{0,1}[0-9]*", in: summenformel)
         for i in extrahierteBausteine {
@@ -216,7 +208,7 @@ struct MolekuelmasseRechner: View {
             if anzahl == 0.0 {
                 anzahl = 1.0
             }
-            for element in elementManager.alleElemente {
+            for element in elemente.alleElemente {
                 if element.symbol == symbol {
                     if let voherigeAnzahl = eingeleseneElementeMitZahlen[element] {
                         eingeleseneElementeMitZahlen[element] = voherigeAnzahl + Int(anzahl)
@@ -244,18 +236,5 @@ struct MolekuelmasseRechner: View {
             print("invalid regex: \(error.localizedDescription)")
             return []
         }
-    }
-}
-
-// Kopiert und modifiziert
-// Orginal von Orkhan Alikhanov, verfügbar unter https://stackoverflow.com/questions/29779128/how-to-make-a-random-color-with-swift
-extension UIColor {
-    static var zufaellig: UIColor {
-        return UIColor(
-            red: .random(in: 0...1),
-            green: .random(in: 0...1),
-            blue: .random(in: 0...1),
-            alpha: 1.0
-        )
     }
 }

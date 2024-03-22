@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct Werkzeuge: View {
-    @Binding var elementeManager: ElementManager
+    
+    @Environment(Elemente.self) private var elemente
     
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 350), spacing: 20)], spacing: 20) {
-                kachel(titel: "Moleküle\nzeichnen", symbol: "pencil.and.ruler", farbe: .mint, ziel: Molekuelzeichner(elementeManager: $elementeManager))
-                kachel(titel: "Molekülmasse\nausrechnen", symbol: "scalemass", farbe: .green, ziel: MolekuelmasseRechner(elementManager: $elementeManager))
-                kachel(titel: "Ionengruppe\nbilden", symbol: "circle.grid.3x3", farbe: .yellow, ziel: IonengruppenBilden(elementManager: $elementeManager))
+                kachel(titel: "Moleküle\nzeichnen", symbol: "pencil.and.ruler", farbe: .mint, ziel: Molekuelzeichner().environment(elemente))
+                kachel(titel: "Molekülmasse\nausrechnen", symbol: "scalemass", farbe: .green, ziel: MolekuelmasseRechner().environment(elemente))
+                kachel(titel: "Ionengruppe\nbilden", symbol: "circle.grid.3x3", farbe: .yellow, ziel: IonengruppenBilden().environment(elemente))
                 kachel(titel: "Gleichungen\nausgleichen", symbol: "arrow.left.arrow.right.circle", farbe: .blue, ziel: GleichungenAusgleichen(), verfuegbar: false)
                 kachel(titel: "Unbekannte\nGröße bestimmen", symbol: "sum", farbe: .orange, ziel: GroesseBestimmen(), verfuegbar: false)
             }.padding()

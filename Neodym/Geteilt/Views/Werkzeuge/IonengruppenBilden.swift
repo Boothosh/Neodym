@@ -9,7 +9,7 @@ import SwiftUI
 
 struct IonengruppenBilden: View {
     
-    @Binding var elementManager: ElementManager
+    @Environment(Elemente.self) private var elemente
     @State private var metall: Element?
     @State private var nichtMetall: Element?
     
@@ -79,14 +79,14 @@ struct IonengruppenBilden: View {
                     .font(.caption)
                 Picker("Metall", selection: $metall) {
                     Text("Auswählen").tag(nil as Element?)
-                    ForEach(elementManager.alleElemente.filter({$0.elektronenBisEdelgas ?? 0 < 0}).sorted()) { element in
+                    ForEach(elemente.alleElemente.filter({$0.elektronenBisEdelgas ?? 0 < 0}).sorted()) { element in
                         Text(element.name)
                             .tag(element as Element?)
                     }
                 }
                 Picker("Nichtmetall", selection: $nichtMetall) {
                     Text("Auswählen").tag(nil as Element?)
-                    ForEach(elementManager.alleElemente.filter({$0.elektronenBisEdelgas ?? 0 > 0}).sorted()) { element in
+                    ForEach(elemente.alleElemente.filter({$0.elektronenBisEdelgas ?? 0 > 0}).sorted()) { element in
                         Text(element.name)
                             .tag(element as Element?)
                     }
@@ -122,17 +122,5 @@ struct IonengruppenBilden: View {
         }
         .navigationTitle("Ionengruppen bilden")
         .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-extension Int {
-    var formatiertAlsLadung: String {
-        if self > 0 {
-            return self.description + "+"
-        } else if self < 0 {
-            return abs(self).description + "-"
-        } else {
-            return self.description
-        }
     }
 }

@@ -9,8 +9,9 @@ import SwiftUI
 
 struct ElementAuswahlGrid: View {
     
+    @Environment(Elemente.self) private var elemente
+    
     @State var suchBegriff = ""
-    @Binding var elemente: ElementManager
     @Environment(\.dismiss) var schließen
     let hinzufuegen: (Element)->(Void)
     

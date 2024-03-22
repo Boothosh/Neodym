@@ -13,15 +13,12 @@ struct ElementDetail: View {
     
     let element: Element
         
-    @State private var coverBild: UIImage?
-    @State private var text: String?
     @State private var szene: SCNScene?
-    @State private var artikelSektionen: [EArtikelSektion]?
+    @State private var artikelSektionen: [EArtikelSektion] = []
+    @State private var textQuellen: [String]? = nil
+    @State private var bildQuellen: [String]? = nil
     
-    // Gibt an, ob der Ladeprozess für die jeweiligen Dateien abgeschlossen ist
-    @State private var coverBildGeladen = false
-    @State private var textGeladen = false
-    @State private var szeneGeladen = false
+    @State private var geladeneInhalte: [String: String] = [:]
     
     @State private var url: URL?
     
@@ -68,65 +65,98 @@ struct ElementDetail: View {
                         + Text(Temperatur(k: t).formatiert)
                             .fontWeight(.semibold)
                     }
+                    if let r = element.radius {
+                        Text("Atomradius: ")
+                        + Text("\(r) pm")
+                            .fontWeight(.semibold)
+                    }
+                    Text("Elektronenkonfiguration: ")
+                    + Text(element.orbitale)
+                        .fontWeight(.semibold)
+                    Text("Entdeckungsjahr: ")
+                    + Text(element.entdeckt == -1 ? "Antik" : element.entdeckt.description)
+                        .fontWeight(.semibold)
                 }
             }
-            if szene != nil || !szeneGeladen {
+            if geladeneInhalte["szene"] == element.name {
                 Section("3D-Modell"){
-                    if !szeneGeladen {
-                        Color.gray
-                            .frame(height: 150)
-                            .cornerRadius(10)
-                            .redacted(reason: .placeholder)
-                            .animierterPlatzhalter(isLoading: Binding.constant(true))
-                    } else if let szene {
+                    if let szene {
                         SceneView(scene: szene, options: [.autoenablesDefaultLighting,.allowsCameraControl])
                             .frame(height: 150)
                             .cornerRadius(10)
                             .overlay(arButton, alignment: .topTrailing)
                             .onTapGesture { print("") } // Ohne diesen Teil wird auf iOS der AR-Button nicht aktiviert
+                    } else {
+                        Text("Fehler: 3D Modell konnte nicht geladen werden.")
                     }
                 }
-            }
-            if let artikelSektionen {
-                ForEach(artikelSektionen) { sektion in
-                    Section(sektion.titel){
-                        
+            } else {
+                Color.gray
+                    .frame(height: 150)
+                    .cornerRadius(10)
+                    .redacted(reason: .placeholder)
+                    .animierterPlatzhalter(isLoading: Binding.constant(true))
+                    .task {
+                        do {
+                            let szene = try await NeoStorage.lade3dModell(fuer: element.name)
+                            withAnimation {
+                                self.szene = szene
+                                self.geladeneInhalte["szene"] = element.name
+                            }
+                        } catch {
+                            print(error)
+                        }
                     }
-                }
             }
-            Section{
-                VStack {
-                    if !coverBildGeladen {
+            if geladeneInhalte["texte"] == element.name {
+                if !artikelSektionen.isEmpty {
+                    ForEach(artikelSektionen) { sektion in
+                        Section(sektion.titel) {
+                            if let bild = sektion.bild() {
+                                Image(uiImage: bild)
+                            }
+                            Text(sektion.text)
+                        }.task {
+                            // TODO: Lade eigenes Bild
+                        }
+                    }
+                    if let textQuellen {
+                        Section("Textquellen"){
+                            ForEach(textQuellen, id: \.self) { quelle in
+                                Text(quelle)
+                            }
+                        }
+                    }
+                    if let bildQuellen {
+                        Section("Bildquellen"){
+                            ForEach(bildQuellen, id: \.self) { quelle in
+                                Text(quelle)
+                            }
+                        }
+                    }
+                } else {
+                    Text("Fehler: Zu diesem Element scheint es noch keine Artikel zu geben.")
+                }
+            } else {
+                Section {
+                    VStack {
                         Color.gray
                             .frame(height: 150)
                             .cornerRadius(10)
                             .redacted(reason: .placeholder)
                             .animierterPlatzhalter(isLoading: Binding.constant(true))
-                    } else if let coverBild {
-                        GeometryReader { geo in
-                            Image(uiImage: coverBild)
-                                .resizable()
-                                .aspectRatio(coverBild.size, contentMode: .fill)
-                                .frame(width: geo.size.width, height: 150)
-                                .cornerRadius(10)
-                        }.frame(height: 150)
-                    } else {
-                        Color.gray
-                            .overlay(Text("Kein Bild gefunden :(").foregroundColor(.white))
-                            .frame(height: 150)
-                            .cornerRadius(10)
+                        Text("Beispieltext bei Spiel Texttext Bei SpielText. Bei Spieltexten spieltexte texten und spielen. Spiel texte Spiel Spieltexte bei texten und auch TextSpiel Text bei Text. Beispieltext bei Spiel Texttext Bei SpielText. Bei Spieltexten spieltexte texten und spielen. Spiel texte Spiel Spieltexte bei texten und auch TextSpiel Text bei Text.")
+                            .redacted(reason: .placeholder)
                     }
-                    HStack {
-                        if !textGeladen {
-                            Text("Beispieltext bei Spiel Texttext Bei SpielText. Bei Spieltexten spieltexte texten und spielen. Spiel texte Spiel Spieltexte bei texten und auch TextSpiel Text bei Text.")
-                                .redacted(reason: .placeholder)
-                        } else if let text {
-                            Text(text)
-                        } else {
-                            Text("Kein Infotext verfügbar :(")
-                        }
-                        Spacer()
-                    }
+                } header: {
+                    Text("Sektionsname")
+                        .redacted(reason: .placeholder)
+                }.task {
+                    let details = await NeoFire.ladeElementDetails(fuer: element)
+                    artikelSektionen = details.0
+                    textQuellen = details.1
+                    bildQuellen = details.2
+                    geladeneInhalte["texte"] = element.name
                 }
             }
             if let wikiURL = konstruiereWikipediaURL(), UIApplication.shared.canOpenURL(konstruiereWikipediaURL() ?? URL.userDirectory) {
@@ -144,27 +174,6 @@ struct ElementDetail: View {
             }
         }
         .navigationTitle(element.name)
-        .task(priority: .background, {
-            if let coverBild = await StorageManager.ladeBildFuer(element: element) {
-                withAnimation {
-                    self.coverBild = coverBild
-                }
-            }
-            withAnimation { self.coverBildGeladen = true }
-            if let szene = await StorageManager.lade3dModell(fuer: element.name) {
-                withAnimation {
-                    self.szene = szene
-                    self.szeneGeladen = true
-                }
-            }
-            withAnimation { self.szeneGeladen = true }
-            if let text = await FirestoreManager.ladeText(fuer: element) {
-                withAnimation {
-                    self.text = text
-                }
-            }
-            withAnimation { self.textGeladen = true }
-        })
     }
     
     var arButton: some View {

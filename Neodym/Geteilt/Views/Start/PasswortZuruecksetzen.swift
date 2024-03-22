@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PasswortZuruecksetzen: View {
     
+    @Environment(NeoAuth.self) private var auth
     @Binding var email: String
     
     @Environment(\.dismiss) var schließen
@@ -23,13 +24,13 @@ struct PasswortZuruecksetzen: View {
         Task {
             if email.trimmingCharacters(in: [" "]) != "" && !ladeVorgang {
                 ladeVorgang = true
-                let ergebnis = await AuthManager.passwortZuruecksetzen(email)
-                if let ergebnis {
-                    alertTitel = "Fehler"
-                    alertText = ergebnis
-                } else {
+                do {
+                    try await auth.passwortZuruecksetzen(email)
                     alertTitel = "Erfolg"
                     alertText = "Halte in deinem E-Mail-Postfach nach einer E-Mail von noreply@neo-datenbank.firebaseapp.com ausschau!"
+                } catch {
+                    alertTitel = "Fehler"
+                    alertText = error.localizedDescription
                 }
                 zeigeAlert = true
                 ladeVorgang = false

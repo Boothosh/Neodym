@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct System: View {
+        
+    @Environment(Elemente.self) private var elemente
     
-    @Binding var elementManager: ElementManager
     let gruppenNamen: [Int: String] = [
         1: ("I"),
         2: ("II"),
@@ -49,7 +50,7 @@ struct System: View {
                             .frame(width: breite, height: breite * 1.1)
                         }
                     }.padding(.leading, breite + 1)
-                    ForEach(elementManager.perioden) { periode in
+                    ForEach(elemente.perioden) { periode in
                         HStack(spacing: 1){
                             Text(periode.nummer)
                                 .font(.system(size: 18, weight: .black))
@@ -95,7 +96,7 @@ struct System: View {
                             Text("Lanthanoide")
                                 .font(.caption)
                                 .frame(width: breite*2 + 1)
-                            ForEach(elementManager.lanthanoide) { element in
+                            ForEach(elemente.lanthanoide) { element in
                                 let ausgegraut = suchBegriff != "" && !element.name.lowercased().contains(suchBegriff.lowercased()) && !element.symbol.lowercased().contains(suchBegriff.lowercased())
                                 ElementKarte(element: element, breite: breite, ausgegraut: ausgegraut)
                                     .onTapGesture {
@@ -111,7 +112,7 @@ struct System: View {
                             Text("Actinoide")
                                 .font(.caption)
                                 .frame(width: breite*2 + 1)
-                            ForEach(elementManager.actinoide) { element in
+                            ForEach(elemente.actinoide) { element in
                                 let ausgegraut = suchBegriff != "" && !element.name.lowercased().contains(suchBegriff.lowercased()) && !element.symbol.lowercased().contains(suchBegriff.lowercased())
                                 ElementKarte(element: element, breite: breite, ausgegraut: ausgegraut)
                                     .onTapGesture {

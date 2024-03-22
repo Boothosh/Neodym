@@ -11,7 +11,7 @@ import PencilKit
 struct Molekuelzeichner: View {
     
     // Elemente
-    @Binding var elementeManager: ElementManager
+    @Environment(Elemente.self) private var elemente
     
     // Sheets
     @State private var zeigeHinzufuegen = false
@@ -46,6 +46,7 @@ struct Molekuelzeichner: View {
     @State private var startPunkt: CGPoint? = nil
     @State private var aktuellerOrtDesElektrons: CGPoint? = nil
     @State private var elektronWurdeZuendeGezogen = false
+    @State private var anderesElektron: (UUID, Int)? = nil
             
     // Konfigurationen
     // Standartwerte sind, falls keys noch nicht vorhanden sind: Wasserstoff und Lewisschreibweise eingeblendet, zoom = 1.0
@@ -267,13 +268,13 @@ struct Molekuelzeichner: View {
                                 .foregroundColor(.green)
                         }
                     }.sheet(isPresented: $zeigeHinzufuegen) {
-                        ElementAuswahlListe(elemente: $elementeManager, hinzufuegen: { element in
+                        ElementAuswahlListe(hinzufuegen: { element in
                             withAnimation {
                                 canvasObjekte.append(CanvasObjekt(element))
                                 ausgewaelteObjekte = []
                                 ausgehendesElektron = nil
                             }
-                        })
+                        }).environment(elemente)
                     }
                     Button {
                         loescheElemente()
@@ -287,6 +288,7 @@ struct Molekuelzeichner: View {
                                 .foregroundColor(ausgewaelteObjekte.first == nil ? .gray : .red)
                         }
                     }.disabled(ausgewaelteObjekte.first == nil)
+                        .keyboardShortcut(.delete)
                     Divider()
                     Button {
                         withAnimation {
@@ -349,6 +351,7 @@ struct Molekuelzeichner: View {
                                 .foregroundColor(.white)
                                 .background(Circle().fill(ausgewaelteObjekte.isEmpty ? .gray : .pink))
                         }.disabled(ausgewaelteObjekte.isEmpty)
+                            .keyboardShortcut("c", modifiers: .command)
                         Button {
                             einfuegen()
                         } label: {
@@ -357,6 +360,7 @@ struct Molekuelzeichner: View {
                                 .foregroundColor(.white)
                                 .background(Circle().fill(zwischenSpeicherObjekte.isEmpty ? .gray : .pink))
                         }.disabled(zwischenSpeicherObjekte.isEmpty)
+                            .keyboardShortcut("v", modifiers: .command)
                     }
                 }
                 .frame(height: 40)
@@ -471,7 +475,7 @@ struct Molekuelzeichner: View {
                             .foregroundStyle(.white, .green)
                             .rotationEffect(-winkel)
                             .popover(isPresented: $elektronWurdeZuendeGezogen) {
-                                ElementAuswahlGrid(elemente: $elementeManager, hinzufuegen: { element in
+                                ElementAuswahlGrid(hinzufuegen: { element in
                                     withAnimation {
                                         var neuesObjekt = CanvasObjekt(element)
                                         neuesObjekt.ort = aktuellerOrtDesElektrons
@@ -493,6 +497,7 @@ struct Molekuelzeichner: View {
                                         ausgehendesElektron = nil
                                     }
                                 })
+                                .environment(elemente)
                                 .frame(minWidth: 450, minHeight: 350)
                                 .onDisappear() {
                                     withAnimation{
@@ -655,28 +660,33 @@ struct Molekuelzeichner: View {
                                                     // Im Verhältnis zum Mittelpunkt der Kugel
                                                     let startPunktLokal = CGPoint(x: Double(xOffS) * 1.3, y: Double(yOffS) * 1.3)
                                                     
-                                                    let s = sin(objekt.drehung.radians);
-                                                    let c = cos(objekt.drehung.radians);
+                                                    let s = sin(objekt.drehung.radians)
+                                                    let c = cos(objekt.drehung.radians)
 
-                                                    let xnew: Double = startPunktLokal.x * c - startPunktLokal.y * s;
-                                                    let ynew: Double = startPunktLokal.x * s + startPunktLokal.y * c;
+                                                    let xnew: Double = startPunktLokal.x * c - startPunktLokal.y * s
+                                                    let ynew: Double = startPunktLokal.x * s + startPunktLokal.y * c
                                                     
                                                     // Im Verhältnis zum Ursprung
                                                     startPunkt = CGPoint(x: xnew, y: ynew) + objekt.ort
                                                 }
                                                 guard let startPunkt else { return }
                                                 
-                                                let s = sin(objekt.drehung.radians);
-                                                let c = cos(objekt.drehung.radians);
+                                                let s = sin(objekt.drehung.radians)
+                                                let c = cos(objekt.drehung.radians)
 
-                                                let xnew: Double = value.translation.width * c - value.translation.height * s;
-                                                let ynew: Double = value.translation.width * s + value.translation.height * c;
+                                                let xnew: Double = value.translation.width * c - value.translation.height * s
+                                                let ynew: Double = value.translation.width * s + value.translation.height * c
                                                 
                                                 aktuellerOrtDesElektrons = CGPoint(x: startPunkt.x + xnew, y: startPunkt.y + ynew)
+                                                
+                                                // Finde die Atome, die 56 Pixel um das Aktuell gezogene Elektron herum sind
+                                                // Iteriere durch diese Atome, und prüfe ob tatsächlich ein Elektron gemeint sein könnte
+                                                // Falls ja setze anderes Elektron auf die ID und die Koordinaten des errechneten Punktes, sonst setzte zurück
                                             }
                                         }
                                         .onEnded({ _ in
                                             if aktuelleAktion == .verbindetElektron {
+                                                // Prüfen, ob anderesElektron einen Wert hat. Falls ja, sollen die beiden Elemente miteinander verknüpft werden
                                                 elektronWurdeZuendeGezogen = true
                                                 aktuelleAktion = nil
                                             }
@@ -986,31 +996,8 @@ struct InaktiveZeichenFlaeche: UIViewRepresentable {
     func updateUIView(_ canvasView: PKCanvasView, context: Context) {}
 }
 
-// Quelle: https://stackoverflow.com/questions/36068104/convert-integer-to-roman-numeral-string-in-swift, Brian Sachetta, Editiert
-
-extension Int {
-    var roemisch: String? {
-        var integerValue = abs(self)
-        if integerValue >= 4000 || integerValue == 0 {
-            // Nicht darstellbar
-            return nil
-        }
-        var numeralString = self > 0 ? "+" : "-"
-        let mappingList: [(Int, String)] = [(1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"), (50, "L"), (40, "XL"), (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")]
-        for i in mappingList {
-            while (integerValue >= i.0) {
-                integerValue -= i.0
-                numeralString += i.1
-            }
-        }
-        return numeralString
-    }
-}
-
 
 // Wichtig: Wenn im Bereich eines anderen Elektron losgelassen wird, muss zu diesem Verbunden werden
-// Kopieren und Einfügen Button
-// Kopieren und Einfügen via Command-C und Command-V
 // Letztes Element nochmal einfügen (als extra-Button)
 // Räumliche Struktur des Moleküls
 
@@ -1024,14 +1011,5 @@ struct Line: Shape {
         path.move(to: CGPoint(x: 0, y: 0))
         path.addLine(to: CGPoint(x: rect.width, y: 0))
         return path
-    }
-}
-
-extension CGPoint {
-    static func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-        return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
-    }
-    static func +(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-        return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
     }
 }

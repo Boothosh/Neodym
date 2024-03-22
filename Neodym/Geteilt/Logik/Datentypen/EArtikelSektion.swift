@@ -5,9 +5,9 @@
 //  Created by Max Eckstein on 05.09.23.
 //
 
-import Foundation
+import SwiftUI
 
-struct EArtikelSektion: Identifiable {
+struct EArtikelSektion: Identifiable, Codable {
     
     let id = UUID()
     
@@ -16,7 +16,7 @@ struct EArtikelSektion: Identifiable {
     let text: String
     let bildPfad: String?
     
-    // Quellen
-    let textQuelle: String
-    let bildQuelle: String?
+    func bild() -> UIImage? {
+        return nil
+    }
 }

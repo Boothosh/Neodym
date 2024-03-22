@@ -9,74 +9,91 @@ import SwiftUI
 
 struct Willkommen: View {
     
-    var benutzer: Benutzer
-    
+    @Environment(NeoStore.self) private var store
+    @Environment(NeoAuth.self) private var auth
+    @State private var zeigeWeiterfuehrendesPopUp = false
+
     var body: some View {
         NavigationStack {
-            VStack {
-                Spacer()
-                VStack(spacing: 2){
-                    Text("Willkommen bei")
-                    HStack { Spacer() }
-                    Text("Neodym")
-                        .foregroundColor(.indigo)
+            GeometryReader { geo in
+                if auth.angemeldet == true {
+                    Text("")
+                        .onAppear {
+                            zeigeWeiterfuehrendesPopUp = true
+                        }
                 }
-                .padding(.top)
-                .font(.system(size: 42, weight: .bold, design: .rounded))
-                Spacer()
-                GeometryReader { geo in
-                    ZStack {
-                        Image(.logo)
+                VStack(spacing: 30){
+                    VStack {
+                        Spacer()
+                        Image("Logo")
                             .resizable()
-                            .frame(width: geo.size.width / 1.7, height: geo.size.width / 1.7)
-                            .mask {
-                                RoundedRectangle(cornerRadius: 25)
-                                    .strokeBorder(lineWidth: 4)
+                            .frame(width: 130, height: 130)
+                        VStack(spacing: 2){
+                            Text("Willkommen bei")
+                            Text("Neodym")
+                                .foregroundStyle(.indigo)
+                        }
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        Text("Alle Werkzeuge, die man für Chemie braucht.\nIn einer App.")
+                            .padding(.top, 5)
+                        Spacer()
+                    }.foregroundStyle(Color(uiColor: UIColor.label))
+                        .multilineTextAlignment(.center)
+                    HStack(spacing: 30){
+                        let size = abs((geo.size.width - 90)/2)
+                        NavigationLink {
+                            LizenzLogIn()
+                                .environment(auth)
+                        } label: {
+                            VStack {
+                                Image(systemName: "studentdesk")
+                                    .font(.system(size: 70))
+                                    .fontWeight(.thin)
+                                Text("Schüler*in")
                             }
-                        Image(.logo)
-                            .resizable()
-                            .frame(width: geo.size.width / 2, height: geo.size.width / 2)
-                            .cornerRadius(20)
-                    }.offset(x: (geo.size.width - (geo.size.width / 1.7)) / 2, y: (geo.size.width - (geo.size.width / 1.7)) / 2)
-                }.aspectRatio(1, contentMode: .fit)
-                
-                Spacer()
-                
-                VStack(spacing: 15){
-                    NavigationLink(destination: Anmeldung(anmeldeArt: .schule, benutzer: benutzer)) {
-                        anmeldeButton("Über Schule anmelden", bildName: "Schule")
+                                .padding()
+                                .frame(width: size, height: min(130, size))
+                                .background(.green.gradient)
+                                .cornerRadius(15)
+                        }
+                        NavigationLink {
+                            LehrerLogIn()
+                                .environment(auth)
+                        } label: {
+                            VStack {
+                                Image(systemName: "graduationcap.fill")
+                                    .font(.system(size: 70))
+                                    .fontWeight(.thin)
+                                Text("Lehrkraft")
+                            }
+                                .padding()
+                                .frame(width: size, height: min(130, size))
+                                .background(.green.gradient)
+                                .cornerRadius(15)
+                        }
                     }
-                    Divider()
-                        .background(.pink)
-                        .padding(.horizontal, 20)
-                    NavigationLink(destination: Anmeldung(anmeldeArt: .anmelden, benutzer: benutzer)) {
-                        anmeldeButton("Normal anmelden", bildName: "Mann")
+                    NavigationLink {
+                        Paywall()
+                            .environment(store)
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Normal fortfahren")
+                                .padding()
+                            Spacer()
+                        }
                     }
-                    NavigationLink(destination: Anmeldung(anmeldeArt: .registrieren, benutzer: benutzer)) {
-                        anmeldeButton("Neu registrieren", bildName: "Frau")
-                    }
+                    .background(.blue.gradient)
+                    .cornerRadius(15)
                 }
-                Spacer()
+                .padding(.horizontal, 30)
+                .padding(.vertical, 30)
             }
-            .padding(.horizontal)
-            .padding(.bottom)
-            .frame(maxWidth: 700)}
-    }
-    
-    func anmeldeButton(_ titel: String, bildName: String) -> some View {
-        return HStack{
-            Image(bildName)
-                .resizable()
-                .frame(width: 35, height:35)
-            Spacer()
-            Text(titel)
-                .foregroundColor(.black)
-                .font(.title3)
-            Spacer()
-        }.padding(.horizontal)
-            .frame(height: 60)
-            .background(.white)
-            .cornerRadius(15)
-            .shadow(radius: 7)
+            .foregroundStyle(.white)
+            .frame(maxWidth: 600)
+        }.sheet(isPresented: $zeigeWeiterfuehrendesPopUp) {
+            LehrerVerifizierungsStatus()
+                .environment(auth)
+        }
     }
 }
