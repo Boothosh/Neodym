@@ -15,6 +15,7 @@ struct MolekuelmasseRechner: View {
     
     // Status des Rechners
     @State private var elementeMitAnzahl: [Element: Int] = [:]
+    
     var elementeAlsArray: [Element] { Array(elementeMitAnzahl.keys) }
     var molekuelmasse: Float {
         elementeAlsArray.reduce(0) {
@@ -114,16 +115,7 @@ struct MolekuelmasseRechner: View {
                 Section("Anteil am Gesamtgewicht"){
                     if elementeAlsArray.count > 1 {
                         if UIDevice.current.userInterfaceIdiom == .phone {
-                            Chart(elementeAlsArray) { element in
-                                SectorMark(
-                                    angle: .value("Value", Float(elementeMitAnzahl[element] ?? 0)*element.atommasse),
-                                    innerRadius: .ratio(0.618),
-                                    outerRadius: .inset(10),
-                                    angularInset: 1
-                                )
-                                .foregroundStyle(by: .value("Element", element.name))
-                                .cornerRadius(4)
-                            }.frame(width: 300, height: 300)
+                            gewichtChart
                             ForEach(elementeAlsArray) { element in
                                 HStack{
                                     Text(element.name)
@@ -133,16 +125,7 @@ struct MolekuelmasseRechner: View {
                             }
                         } else {
                             HStack(spacing: 30){
-                                Chart(elementeAlsArray) { element in
-                                    SectorMark(
-                                        angle: .value("Value", Float(elementeMitAnzahl[element] ?? 0)*element.atommasse),
-                                        innerRadius: .ratio(0.618),
-                                        outerRadius: .inset(10),
-                                        angularInset: 1
-                                    )
-                                    .foregroundStyle(by: .value("Element", element.name))
-                                    .cornerRadius(4)
-                                }.frame(width: 350, height: 350)
+                                gewichtChart
                                 List(elementeAlsArray) { element in
                                     HStack{
                                         Text(element.name)
@@ -236,5 +219,34 @@ struct MolekuelmasseRechner: View {
             print("invalid regex: \(error.localizedDescription)")
             return []
         }
+    }
+    
+    var gewichtChart: some View {
+        Chart(elementeAlsArray) { element in
+            SectorMark(
+                angle: .value("Value", Float(elementeMitAnzahl[element] ?? 0)*element.atommasse),
+                innerRadius: .ratio(0.618),
+                outerRadius: .inset(10),
+                angularInset: 1
+            )
+            .foregroundStyle(by: .value("Element", element.name))
+            .cornerRadius(4)
+        }
+        .frame(width: 300, height: 300)
+            .chartBackground { chartProxy in
+              GeometryReader { geometry in
+                  if let plotFrame = chartProxy.plotFrame {
+                      VStack {
+                          Text("Schwerstes Atom")
+                              .font(.callout)
+                              .foregroundStyle(.secondary)
+                          Text(elementeAlsArray.sorted(by: {$0.atommasse > $1.atommasse}).first?.name ?? "Fehler")
+                              .font(.title2.bold())
+                              .foregroundColor(.primary)
+                      }
+                      .position(x: geometry[plotFrame].midX, y: geometry[plotFrame].midY)
+                  }
+              }
+            }
     }
 }
