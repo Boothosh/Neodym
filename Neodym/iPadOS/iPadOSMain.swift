@@ -83,13 +83,16 @@ struct iPadOSMain: View {
                 Button {
                     zeigeEinstellungen = true
                 } label: {
-                    Text("Einstellungen")
-                    Spacer()
-                    Image(systemName: "gearshape.2")
-                }.foregroundStyle(Color(uiColor: .label))
-            }.padding(ProcessInfo.processInfo.isiOSAppOnMac ? .vertical : .top)
-                .padding(.horizontal)
-            .background(Color(.listenHintergrundFarbe))
+                    HStack {
+                        Text("Einstellungen")
+                        Spacer()
+                        Image(systemName: "gearshape.2")
+                    }.padding()
+                        .background(.indigo)
+                        .cornerRadius(5)
+                        .padding(5)
+                }.foregroundStyle(.white)
+            }
         }.navigationTitle("Neodym")
             .sheet(isPresented: $zeigeEinstellungen, content: {
                 Einstellungen()
@@ -120,42 +123,42 @@ struct iPadOSMain: View {
                             }
                         }
                     }
-                        .toolbar {
-                            ToolbarItem {
-                                Picker("Ansicht", selection: $systemIstAusgewaelt.onChange(setzteNeuenSystemIstAusgewaeltWert)) {
-                                    Text("Periodensystem").tag(true)
-                                    Text("Liste").tag(false)
-                                }
-                                .pickerStyle(.segmented)
+                    .toolbar {
+                        ToolbarItem {
+                            Picker("Ansicht", selection: $systemIstAusgewaelt.onChange(setzteNeuenSystemIstAusgewaeltWert)) {
+                                Text("Periodensystem").tag(true)
+                                Text("Liste").tag(false)
                             }
-                            if !systemIstAusgewaelt {
-                                ToolbarItem {
-                                    Menu("Sortierung", systemImage: "line.3.horizontal.decrease") {
-                                        Picker(selection: $sortiertNach) {
-                                            Text("Ordnungszahl")
-                                                .tag("Ordnungszahl")
-                                            Text("Atomradius")
-                                                .tag("Atomradius")
-                                            Text("Entdeckungsjahr")
-                                                .tag("Entdeckungsjahr")
-                                            Text("Name")
-                                                .tag("Name")
-                                        } label: {
-                                            
-                                        }
-                                        Divider()
-                                        Picker(selection: $sortiertAufsteigend) {
-                                            Text("Aufsteigend")
-                                                .tag(true)
-                                            Text("Absteigend")
-                                                .tag(false)
-                                        } label: {
-                                            
-                                        }
+                            .pickerStyle(.segmented)
+                        }
+                        if !systemIstAusgewaelt {
+                            ToolbarItem {
+                                Menu("Sortierung", systemImage: "line.3.horizontal.decrease") {
+                                    Picker(selection: $sortiertNach) {
+                                        Text("Ordnungszahl")
+                                            .tag("Ordnungszahl")
+                                        Text("Atomradius")
+                                            .tag("Atomradius")
+                                        Text("Entdeckungsjahr")
+                                            .tag("Entdeckungsjahr")
+                                        Text("Name")
+                                            .tag("Name")
+                                    } label: {
+                                        
+                                    }
+                                    Divider()
+                                    Picker(selection: $sortiertAufsteigend) {
+                                        Text("Aufsteigend")
+                                            .tag(true)
+                                        Text("Absteigend")
+                                            .tag(false)
+                                    } label: {
+                                        
                                     }
                                 }
                             }
                         }
+                    }
                 case .wissen_stoechometrie:
                     Wissen()
                 case .wissen_molekuele:
@@ -236,20 +239,20 @@ struct iPadOSMain: View {
                 }
                 .animation(.easeIn, value: elementListe)
                 .searchable(text: $suchBegriff, isPresented: $suche)
-                    .navigationTitle("Elemente")
+                .navigationTitle("Elemente")
             } detail: {
                 hauptcontent
             }
-                .onContinueUserActivity(CSSearchableItemActionType, perform: spotlight)
-                .onContinueUserActivity(CSQueryContinuationActionType, perform: spotlightSuche)
+            .onContinueUserActivity(CSSearchableItemActionType, perform: spotlight)
+            .onContinueUserActivity(CSQueryContinuationActionType, perform: spotlightSuche)
         } else {
             NavigationSplitView(columnVisibility: $columnVisibility){
                 sideBar
             } detail: {
                 hauptcontent
             }
-                .onContinueUserActivity(CSSearchableItemActionType, perform: spotlight)
-                .onContinueUserActivity(CSQueryContinuationActionType, perform: spotlightSuche)
+            .onContinueUserActivity(CSSearchableItemActionType, perform: spotlight)
+            .onContinueUserActivity(CSQueryContinuationActionType, perform: spotlightSuche)
         }
     }
     
@@ -269,7 +272,7 @@ struct iPadOSMain: View {
             ausgewaeltesElement = element
             ausgewaelterAppBereich = .elemente
         }
-     }
+    }
     
     func spotlightSuche(userActivity: NSUserActivity) {
         guard let searchString = userActivity.userInfo?[CSSearchQueryString] as? String else { return }
@@ -287,6 +290,6 @@ extension Binding {
             set: { selection in
                 self.wrappedValue = selection
                 handler(selection)
-        })
+            })
     }
 }
