@@ -17,6 +17,7 @@ import StoreKit
     var privatProdukte: [Product] = []
     
     var hatBerechtigung: Bool?
+    var hatAbo = false
     
     private var taskHandle: Task<Void, Error>?
     
@@ -49,6 +50,7 @@ import StoreKit
                 let id = transaktion.productID
                 if id == "neo_full_lifetime" || id == "neo_full_monatlich" || id == "neo_full_jaehrlich" {
                     hatBerechtigung = true
+                    hatAbo = (id != "neo_full_lifetime")
                 }
                 await transaktion.finish()
                 return true
@@ -67,6 +69,7 @@ import StoreKit
             let id = transaktion.productID
             if id == "neo_full_lifetime" || id == "neo_full_monatlich" || id == "neo_full_jaehrlich" {
                 hatBerechtigung = true
+                hatAbo = (id != "neo_full_lifetime")
                 return
             }
         }
@@ -85,6 +88,7 @@ import StoreKit
                     let id = transaktion.productID
                     if id == "neo_full_lifetime" || id == "neo_full_monatlich" || id == "neo_full_jaehrlich" {
                         self.hatBerechtigung = true
+                        self.hatAbo = (id != "neo_full_lifetime")
                     }
                     await transaktion.finish()
                 } catch {

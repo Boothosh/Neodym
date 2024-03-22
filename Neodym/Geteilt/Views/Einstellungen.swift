@@ -38,13 +38,15 @@ struct Einstellungen: View {
                             .font(.largeTitle)
                             .frame(width: 30, height: 30)
                     }
-                    if store.hatBerechtigung == true {
+                    if store.hatAbo {
                         Button {
                             zeigeBearbeiteAbonnement = true
                         } label: {
                             Label(title: { Text("Abonnement bearbeiten").foregroundStyle(Color(uiColor: UIColor.label))},
-                                icon: { Image(systemName: "creditcard") })
+                                  icon: { Image(systemName: "creditcard") })
                         }
+                    } else if store.hatBerechtigung == true {
+                        Text("Vollversion lebenslang")
                     } else if let email = auth.email {
                         Text("E-Mail: \(email)")
                     } else if let lizenz = auth.lizenzSchluessel, let ablaufdatum = auth.lizenzEndDatum {
@@ -132,9 +134,11 @@ struct Einstellungen: View {
                     link(link: "https://instagram.com/neodym_app", text: "Instagram", systemImage: nil)
                 } footer: {
                     VStack(alignment: .leading) {
-                        Text("Benutzer ID: \(auth.id ?? "Fehler")")
-                        Text("Version: 1.0")
-                        Text("© 2024 Bromedia")
+                        if store.hatBerechtigung != true {
+                            Text("Benutzer ID: \(auth.id ?? "Fehler")")
+                        }
+                        Text("Version: 1.1")
+                        Text("© 2024 Bromedia GbR")
                     }
                 }
             }
