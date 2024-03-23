@@ -60,7 +60,7 @@ struct NeodymApp: App {
                         .environment(store)
                         .confettiCannon(counter: $konfetti, num: 150, openingAngle: Angle(degrees: 0), closingAngle: Angle(degrees: 360), radius: 500)
                 }
-            } else if auth.verifiziert == nil && store.hatBerechtigung == nil {
+            } else if auth.verifiziert == nil || store.hatBerechtigung == nil {
                 ProgressView()
                     .task {
                         await store.delayedInit()
@@ -71,6 +71,13 @@ struct NeodymApp: App {
                             Task.detached {
                                 await elemente.delayedInit()
                             }
+                        }
+                        // Hiernach muss sichergegangen werden, dass sowohl store.hatBerechtigung als auch auth.verifiziert definiert ist.
+                        if store.hatBerechtigung == nil {
+                            store.hatBerechtigung = false
+                        }
+                        if auth.angemeldet == nil {
+                            auth.angemeldet = false
                         }
                     }
             } else {

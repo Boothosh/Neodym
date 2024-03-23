@@ -43,6 +43,14 @@ struct Paywall: View {
                     .background(Color.blue.opacity(0.3))
                     .cornerRadius(15)
                     .padding(.horizontal)
+                    HStack {
+                        Text("\(Image(systemName: "iphone"))+\(Image(systemName: "ipad.landscape"))+\(Image(systemName: "macbook"))+\(Image(systemName: "visionpro")): Ein Abo oder Kauf für Zugang auf all deinen Geräten.")
+                        Spacer()
+                    }
+                    .padding()
+                    .background(Color.green.opacity(0.3))
+                    .cornerRadius(15)
+                    .padding(.horizontal)
                     
                     // Abo-Optionen
                     if !store.privatProdukte.isEmpty {

@@ -25,7 +25,12 @@ import Observation
     var lizenzEndDatum: Date?
     
     func delayedInit() async {
-        angemeldet = Auth.auth().currentUser != nil
+        guard let user = Auth.auth().currentUser else {
+            angemeldet = false
+            verifiziert = false
+            return
+        }
+        angemeldet = true
         verifizierteEmail = Auth.auth().currentUser?.isEmailVerified
         do {
             if try await pruefeIdentitaet("lehrer") {
