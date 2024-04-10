@@ -11,7 +11,7 @@ import StoreKit
 struct Paywall: View {
     
     @Environment(NeoStore.self) private var store
-    @State private var ausgewaelt: Product? = nil
+    @State private var auswahl: Product? = nil
     @State private var bounceCounter: [Product: Int] = [:]
     
     @State private var probeAbo = false
@@ -65,8 +65,8 @@ struct Paywall: View {
                                                 .font(.subheadline)
                                         }
                                         Spacer()
-                                        Image(systemName: ausgewaelt == produkt ? "checkmark.circle.fill" : "circle")
-                                            .foregroundStyle(ausgewaelt == produkt ? .white : .gray, .blue)
+                                        Image(systemName: auswahl == produkt ? "checkmark.circle.fill" : "circle")
+                                            .foregroundStyle(auswahl == produkt ? .white : .gray, .blue)
                                             .font(.title2)
                                             .symbolEffect(.bounce, value: bounceCounter[produkt] ?? 0)
                                     }
@@ -79,12 +79,12 @@ struct Paywall: View {
                                 .onTapGesture {
                                     waehleAus(produkt)
                                 }
-                                .overlay(ausgewaelt == produkt ? RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 2).fill(.blue) : nil)
+                                .overlay(auswahl == produkt ? RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 2).fill(.blue) : nil)
                                 .cornerRadius(15)
                             }
                         }
                         .padding(.horizontal)
-                        .sensoryFeedback(.selection, trigger: ausgewaelt)
+                        .sensoryFeedback(.selection, trigger: auswahl)
                             .task{
                                 await setup()
                             }
@@ -97,9 +97,9 @@ struct Paywall: View {
             VStack(spacing: 20){
                 Button{
                     Task {
-                        guard let ausgewaelt else { return }
+                        guard let auswahl else { return }
                         do {
-                            let _ = try await store.kauf(ausgewaelt)
+                            let _ = try await store.kauf(auswahl)
                         } catch {
                             
                         }
@@ -111,8 +111,8 @@ struct Paywall: View {
                                 Text(!istAbo ? "Kaufen" : probeAbo ? "Kostenlos testen" : "Abonnieren")
                                     .font(.title3)
                                     .bold()
-                                if let sub = ausgewaelt?.subscription, istAbo {
-                                    Text(probeAbo ? "\(String(sub.introductoryOffer?.period.value ?? 1 )) \(sub.introductoryOffer?.period.unit.debugDescription ?? "") kostenlos testen, danach wird der Plan für \(ausgewaelt!.displayPrice)/\(sub.subscriptionPeriod.unit.debugDescription) fortgesetzt, bis er gekündigt wird." : "Plan wird automatisch für \(ausgewaelt!.displayPrice)/\(sub.subscriptionPeriod.unit.debugDescription) fortgesetzt, bis er gekündigt wird.")
+                                if let sub = auswahl?.subscription, istAbo {
+                                    Text(probeAbo ? "\(String(sub.introductoryOffer?.period.value ?? 1 )) \(sub.introductoryOffer?.period.unit.debugDescription ?? "") kostenlos testen, danach wird der Plan für \(auswahl!.displayPrice)/\(sub.subscriptionPeriod.unit.debugDescription) fortgesetzt, bis er gekündigt wird." : "Plan wird automatisch für \(auswahl!.displayPrice)/\(sub.subscriptionPeriod.unit.debugDescription) fortgesetzt, bis er gekündigt wird.")
                                          .font(.caption)
                                 }
                             }
@@ -165,9 +165,9 @@ struct Paywall: View {
     
     func waehleAus(_ produkt: Product) {
         Task {
-            if ausgewaelt != produkt {
+            if auswahl != produkt {
                 withAnimation {
-                    ausgewaelt = produkt
+                    auswahl = produkt
                     bounceCounter[produkt] = (bounceCounter[produkt] ?? 0) + 1
                     buttonMussLaden = true
                     istAbo = produkt.type == .autoRenewable

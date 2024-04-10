@@ -42,12 +42,9 @@ struct NeoFire {
         return quizseiten.isEmpty ? nil : quizseiten
     }
     
-    static func kaufeLizenzen(_ anzahl: Int) async throws {
-        let _ = try await Functions.functions().httpsCallable("kaufeLizenzen").call(["anzahl": anzahl])
-    }
-    
-    static func kaufeTestLizenzen() async throws {
-        let _ = try await Functions.functions().httpsCallable("kaufeTestLizenzen").call()
+    static func kaufeLizenzen(anzahl: Int, beleg: String) async throws {
+        print("[NeoFire]: Beleg: \(beleg)")
+        let _ = try await Functions.functions().httpsCallable("kaufeLizenzen").call(["anzahl": anzahl, "beleg": beleg])
     }
     
     static func ladeLizenzen() async throws -> [Lizenz] {
@@ -58,7 +55,7 @@ struct NeoFire {
             let id = i.documentID
             let aktiv = i.data()["aktiv"] as? Bool
             let benutzerID = i.data()["benutzer"] as? String
-            let endDatum = i.data()["endDatum"] as? Date
+            let endDatum = (i.data()["endDatum"] as? Timestamp)?.dateValue()
             lizenzen.append(Lizenz(schluessel: i.documentID, aktiv: aktiv == true, benutzerID: benutzerID, ablaufdatum: endDatum))
         }
         return lizenzen

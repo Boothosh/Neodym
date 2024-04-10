@@ -12,7 +12,8 @@ import StoreKit
     var lifetime:   Product?
     var monatlich:  Product?
     var jaehrlich:  Product?
-    var lizenz:     Product?
+    
+    var lizenzen:     [Product]?
     
     var privatProdukte: [Product] = []
     
@@ -35,6 +36,8 @@ import StoreKit
             jaehrlich = try await Product.products(for: ["neo_full_jaehrlich"]).first
             guard let lifetime, let monatlich, let jaehrlich else { return }
             privatProdukte.append(contentsOf: [monatlich, jaehrlich, lifetime])
+            lizenzen = try await Product.products(for: ["lizenz_paket_10", "lizenz_paket_50", "lizenz_paket_100"])
+            lizenzen?.sort(by: { $0.price < $1.price })
             try await checkeObBerechtigung()
         } catch {
             print(error)
@@ -42,17 +45,22 @@ import StoreKit
         }
     }
     
-    func kauf(_ produkt: Product, _ anzahl: Int = 1) async throws -> Bool {
-        let ergebnis = try await produkt.purchase(options: [.quantity(anzahl)])
+    func kauf(_ produkt: Product, anzahl: Int = 1) async throws -> Bool {
+        let ergebnis = try await produkt.purchase(options: [.quantity(anzahl), .appAccountToken(UUID())])
         switch ergebnis {
             case .success(let verifizierungsErgebnis):
                 let transaktion = try checkVerified(verifizierungsErgebnis)
+                print(transaktion.hashValue)
                 let id = transaktion.productID
                 if id == "neo_full_lifetime" || id == "neo_full_monatlich" || id == "neo_full_jaehrlich" {
                     hatBerechtigung = true
                     hatAbo = (id != "neo_full_lifetime")
+                } else {
+                    let paketAnzahl = id == "lizenz_paket_100" ? 100 : id == "lizenz_paket_50" ? 50 : 10
+                    try await NeoFire.kaufeLizenzen(anzahl: anzahl*paketAnzahl, beleg: transaktion.appAccountToken?.uuidString ?? "Fehler")
                 }
                 await transaktion.finish()
+                print("[NeoStore]: Transaktion \(transaktion.id) abgeschlossen!")
                 return true
             default:
                 return false
@@ -89,10 +97,12 @@ import StoreKit
                     if id == "neo_full_lifetime" || id == "neo_full_monatlich" || id == "neo_full_jaehrlich" {
                         self.hatBerechtigung = true
                         self.hatAbo = (id != "neo_full_lifetime")
+                    } else {
+                        try await NeoFire.kaufeLizenzen(anzahl: transaktion.purchasedQuantity, beleg: transaktion.appAccountToken?.uuidString ?? "Fehler")
                     }
                     await transaktion.finish()
                 } catch {
-                    print("Transaction failed verification")
+                    print(error)
                 }
             }
         }

@@ -73,12 +73,8 @@ struct NeodymApp: App {
                             }
                         }
                         // Hiernach muss sichergegangen werden, dass sowohl store.hatBerechtigung als auch auth.verifiziert definiert ist.
-                        if store.hatBerechtigung == nil {
-                            store.hatBerechtigung = false
-                        }
-                        if auth.angemeldet == nil {
-                            auth.angemeldet = false
-                        }
+                        store.hatBerechtigung = (store.hatBerechtigung ?? false)
+                        auth.verifiziert = (auth.verifiziert ?? false)
                     }
             } else {
                 // Benutzer ist nicht angemeldet

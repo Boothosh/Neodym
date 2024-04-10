@@ -174,7 +174,7 @@ struct System: View {
                     .font(.system(size: 9)) : nil, alignment: .topTrailing)
                 .padding(5)
                 .frame(width: breite, height: breite * 1.1)
-                .background(ausgegraut ? .gray : Color(element.klassifikation))
+                .background(ausgegraut ? Color.gray.gradient : Color(element.klassifikation).gradient)
                 .foregroundColor(.white.opacity(ausgegraut ? 0.5 : 1))
                 .animation(.easeInOut(duration: 0.1), value: ausgegraut)
         }

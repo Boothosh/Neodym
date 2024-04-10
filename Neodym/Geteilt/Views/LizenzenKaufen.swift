@@ -2,7 +2,7 @@
 //  LizenzenKaufen.swift
 //  Neodym
 //
-//  Created by Max Eckstein on 28.02.24.
+//  Created by Max Eckstein on 02.04.24.
 //
 
 import SwiftUI
@@ -10,97 +10,142 @@ import StoreKit
 
 struct LizenzenKaufen: View {
     
-    @Environment(NeoStore.self) private var store
+    @Environment(NeoStore.self)     var store
+    @Environment(NeoAuth.self)      var auth
+    @Environment(\.dismiss)         var schliessen
     
-    @State var lizenzen: [Lizenz] = []
-    @State var zeigeSheet = false
-    @State var anzahl = 0
+    @State private var anzahl = 1
+    @State private var auswahl: Product? = nil
+    @State private var bounceCounter: [Product: Int] = [:]
+    @State private var buttonMussLaden = false
+    @State private var zeigeInfoSheet = false
     
     var body: some View {
-        List {
-            if !lizenzen.isEmpty {
-                ForEach(lizenzen) { lizenz in
-                    
-                }
-            } else {
-                ContentUnavailableView(label: {
-                    Label("Keine Lizenzen", systemImage: "key.slash")
-                }, description: {
-                    Text("Sie besitzen noch keine Lizenzen. Kaufen Sie Lizenzen, um diese hier verwalten zu können.")
-                }, actions: {
-                    Button(action: {
-                        zeigeSheet = true
-                    }, label: {
-                        Text("Lizenzen kaufen wird in Kürze verfügbar sein!")
-                    }).disabled(true)
-                })
-            }
-        }.navigationTitle("Lizenzen")
-        .sheet(isPresented: $zeigeSheet, content: {
-            NavigationStack {
-                Form {
-                    if let lz = store.lizenz {
-                        Section(header: Text("Wieviele Lizenzen möchten Sie kaufen?")){
-                            HStack {
-                                TextField("Anzahl der Lizenzen", value: $anzahl, format: .number)
-                                Stepper(value: $anzahl, label: {})
-                            }
+        NavigationStack {
+            ScrollView {
+                if let lz = store.lizenzen {
+                    VStack(alignment: .leading, spacing: 10){
+                        Button {
+                            zeigeInfoSheet = true
+                        } label: {
+                            Text("\(Image(systemName: "info.circle")) Wie funktionieren Lizenzen?")
                         }
-                        Section(header: Text("Preisvorschau")){
-                            HStack {
-                                Text("Preis pro Lizenz:")
-                                Spacer()
-                                Text(lz.displayPrice)
-                            }
-                            HStack {
-                                Text("Preis für \(anzahl) Lizenzen:")
-                                Spacer()
-                                Text(formattedPreis())
-                            }
-                        }
-                        Section(header: Text("Kaufen")){
-                            Button {
-                                Task {
-                                    do {
-                                        try await NeoFire.kaufeTestLizenzen()
-                                    } catch {
-                                        
+                        Text("Für den Lizenzkauf gibt es die folgenden Packete:")
+                        ForEach(lz){ produkt in
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    VStack(alignment: .leading){
+                                        Text(produkt.displayName)
+                                            .font(.headline)
+                                        Text("\(produkt.displayPrice)")
+                                            .font(.subheadline)
                                     }
+                                    Spacer()
+                                    Image(systemName: auswahl == produkt ? "checkmark.circle.fill" : "circle")
+                                        .foregroundStyle(auswahl == produkt ? .white : .gray, .blue)
+                                        .font(.title2)
+                                        .symbolEffect(.bounce, value: bounceCounter[produkt] ?? 0)
                                 }
-                            } label: {
-                                Text("30 30-Tage Lizenzen kaufen (kostenlos)")
+                                Divider()
+                                Text(produkt.description)
+                                    .font(.subheadline)
                             }
-                            Button {
-                                Task {
-                                    do {
-                                        if try await store.kauf(lz, anzahl) {
-                                            try await NeoFire.kaufeLizenzen(anzahl)
-                                        }
-                                    } catch {
-                                        
-                                    }
-                                }
-                            } label: {
-                                Text("Kaufen")
+                            .padding()
+                            .background(Color.gray.opacity(0.1))
+                            .onTapGesture {
+                                auswahl = produkt
+                                bounceCounter[auswahl!] = 1 + (bounceCounter[auswahl!] ?? 0)
                             }
+                            .overlay(auswahl == produkt ? RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 2).fill(.blue) : nil)
+                            .cornerRadius(15)
                         }
-                    } else {
-                        ProgressView()
                     }
-                }.navigationTitle("Lizenzen kaufen")
-                .navigationBarTitleDisplayMode(.large)
+                    .padding(.horizontal)
+                    .sensoryFeedback(.selection, trigger: auswahl)
+                    .task {
+                        withAnimation {
+                            auswahl = lz[1]
+                            bounceCounter[auswahl!] = 1
+                        }
+                    }
+                    VStack(spacing: 20){
+                        HStack {
+                            Button {
+                                anzahl -= 1
+                            } label: {
+                                Image(systemName: "minus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundStyle(.white, anzahl >= 10 ? .gray : .blue)
+                            }.disabled(anzahl <= 1)
+                            VStack {
+                                Text("Anzahl")
+                                    .font(.caption2)
+                                Text("\(anzahl)")
+                            }
+                            Button {
+                                anzahl += 1
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundStyle(.white, anzahl >= 10 ? .gray : .blue)
+                            }.disabled(anzahl >= 10)
+                        }
+                        Button{
+                            Task {
+                                guard let auswahl else { return }
+                                do {
+                                    buttonMussLaden = true
+                                    if try await store.kauf(auswahl, anzahl: anzahl) {
+                                        try await auth.ladeLizenzen()
+                                        schliessen()
+                                    }
+                                } catch {
+                                    
+                                }
+                                buttonMussLaden = false
+                            }
+                        } label: {
+                            Group {
+                                if !buttonMussLaden {
+                                    VStack {
+                                        Text("Kaufen")
+                                            .font(.title3)
+                                            .bold()
+                                    }
+                                } else {
+                                    ProgressView()
+                                }
+                            }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(15)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        HStack {
+                            Link(destination: URL(string: "https://neodym.app/rechtliches#datenschutz")!) {
+                                Text("Datenschutz")
+                            }
+                            Image(systemName: "circle")
+                                .font(.caption2)
+                            Link(destination: URL(string: "https://neodym.app/rechtliches#agb")!) {
+                                Text("AGB")
+                            }
+                        }.font(.caption)
+                        .bold()
+                    }.padding()
+                    .frame(maxWidth: 600)
+                } else {
+                    ProgressView()
+                }
             }
-        })
-    }
-    
-    func formattedPreis() -> String {
-        guard let lz = store.lizenz else { return "" }
-        do {
-            let r = try Regex("[0-9]+[.,]*[0-9]*")
-            let preis = Decimal(anzahl)*lz.price
-            return lz.displayPrice.replacing(r, with: "\(preis)")
-        } catch {
-            return ""
+            .navigationTitle("Lizenzen kaufen")
+            .sheet(isPresented: $zeigeInfoSheet, content: {
+                InfoSheet("Lizenzen", .lizenzen)
+            })
         }
     }
 }

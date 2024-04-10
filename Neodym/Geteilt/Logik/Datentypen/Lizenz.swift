@@ -15,4 +15,10 @@ struct Lizenz: Identifiable {
     let aktiv: Bool
     let benutzerID: String?
     let ablaufdatum: Date?
+    init(schluessel: String, aktiv: Bool, benutzerID: String? = nil, ablaufdatum: Date? = nil) {
+        self.schluessel = schluessel
+        self.aktiv = aktiv
+        self.benutzerID = benutzerID
+        self.ablaufdatum = ablaufdatum
+    }
 }

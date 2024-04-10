@@ -20,13 +20,22 @@ struct LizenzLogIn: View {
     @State private var zeigeError: Bool = false
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10){
             HStack {
                 Text("Lizenz einlösen")
                     .foregroundColor(.indigo)
                     .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .underline()
                 Spacer()
             }
+            HStack {
+                Text("\(Image(systemName: "info.circle")) Wenn dir deine Lehrer:innen einen Lizenzschlüssel zugeteilt haben, kannst du diesen hier eingeben. Damit erhältst du Zugang zur App.")
+                Spacer()
+            }
+            .padding()
+            .background(Color.blue.opacity(0.3))
+            .cornerRadius(15)
+            .padding(.top)
             TextField("Lizenz", text: $lizenz, prompt: Text("Deine Lizenz"))
                 .modifier(CustomTextFeld(error: $lizenzLeer))
                 .onSubmit { einloesen() }

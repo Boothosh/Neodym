@@ -51,7 +51,7 @@ struct iOSElementListe: View {
                             .fontWeight(.bold)
                             .shadow(radius: 5)
                             .frame(width: 60, height: 60)
-                            .background(Color(element.klassifikation))
+                            .background(Color(element.klassifikation).gradient)
                             .cornerRadius(5)
                             .overlay(alignment: .bottomTrailing){
                                 Text(element.kernladungszahl.description)
@@ -65,7 +65,7 @@ struct iOSElementListe: View {
                         VStack(alignment: .leading){
                             Text(element.name)
                                 .font(.title3)
-                                .foregroundStyle(Color(uiColor: UIColor.label))
+                                .foregroundStyle(.prim)
                             let text = (sortiertNach == "Atomradius") ? "Atomradius: \(element.radius != nil ? element.radius!.description + " pm" : "Unbekannt")" : (sortiertNach == "Entdeckungsjahr") ? "Entdeckungsjahr: \(element.entdeckt == -1 ? "Antik" : element.entdeckt.description)" : element.klassifikation
                             Text(text)
                                 .fontWeight(.bold)

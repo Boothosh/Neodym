@@ -5,7 +5,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "5.99",
+      "displayPrice" : "6.99",
       "familyShareable" : false,
       "internalID" : "6476833198",
       "localizations" : [
@@ -18,13 +18,58 @@
       "productID" : "neo_full_lifetime",
       "referenceName" : "Einmaliger Plan",
       "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "79.99",
+      "familyShareable" : false,
+      "internalID" : "6480218861",
+      "localizations" : [
+        {
+          "description" : "Zugang für 100 Schüler:innen für 1 Jahr",
+          "displayName" : "100 Lizenzen",
+          "locale" : "de"
+        }
+      ],
+      "productID" : "lizenz_paket_100",
+      "referenceName" : "Lizenzen 100er Pack",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "11.99",
+      "familyShareable" : false,
+      "internalID" : "6480219119",
+      "localizations" : [
+        {
+          "description" : "Zugang für 10 Schüler:innen für 1 Jahr",
+          "displayName" : "10 Lizenzen",
+          "locale" : "de"
+        }
+      ],
+      "productID" : "lizenz_paket_10",
+      "referenceName" : "Lizenzen 10er Pack",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "44.99",
+      "familyShareable" : false,
+      "internalID" : "6480218978",
+      "localizations" : [
+        {
+          "description" : "Zugang für 50 Schüler:innen für 1 Jahr",
+          "displayName" : "50 Lizenzen",
+          "locale" : "de"
+        }
+      ],
+      "productID" : "lizenz_paket_50",
+      "referenceName" : "Lizenzen 50er Pack",
+      "type" : "Consumable"
     }
   ],
   "settings" : {
     "_applicationInternalID" : "6466750604",
     "_developerTeamID" : "JWNMYGMKR3",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 732643288.52078402,
+    "_lastSynchronizedDate" : 733344262.99390399,
     "_locale" : "de",
     "_storefront" : "DEU",
     "_storeKitErrors" : [
@@ -90,12 +135,12 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "3.99",
+          "displayPrice" : "4.99",
           "familyShareable" : false,
           "groupNumber" : 2,
           "internalID" : "6476833428",
           "introductoryOffer" : {
-            "internalID" : "F38AF284",
+            "internalID" : "BC14EAFD",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"
@@ -125,7 +170,7 @@
           "groupNumber" : 1,
           "internalID" : "6476833345",
           "introductoryOffer" : {
-            "internalID" : "FAA272B2",
+            "internalID" : "D4272943",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"

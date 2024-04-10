@@ -14,7 +14,7 @@ struct iOSMain: View {
     @Environment(Elemente.self) private var elemente
     @Environment(NeoStore.self) private var store
     
-    @State private var appBereich = "Elemente"
+    @State private var appBereich = AppBereich.elemente
     
     // Für Elementliste
     @State var suche = false
@@ -22,50 +22,63 @@ struct iOSMain: View {
     @State var navigationVonElementListe = NavigationPath()
     
     var body: some View {
-        TabView(selection: $appBereich){
-            iOSElementListe(navigationPfad: $navigationVonElementListe, suchBegriff: $suchBegriff, suche: $suche)
-                .environment(elemente)
-                .tabItem {
-                    Label("Elemente", systemImage: "atom")
-                }.tag("Elemente")
-            NavigationStack {
-                Wissen()
+        VStack(spacing: 0) {
+            // Ausgewählter Inhalt
+            switch appBereich {
+                case .elemente:
+                    iOSElementListe(navigationPfad: $navigationVonElementListe, suchBegriff: $suchBegriff, suche: $suche)
+                        .environment(elemente)
+                case .wissen:
+                    NavigationStack {
+                        Wissen()
+                    }
+                case .werkzeuge:
+                    NavigationStack {
+                        Werkzeuge()
+                            .environment(elemente)
+                    }
+                case .lizenzen:
+                    NavigationStack {
+                        LizenzenUebersicht()
+                            .environment(store)
+                            .environment(auth)
+                    }
+                case .einstellungen:
+                    Einstellungen()
+                        .environment(elemente)
+                        .environment(auth)
+                        .environment(store)
             }
-            .tabItem {
-                Label("Wissen", systemImage: "graduationcap")
-                    .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird
-            }.tag("Wissen")
-            NavigationStack{
-                Werkzeuge()
-                    .environment(elemente)
+            // Tabbar
+            Divider()
+                .background(.indigo)
+            GeometryReader { geo in
+                let w = (geo.size.width - ((auth.email == nil) ? 3 : 4) * 10) / CGFloat((auth.email == nil) ? 4.0 : 5.0)
+                HStack {
+                    TabItem(.elemente, w)
+                    Spacer()
+                    TabItem(.wissen, w)
+                        .frame(width: 65)
+                    Spacer()
+                    TabItem(.werkzeuge, w)
+                        .frame(width: 65)
+                    if auth.email != nil {
+                        Spacer()
+                        TabItem(.lizenzen, w)
+                            .frame(width: 65)
+                    }
+                    Spacer()
+                    TabItem(.einstellungen, w)
+                }
             }
-            .tabItem {
-                Label("Werkzeuge", systemImage: "wrench.and.screwdriver")
-            }.tag("Werkzeuge")
-            // QuizView ist in der 1.0 Version für iPhones deaktiviert, da noch nicht ausgereift
-//            NavigationStack {
-//                QuizView()
-//            }
-//            .tabItem {
-//                Label("Quiz", systemImage: "brain")
-//                    .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
-//            }.tag("Quiz")
-            if auth.email != nil {
-                NavigationStack {
-                    LizenzenKaufen()
-                }.tabItem { Label("Lizenzen", systemImage: "key").environment(\.symbolVariants, .none) }
-                    .tag("Lizenzen")
-            }
-            Einstellungen()
-                .environment(elemente)
-                .environment(auth)
-                .environment(store)
-                .tabItem {
-                Label("Einstellungen", systemImage: "gearshape.2")
-                    .environment(\.symbolVariants, .none) // Um zu verhindern, dass Icon gefüllt wird/
-            }.tag("Einstellungen")
-        }.onContinueUserActivity(CSSearchableItemActionType, perform: spotlight)
-            .onContinueUserActivity(CSQueryContinuationActionType, perform: spotlightSuche)
+            .frame(height: 50)
+            .padding(.horizontal)
+            .padding(.top)
+            .background(.quinary)
+        }
+        .onContinueUserActivity(CSQueryContinuationActionType, perform: spotlightSuche)
+        .onContinueUserActivity(CSSearchableItemActionType, perform: spotlight)
+        .sensoryFeedback(.selection, trigger: appBereich)
     }
     
     func spotlight(userActivity: NSUserActivity) {
@@ -75,16 +88,37 @@ struct iOSMain: View {
             }
             if let element = await elemente.alleElemente.first(where: { $0.name == searchString }) {
                 navigationVonElementListe.append(element)
-                appBereich = "Elemente"
+                appBereich = .elemente
             }
         }
-     }
+    }
     
     func spotlightSuche(userActivity: NSUserActivity) {
         guard let searchString = userActivity.userInfo?[CSSearchQueryString] as? String else { return }
         suche = true
         suchBegriff = searchString
-        appBereich = "Elemente"
+        appBereich = .elemente
         navigationVonElementListe.removeLast(5) // Nur um sicher zu gehen
+    }
+    
+    enum AppBereich: String {
+        case elemente =         "Elemente"
+        case wissen =           "Wissen"
+        case werkzeuge =        "Werkzeuge"
+        case lizenzen =         "Lizenzen"
+        case einstellungen =    "Einstellungen"
+    }
+    
+    func TabItem(_ name: AppBereich, _ width: CGFloat) -> some View {
+        VStack {
+            Image(name.rawValue.lowercased())
+                .resizable()
+                .frame(width: 25, height: 25)
+            Text(name.rawValue)
+                .font(.caption2)
+                .foregroundStyle(appBereich == name ? .indigo : .primary)
+        }.onTapGesture {
+            appBereich = name
+        }.frame(width: width)
     }
 }

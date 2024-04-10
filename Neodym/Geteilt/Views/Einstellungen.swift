@@ -15,6 +15,7 @@ struct Einstellungen: View {
     @Environment(NeoAuth.self) private var auth
     @Environment(Elemente.self) private var elemente
     @Environment(NeoStore.self) private var store
+    @Environment(\.dismiss) private var schliessen
             
     @State private var zeigeAlert = false
     @State private var titel = ""
@@ -29,8 +30,14 @@ struct Einstellungen: View {
             List {
                 Section {
                     HStack {
-                        Text(store.hatBerechtigung == true ? "Neodym+" : auth.email != nil ? "🧑🏼‍🏫 Lehrer*in" : "🧑🏼‍🎓 Schüler*in")
+                        if auth.angemeldet == true {
+                            Image((auth.email != nil) ? "lehrer" : "schueler")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                        }
+                        Text(store.hatBerechtigung == true ? "Neodym +" : auth.email != nil ? "Lehrer:in" : " Schüler:in")
                             .font(.largeTitle)
+                            .foregroundStyle(.linearGradient(colors: [.green, .blue, .indigo,], startPoint: .topLeading, endPoint: .bottomTrailing))
                         Spacer()
                         Image(systemName: store.hatBerechtigung == true ? "crown.fill" : "checkmark.seal.fill")
                             .foregroundStyle(store.hatBerechtigung == true ? .yellow :
@@ -42,9 +49,8 @@ struct Einstellungen: View {
                         Button {
                             zeigeBearbeiteAbonnement = true
                         } label: {
-                            Label(title: { Text("Abonnement bearbeiten").foregroundStyle(Color(uiColor: UIColor.label))},
-                                  icon: { Image(systemName: "creditcard") })
-                        }
+                            FTLabel("Abonnement bearbeiten", bild: "abo")
+                        }.foregroundStyle(.prim)
                     } else if store.hatBerechtigung == true {
                         Text("Vollversion lebenslang")
                     } else if let email = auth.email {
@@ -52,16 +58,6 @@ struct Einstellungen: View {
                     } else if let lizenz = auth.lizenzSchluessel, let ablaufdatum = auth.lizenzEndDatum {
                         Text("Lizenz: \(lizenz)")
                         Text("Ablaufdatum: \(ablaufdatum.formatted())")
-                    }
-                }
-                Section {
-                    link(link: "https://neodym.app/rechtliches#agb", text: "ABG", systemImage: "scroll")
-                    link(link: "https://neodym.app/rechtliches#datenschutz", text: "Datenschutz", systemImage: "lock.shield")
-                    link(link: "https://neodym.app/rechtliches#impressum", text: "Impressum", systemImage: "person")
-                    NavigationLink {
-                        Credits()
-                    } label: {
-                        Label("Credits", systemImage: "square.on.square.badge.person.crop")
                     }
                 }
                 Section {
@@ -77,17 +73,17 @@ struct Einstellungen: View {
                         }.navigationTitle("Darstellung")
                         .navigationBarTitleDisplayMode(.inline)
                     } label: {
-                        Label("Darstellung", systemImage: "a.magnify")
+                        FTLabel("Darstellung", bild: "darstellung")
                     }
                     NavigationLink {
                         Form {
                             Section {
                                 if elemente.spotlightEintraegeVorhanden {
-                                    LabelButton(text: "Alle Spotlight-Sucheinträge löschen", symbol: "trash", action: {
+                                    LabelButton(text: "Alle Spotlight-Sucheinträge löschen", symbol: "loeschen", action: {
                                         await elemente.loescheSpotlightEintraege()
                                     }, role: .destructive)
                                 } else {
-                                    LabelButton(text: "Spotlight-Sucheinträge wiederherstellen", symbol: "text.magnifyingglass", action: {
+                                    LabelButton(text: "Spotlight-Sucheinträge wiederherstellen", symbol: "zurueck", action: {
                                         await elemente.indexeFuerSpotlight()
                                     })
                                 }
@@ -101,15 +97,28 @@ struct Einstellungen: View {
                         }.navigationTitle("Speicher")
                         .navigationBarTitleDisplayMode(.inline)
                     } label: {
-                        Label("Speicher", systemImage: "internaldrive")
+                        FTLabel("Speicher", bild: "speicher")
+                    }
+                }
+                Section {
+                    NavigationLink {
+                        Credits()
+                    } label: {
+                        FTLabel("Credits", bild: "credits")
+                    }
+                    DisclosureGroup("Rechtliches") {
+                        link("AGB", bild: "agb", ziel: "https://neodym.app/rechtliches#agb")
+                        link("Datenschutz", bild: "datenschutz", ziel: "https://neodym.app/rechtliches#datenschutz")
+                        link("Impressum", bild: "impressum", ziel: "https://neodym.app/rechtliches#impressum")
                     }
                 }
                 if auth.verifiziert == true {
                     Section {
                         if auth.email != nil {
-                            LabelButton(text: "Abmelden", symbol: "rectangle.portrait.and.arrow.right", action: {
+                            LabelButton(text: "Abmelden", symbol: "abmelden", action: {
                                 do {
                                     try await auth.abmelden()
+                                    schliessen()
                                 } catch {
                                     titel = "Abmeldevorgang fehlgeschlagen"
                                     nachricht = error.localizedDescription
@@ -117,27 +126,28 @@ struct Einstellungen: View {
                                 }
                             }, role: .destructive)
                         }
-                        LabelButton(text: "Abmelden und Konto löschen", symbol: "trash", action: {
+                        LabelButton(text: "Abmelden und Konto löschen", symbol: "loeschen", action: {
                             do {
                                 try await auth.abmelden(loeschen: true)
                             } catch {
                                 titel = "Abmeldevorgang fehlgeschlagen"
                                 nachricht = error.localizedDescription
                                 zeigeAlert = true
+                                schliessen()
                             }
                         }, role: .destructive)
                     }
                 }
                 Section {
-                    link(link: "https://appstore.com", text: "Feedback", systemImage: "star.bubble")
-                    link(link: "https://neodym.app", text: "Website", systemImage: "globe")
-                    link(link: "https://instagram.com/neodym_app", text: "Instagram", systemImage: nil)
+                    link("Feedback", bild: "feedback", ziel: "https://apps.apple.com/app/id6466750604?action=write-review")
+                    link("Website", bild: "website", ziel: "https://neodym.app")
+                    link("Instagram", bild: "insta", ziel: "https://instagram.com/neodym_app")
                 } footer: {
                     VStack(alignment: .leading) {
                         if store.hatBerechtigung != true {
                             Text("Benutzer ID: \(auth.id ?? "Fehler")")
                         }
-                        Text("Version: 1.1")
+                        Text("Version: 1.2")
                         Text("© 2024 Bromedia GbR")
                     }
                 }
@@ -159,22 +169,12 @@ struct Einstellungen: View {
     }
     
     @ViewBuilder
-    func link(link: String, text: String, systemImage: String? = nil) -> some View {
-        if let url = URL(string: link) {
+    func link(_ text: String, bild: String, ziel: String) -> some View {
+        if let url = URL(string: ziel) {
             Link(destination: url) {
                 HStack {
-                    Label {
-                        Text(text)
-                            .foregroundStyle(Color(UIColor.label))
-                    } icon: {
-                        if let s = systemImage {
-                            Image(systemName: s)
-                        } else {
-                            Image(.insta)
-                                .resizable()
-                                .aspectRatio(1, contentMode: .fit)
-                        }
-                    }
+                    FTLabel(text, bild: bild)
+                        .foregroundStyle(.prim)
                     Spacer()
                     Image(systemName: "arrow.up.right")
                 }

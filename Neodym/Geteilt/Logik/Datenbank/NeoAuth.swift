@@ -14,13 +14,19 @@ import Observation
 
 @Observable class NeoAuth {
 
+    // Status
     var verifiziert: Bool? = nil
     var angemeldet: Bool? = nil
     var verifizierteEmail: Bool? = nil
     
-    // Parameter
-    var email: String?
+    // Allgemein
     var id: String?
+    
+    // Lehrer
+    var email: String?
+    var lizenzen: [Lizenz] = []
+    
+    // Schüler
     var lizenzSchluessel: String?
     var lizenzEndDatum: Date?
     
@@ -31,10 +37,13 @@ import Observation
             return
         }
         angemeldet = true
-        verifizierteEmail = Auth.auth().currentUser?.isEmailVerified
+        verifizierteEmail = user.isEmailVerified
         do {
             if try await pruefeIdentitaet("lehrer") {
                 verifiziert = true
+                do {
+                    try await ladeLizenzen()
+                } catch {}
             } else {
                 verifiziert = try await pruefeIdentitaet("schueler")
             }
@@ -103,6 +112,7 @@ import Observation
             sleep(5)
             guard let benutzer = Auth.auth().currentUser else { return }
             let _ = try await Firestore.firestore().document("/lehrer/\(benutzer.uid)").getDocument(source: .server)
+            try await self.ladeLizenzen()
         }
     }
     
@@ -177,11 +187,16 @@ import Observation
         self.email              = nil
         self.lizenzSchluessel   = nil
         self.lizenzEndDatum     = nil
+        self.lizenzen           = []
         
         // Abmelden
-        self.verifiziert = false
-        self.angemeldet = false
-        self.verifizierteEmail = false
+        self.verifiziert        = false
+        self.angemeldet         = false
+        self.verifizierteEmail  = false
+    }
+    
+    func ladeLizenzen() async throws {
+        lizenzen = try await NeoFire.ladeLizenzen()
     }
     
     /// Passwort von dem Konto mit der übergebenen E-Mail zurücksetzen.

@@ -28,8 +28,9 @@ struct LabelButton: View {
                 Text(text)
             } icon: {
                 if !progress {
-                    Image(systemName: symbol)
-                        .foregroundStyle(role == .destructive ? .red : .accentColor)
+                    Image(symbol)
+                        .resizable()
+                        .scaledToFit()
                 } else {
                     ProgressView()
                         .tint(.pink)

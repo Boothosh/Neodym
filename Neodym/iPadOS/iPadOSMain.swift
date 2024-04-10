@@ -52,30 +52,28 @@ struct iPadOSMain: View {
     var sideBar: some View {
         VStack {
             List(selection: $ausgewaelterAppBereich){
-                Label("Elemente", systemImage: "square.grid.4x3.fill")
+                FTLabel("Elemente", bild: "pse", scale: 0.8)
                     .tag(iPadAppBereich.elemente)
                 DisclosureGroup(content: {
-                    Label("Stöchiometrie", systemImage: "x.squareroot")
+                    FTLabel("Stöchiometrie", bild: "stoechiometrie", scale: 0.8)
                         .tag(iPadAppBereich.wissen_stoechometrie)
-                    Label("Moleküle", systemImage: "circle.hexagonpath.fill")
-                        .tag(iPadAppBereich.wissen_molekuele)
                 }, label: {
-                    Label("Wissen", systemImage: "graduationcap")
+                    FTLabel("Wissen", bild: "wissen", scale: 0.8)
                 })
                 DisclosureGroup(content: {
-                    Label("Moleküle zeichnen", systemImage: "pencil.and.ruler")
+                    FTLabel("Moleküle zeichnen", bild: "canvas", scale: 0.8)
                         .tag(iPadAppBereich.werkzeug_zeichnen)
-                    Label("Molekülmasse ausrechnen", systemImage: "scalemass")
+                    FTLabel("Molekülmasse ausrechnen", bild: "wage", scale: 0.8)
                         .tag(iPadAppBereich.werkzeug_molmasse)
-                    Label("Ionengruppe bilden", systemImage: "circle.grid.3x3")
+                    FTLabel("Ionengruppe bilden", bild: "ionengitter", scale: 0.8)
                         .tag(iPadAppBereich.werkzeug_ionengruppe)
                 }, label: {
-                    Label("Werkzeuge", systemImage: "wrench.and.screwdriver")
+                    FTLabel("Werkzeuge", bild: "werkzeuge", scale: 0.8)
                 })
-                Label("Quiz", systemImage: "brain")
+                FTLabel("Quiz", bild: "quiz", scale: 0.8)
                     .tag(iPadAppBereich.quiz)
                 if auth.email != nil {
-                    Label("Lizenzen", systemImage: "key")
+                    FTLabel("Lizenzen", bild: "lizenzen", scale: 0.8)
                         .tag(iPadAppBereich.lizenzen)
                 }
             }
@@ -86,10 +84,12 @@ struct iPadOSMain: View {
                     HStack {
                         Text("Einstellungen")
                         Spacer()
-                        Image(systemName: "gearshape.2")
+                        Image("einstellungen")
+                            .resizable()
+                            .frame(width: 25, height: 25)
                     }.padding()
                         .background(.indigo)
-                        .cornerRadius(5)
+                        .cornerRadius(10)
                         .padding(5)
                 }.foregroundStyle(.white)
             }
@@ -175,7 +175,9 @@ struct iPadOSMain: View {
                 case .quiz:
                     QuizView()
                 case .lizenzen:
-                    LizenzenKaufen()
+                    LizenzenUebersicht()
+                        .environment(auth)
+                        .environment(store)
                 case nil:
                     Text("Wähle einen Bereich der App aus, den du nutzen möchtest!")
             }
@@ -214,7 +216,7 @@ struct iPadOSMain: View {
                             .fontWeight(.bold)
                             .shadow(radius: 5)
                             .frame(width: 60, height: 60)
-                            .background(Color(element.klassifikation))
+                            .background(Color(element.klassifikation).gradient)
                             .cornerRadius(5)
                             .overlay(alignment: .bottomTrailing){
                                 Text(element.kernladungszahl.description)
@@ -228,7 +230,7 @@ struct iPadOSMain: View {
                         VStack(alignment: .leading){
                             Text(element.name)
                                 .font(.title3)
-                                .foregroundStyle(Color(uiColor: UIColor.label))
+                                .foregroundStyle(.prim)
                             let text = (sortiertNach == "Atomradius") ? "Atomradius: \(element.radius != nil ? element.radius!.description + " pm" : "Unbekannt")" : (sortiertNach == "Entdeckungsjahr") ? "Entdeckungsjahr: \(element.entdeckt == -1 ? "Antik" : element.entdeckt.description)" : element.klassifikation
                             Text(text)
                                 .fontWeight(.bold)
@@ -245,6 +247,7 @@ struct iPadOSMain: View {
             }
             .onContinueUserActivity(CSSearchableItemActionType, perform: spotlight)
             .onContinueUserActivity(CSQueryContinuationActionType, perform: spotlightSuche)
+            
         } else {
             NavigationSplitView(columnVisibility: $columnVisibility){
                 sideBar

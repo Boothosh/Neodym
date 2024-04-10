@@ -48,6 +48,7 @@ struct PasswortZuruecksetzen: View {
                     Text("Passwort zurücksetzten")
                         .foregroundColor(.indigo)
                         .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .underline()
                     Spacer()
                 }
                 TextField("Deine E-Mail", text: $email)

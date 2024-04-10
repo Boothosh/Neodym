@@ -12,7 +12,7 @@ import QuickLook
 struct ElementDetail: View {
     
     let element: Element
-        
+    
     @State private var szene: SCNScene?
     @State private var artikelSektionen: [EArtikelSektion] = []
     @State private var textQuellen: [String]? = nil
@@ -32,7 +32,7 @@ struct ElementDetail: View {
                         .fontWeight(.bold)
                         .shadow(radius: 5)
                         .frame(width: 60, height: 60)
-                        .background(Color(element.klassifikation))
+                        .background(Color(element.klassifikation).gradient)
                         .cornerRadius(5)
                         .shadow(radius: 5)
                     VStack(alignment: .leading){
@@ -78,17 +78,25 @@ struct ElementDetail: View {
                         .fontWeight(.semibold)
                 }
             }
-            if geladeneInhalte["szene"] == element.name {
+            if let szene, geladeneInhalte["szene"] == element.name {
                 Section("3D-Modell"){
-                    if let szene {
-                        SceneView(scene: szene, options: [.autoenablesDefaultLighting,.allowsCameraControl])
-                            .frame(height: 150)
-                            .cornerRadius(10)
-                            .overlay(arButton, alignment: .topTrailing)
-                            .onTapGesture { print("") } // Ohne diesen Teil wird auf iOS der AR-Button nicht aktiviert
-                    } else {
-                        Text("Fehler: 3D Modell konnte nicht geladen werden.")
-                    }
+                    SceneView(scene: szene, options: [.autoenablesDefaultLighting,.allowsCameraControl])
+                        .frame(height: 150)
+                        .cornerRadius(10)
+                    Button {
+                        url = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("modelle/\(element.name).usdz")
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Atommodell 3D betrachten ") +
+                            Text("\(Image(systemName: "atom"))").fontWeight(.thin)
+                            Spacer()
+                        }
+                        .padding()
+                        .foregroundStyle(.white)
+                        .background(.blue.gradient)
+                        .cornerRadius(10)
+                    }.quickLookPreview($url)
                 }
             } else {
                 Color.gray
@@ -174,24 +182,6 @@ struct ElementDetail: View {
             }
         }
         .navigationTitle(element.name)
-    }
-    
-    var arButton: some View {
-        HStack {
-            Text("In AR betrachten")
-            Image(systemName: "dot.circle.viewfinder")
-        }
-        .foregroundColor(.white)
-        .font(.system(size: 14))
-        .padding(.horizontal, 5)
-        .padding(.vertical, 3)
-        .background(.blue)
-        .cornerRadius(10)
-        .padding(5)
-        .onTapGesture {
-            url = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("modelle/\(element.name).usdz")
-        }
-        .quickLookPreview($url)
     }
     
     func konstruiereWikipediaURL() -> URL? {

@@ -301,7 +301,7 @@ struct Molekuelzeichner: View {
                             .frame(width: 40, height: 40)
                             .foregroundColor(.white)
                             .background(Circle().fill(.cyan))
-                            .overlay(ausgewaeltesWerkzeug == .fingerOderZeiger ? Circle().stroke(lineWidth: 2).foregroundColor(Color(UIColor.systemBackground)).frame(width: 34, height: 34) : nil)
+                            .overlay(ausgewaeltesWerkzeug == .fingerOderZeiger ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
                     }
                     Button {
                         withAnimation {
@@ -313,7 +313,7 @@ struct Molekuelzeichner: View {
                             .frame(width: 40, height: 40)
                             .foregroundColor(.white)
                             .background(Circle().fill(.cyan))
-                            .overlay(ausgewaeltesWerkzeug == .bindung ? Circle().stroke(lineWidth: 2).foregroundColor(Color(UIColor.systemBackground)).frame(width: 34, height: 34) : nil)
+                            .overlay(ausgewaeltesWerkzeug == .bindung ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
                     }
                     Button {
                         withAnimation {
@@ -326,7 +326,7 @@ struct Molekuelzeichner: View {
                             .frame(width: 40, height: 40)
                             .foregroundColor(.white)
                             .background(Circle().fill(.blue))
-                            .overlay(ausgewaeltesWerkzeug == .lasso ? Circle().stroke(lineWidth: 2).foregroundColor(Color(UIColor.systemBackground)).frame(width: 34, height: 34) : nil)
+                            .overlay(ausgewaeltesWerkzeug == .lasso ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
                     }
                     Button {
                         withAnimation {
@@ -339,7 +339,7 @@ struct Molekuelzeichner: View {
                             .frame(width: 40, height: 40)
                             .foregroundColor(.white)
                             .background(Circle().fill(.orange))
-                            .overlay(ausgewaeltesWerkzeug == .zeichnen ? Circle().stroke(lineWidth: 2).foregroundColor(Color(UIColor.systemBackground)).frame(width: 34, height: 34) : nil)
+                            .overlay(ausgewaeltesWerkzeug == .zeichnen ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
                     }
                     if geo.size.width > 500 {
                         Divider()

@@ -27,7 +27,7 @@ struct ElementAuswahlGrid: View {
                             .shadow(radius: 5)
                             .padding(5)
                             .frame(width: 60, height: 65)
-                            .background(Color(element.klassifikation))
+                            .background(Color(element.klassifikation).gradient)
                             .foregroundColor(.white)
                             .cornerRadius(5)
                             .onTapGesture {

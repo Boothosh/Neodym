@@ -22,47 +22,61 @@ struct LehrerLogIn: View {
     @State private var errorNachricht: String? = nil
     @State private var zeigeError: Bool = false
     
+    @State private var registrierenAusgewaelt = true
+    
     @State private var zeigePasswortZuruecksetzen = false
     
     var body: some View {
         VStack(spacing: 10){
             HStack {
-                Text("Lehrer Zugang")
+                Text("Lehrer:innen Zugang")
                     .foregroundColor(.indigo)
                     .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .underline()
                 Spacer()
             }
-            HStack {
-                Text("Bitte tragen Sie im folgenden Textfeld Ihre schulische E-Mail-Adresse ein. So kann verifiziert werden, dass Sie eine Lehrkraft sind.")
-                    .multilineTextAlignment(.leading)
-                Spacer()
+            Picker(selection: $registrierenAusgewaelt) {
+                Text("Registrieren")
+                    .tag(true)
+                Text("Anmelden")
+                    .tag(false)
+            } label: {
+                
+            }.pickerStyle(.segmented)
+                .padding(.bottom)
+            if registrierenAusgewaelt {
+                VStack(alignment: .leading, spacing: 5){
+                    Text("\(Image(systemName: "info.circle")) Schritte zum Erstellen eines Lehrer:innen-Kontos:")
+                    HStack{Spacer()}
+                    Text("\(Image(systemName: auth.angemeldet == true ? "checkmark.circle" : "circle")) Erstellen Sie einen Account mit Ihrer dienstlichen E-Mail-Adresse.")
+                    Text("\(Image(systemName: auth.verifizierteEmail == true ? "checkmark.circle" : "circle")) Verifizieren Sie Ihre E-Mail-Adresse.")
+                    HStack{Spacer()}
+                    Text("Anschließend müssen wir Prüfen, ob Ihre E-Mail-Adresse einer Bildungseinrichtung zugeordnet werden kann. Ist dies der Fall, wird Ihr Konto freigeschaltet! Diese Prüfung kann 24 Stunden dauern.")
+                }
+                .padding()
+                .background(Color.blue.opacity(0.3))
+                .cornerRadius(15)
             }
             TextField("E-Mail", text: $email, prompt: Text("Ihre Schul-E-Mail-Adresse"))
                 .modifier(CustomTextFeld(error: $emailLeer))
                 .onChange(of: email) { _, _ in
                     emailLeer = false
-            }.padding(.vertical)
+            }
             SecureField("Passwort", text: $passwort, prompt: Text("Ihr Passwort"))
                 .modifier(CustomTextFeld(error: $passwortLeer))
                 .onChange(of: passwort) { _, _ in
                     emailLeer = false
                 }
                 .onSubmit {
-                    registieren()
+                    registrierenAusgewaelt ? registieren() : anmelden()
                 }
             Spacer()
-            HStack {
-                AnmeldeButton(laden: $ladeVorgangAnmelden, text: "Anmelden") {
-                    anmelden()
-                }.disabled(ladeVorgangRegistrieren)
-                Divider()
-                    .background(.pink)
-                AnmeldeButton(laden: $ladeVorgangRegistrieren, text: "Registrieren") {
-                    registieren()
-                }.disabled(ladeVorgangAnmelden)
-                .keyboardShortcut(.defaultAction)
-            }.frame(height: 60)
-            HStack {
+            AnmeldeButton(laden: registrierenAusgewaelt ? $ladeVorgangRegistrieren : $ladeVorgangAnmelden, text: registrierenAusgewaelt ? "Registrieren" : "Anmelden") {
+                registrierenAusgewaelt ? registieren() : anmelden()
+            }
+            .disabled(registrierenAusgewaelt ? ladeVorgangRegistrieren : ladeVorgangAnmelden)
+            .keyboardShortcut(.defaultAction)
+            if !registrierenAusgewaelt {
                 Button {
                     zeigePasswortZuruecksetzen = true
                 } label: {
@@ -72,7 +86,6 @@ struct LehrerLogIn: View {
                     PasswortZuruecksetzen(email: $email)
                         .environment(auth)
                 }
-                Spacer()
             }
         }.padding(.horizontal)
             .padding(.bottom)
@@ -94,6 +107,7 @@ struct LehrerLogIn: View {
                 PasswortZuruecksetzen(email: $email)
                     .environment(auth)
             }
+            .animation(.easeInOut, value: registrierenAusgewaelt)
     }
     
     func anmelden() {

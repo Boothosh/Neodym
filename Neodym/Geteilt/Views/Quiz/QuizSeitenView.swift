@@ -145,7 +145,7 @@ struct QuizSeitenView: View {
                                                 .multilineTextAlignment(.center)
                                                 .frame(width: 250, height: 100)
                                                 .padding(.horizontal, 25)
-                                                .background(ausgewaelteAntworten.contains(antwort.1) ? Color.green.opacity(0.5) : Color(uiColor: .systemBackground))
+                                                .background(ausgewaelteAntworten.contains(antwort.1) ? .green.opacity(0.5) : .bgr)
                                                 .cornerRadius(25)
                                                 .overlay(
                                                     RoundedRectangle(cornerRadius: 25.0)

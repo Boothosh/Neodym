@@ -28,7 +28,7 @@ struct ElementAuswahlListe: View {
                             .fontWeight(.bold)
                             .shadow(radius: 5)
                             .frame(width: 60, height: 60)
-                            .background(Color(element.klassifikation))
+                            .background(Color(element.klassifikation).gradient)
                             .cornerRadius(5)
                             .shadow(radius: 5)
                             .padding(.trailing)
