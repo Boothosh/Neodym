@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import GameKit
+#if os(iOS) || os(visionOS)
 import PencilKit
+#endif
 
 struct Molekuelzeichner: View {
     
-    // Elemente
     @Environment(Elemente.self) private var elemente
+    @Binding var columnVisibility: NavigationSplitViewVisibility
     
     // Sheets
     @State private var zeigeHinzufuegen = false
@@ -34,9 +37,7 @@ struct Molekuelzeichner: View {
     @State private var initialeDrehungen: [Int: Angle]? = nil
     @State private var initialePositionen: [Int: CGPoint]? = nil
     @State private var drehAnkerPunkt: CGPoint? = nil
-    
-    @State private var canvasView = PKCanvasView()
-    
+        
     // Kopieren und Einfügen
     @State private var zwischenSpeicherObjekte = [CanvasObjekt]()
     @State private var zwischenSpeicherBindungen = [CanvasBindung]()
@@ -47,197 +48,284 @@ struct Molekuelzeichner: View {
     @State private var aktuellerOrtDesElektrons: CGPoint? = nil
     @State private var elektronWurdeZuendeGezogen = false
     @State private var anderesElektron: (UUID, Int)? = nil
-            
+    
     // Konfigurationen
-    // Standartwerte sind, falls keys noch nicht vorhanden sind: Wasserstoff und Lewisschreibweise eingeblendet, zoom = 1.0
-    // Die Keys mussten teilweise negativiert werden, damit die Standartwerte passen
-    @State var wasserstoffEinblenden = !UserDefaults.standard.bool(forKey: "wasserstoffAusblenden")
-    @State var oxidationszahlenEinblenden = !UserDefaults.standard.bool(forKey: "oxidationszahlenAusblenden")
-    @State var zoom = UserDefaults.standard.double(forKey: "zoom")
-    @State var letzterZoom = 1.0
+    @AppStorage("reduzierteSchreibweise") private var reduzierteSchreibweise = true
+    @AppStorage("oxEinblenden")     private var oxzahlenEinblenden = true
+    @AppStorage("keileEinblenden")  private var keileEinblenden = false
+    @AppStorage("winkelEinblenden") private var winkelEinblenden = false
+    @AppStorage("zoom")             private var zoom = 1.0
+    @AppStorage("atomDarstellung")  private var atomDarstellung = "hintergrund"
+    @AppStorage("hintergrund")      private var hintergrund = "karo"
+    @State                          private var letzterZoom = 1.0
+    
+    // Tastatur
+    @FocusState private var focused: Bool
+    @State      private var shiftIstGedrueckt   = false
     
     @State private var aktuelleAktion: NutzerAktion? = nil
-
-    private let canvasGroesse: CGFloat = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? UIScreen.main.bounds.width * 3 : UIScreen.main.bounds.height * 3
+    
+    #if os(iOS) || os(visionOS)
+    // Zeichnen
+    var picker = PKToolPicker()
+    var zeichenflaeche = PKCanvasView()
+    #endif
+    
+    // Das Symbol des zuletzt hinzugefügten Atoms
+    @State private var letztesAtomSymbol = "C"
+    
+    private let canvasGroesse: CGFloat = 3_500
     
     var body: some View {
-        GeometryReader { geo in
-            ZStack (alignment: .topLeading) {
-                
-                // Canvas
-                ZStack(alignment: .center) {
-                    ZStack (alignment: .center) {
-                        
-                        // Hintergrund
-                        Color
-                            .gray
-                            .opacity(0.2)
-                                                
-                        // Kreuz im Hintergrund
-                        ZStack (alignment: .center){
-                            Line()
-                                .stroke(style: StrokeStyle(lineWidth: 1, dash: [10]))
-                                .fill(Color.pink)
-                                .frame(height: 1)
-                            Line()
-                                .stroke(style: StrokeStyle(lineWidth: 1, dash: [10]))
-                                .fill(Color.pink)
-                                .frame(height: 1)
-                                .rotationEffect(Angle(degrees: 90))
-                        }
-                        .frame(width: 70, height: 70)
-                        
-                        // Optional das gezeichnete
-                        if ausgewaeltesWerkzeug != .zeichnen {
-                            InaktiveZeichenFlaeche(canvasView: $canvasView)
-                                .frame(width: canvasGroesse, height: canvasGroesse)
-                        }
-                        
-                        // Bei Lasso der ausgewählte Bereich
-                        if ausgewaeltesWerkzeug == .lasso && ursprungDesLassos != nil && aktuellerOrtDerLassos != nil {
-                            let breite = ursprungDesLassos!.x - aktuellerOrtDerLassos!.x
-                            let hoehe = ursprungDesLassos!.y - aktuellerOrtDerLassos!.y
-                            Color
-                                .blue
-                                .opacity(0.3)
-                                .cornerRadius(5)
-                                .overlay(RoundedRectangle(cornerRadius: 5).stroke(lineWidth: 1))
-                                .frame(width: abs(breite), height: abs(hoehe))
-                                .offset(x: ursprungDesLassos!.x - breite / 2, y: ursprungDesLassos!.y - hoehe / 2)
-                        }
-                        
-                        // Bindungen der Canvas Objekte
-                        ForEach(canvasBindungen) { bindung in
-                            bindungAufCanvas(bindung)
-                        }
-                        
-                        // Gezogene Bindungen
-                        if aktuellerOrtDesElektrons != nil {
-                            temporaereBindungWegenGezogenemElektron()
-                        }
-                                                
-                        // Canvas Objekte
-                        ForEach(canvasObjekte) { objekt in
-                            if !(!wasserstoffEinblenden && objekt.element.symbol == "H"){
-                                elementAufCanvas(objekt)
-                                    .offset(x: objekt.ort.x, y: objekt.ort.y)
-                                    .gesture(
-                                        DragGesture()
-                                            .onChanged({ value in
-                                                if (aktuelleAktion == nil || aktuelleAktion == .verschiebtElemente){
-                                                    aktuelleAktion = .verschiebtElemente
-                                                    if !ausgewaelteObjekte.contains(objekt.id) {
-                                                        if ausgewaeltesWerkzeug == .lasso {
-                                                            ausgewaelteObjekte.append(objekt.id)
-                                                        } else {
-                                                            ausgewaelteObjekte = [objekt.id]
-                                                        }
-                                                    }
-                                                    for i in ausgewaelteObjekte {
-                                                        guard let objektIndex = canvasObjekte.firstIndex(where: { x in x.id == i}) else { continue }
-                                                        let neueXPos = canvasObjekte[objektIndex].ort.x + (value.translation.width - aktuelleVerschiebung.width)
-                                                        let neueYPos = canvasObjekte[objektIndex].ort.y + (value.translation.height - aktuelleVerschiebung.height)
-                                                        if abs(neueXPos) < canvasGroesse / 2 - 60 {
-                                                            canvasObjekte[objektIndex].ort.x = neueXPos
-                                                        }
-                                                        if abs(neueYPos) < canvasGroesse / 2 - 60 {
-                                                            canvasObjekte[objektIndex].ort.y = neueYPos
-                                                        }
-                                                    }
-                                                    aktuelleVerschiebung = value.translation
-                                                }
-                                            })
-                                            .onEnded({ _ in
-                                                aktuelleVerschiebung = .zero
-                                                if aktuelleAktion == .verschiebtElemente {
-                                                    aktuelleAktion = nil
-                                                }
-                                            })
-                                    )
-                            }
-                        }
-                        
+        HOrVStack(
+            Group {
+            Text("")
+                .frame(width: 0, height: 0)
+                .focusable()
+                .focused($focused)
+                .onKeyPress { press in
+                    // Funktioniert nur auf macOS
+                    if press.key == .delete {
+                        loescheElemente()
+                        return .handled
+                    } else {
+                        return .ignored
                     }
+                }
+                .onAppear {
+                    focused = true
+                }
+            Group {
+#if os(iOS)
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    iPhoneControlls
+                } else {
+                    iPadControlls
+                }
+#else
+                iPadControlls
+#endif
+            }
+            .navigationTitle("Molekül Canvas")
+            #if os(iOS) || os(visionOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.bgr, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            #endif
+            .toolbar {
+                Button {
+                    
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }.disabled(true)
+                Button {
+                    zeigeEinstellungen = true
+                } label: {
+                    Image(systemName: "slider.horizontal.3")
+                }.popover(isPresented: $zeigeEinstellungen) {
+                    einstellungen
+                }
+            }
+            .zIndex(1.0)
+            Divider()
+                .background(.indigo)
+            canvas
+                .clipped()
+                .ignoresSafeArea(.all)
+                .zIndex(0)
+        })
+        .onChange(of: focused) { oldValue, newValue in
+            print(newValue)
+        }
+    }
+    
+    var canvas: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .center) {
+                Color.bgr
+                if hintergrund != "" {
+                    Image(hintergrund)
+                        .renderingMode(.template)
+                        .resizable(resizingMode: .tile)
+                        .foregroundStyle(.gray.opacity(0.3))
+                        .frame(width: canvasGroesse, height: canvasGroesse)
+                }
+                // Kreuz im Hintergrund
+                ZStack (alignment: .center){
+                    Line()
+                        .stroke(style: StrokeStyle(lineWidth: 1, dash: [10]))
+                        .fill(Color.indigo)
+                        .frame(height: 1)
+                    Line()
+                        .stroke(style: StrokeStyle(lineWidth: 1, dash: [10]))
+                        .fill(Color.indigo)
+                        .frame(height: 1)
+                        .rotationEffect(Angle(degrees: 90))
+                }
+                .frame(width: 70, height: 70)
+                #if os(iOS) || os(visionOS)
+                ZeichenFlaeche(aktiv: ausgewaeltesWerkzeug == .zeichnen, zeichenflaeche: zeichenflaeche, picker: picker)
                     .frame(width: canvasGroesse, height: canvasGroesse)
-                    if ausgewaeltesWerkzeug == .zeichnen {
-                        ZeichenFlaeche(canvasView: $canvasView)
-                            .frame(width: canvasGroesse, height: canvasGroesse)
+                    .zIndex(ausgewaeltesWerkzeug == .zeichnen ? 0.6 : 0.4)
+                #endif
+                ZStack (alignment: .center) {
+                    // Bei Lasso der ausgewählte Bereich
+                    if ausgewaeltesWerkzeug == .lasso && ursprungDesLassos != nil && aktuellerOrtDerLassos != nil {
+                        let breite = ursprungDesLassos!.x - aktuellerOrtDerLassos!.x
+                        let hoehe = ursprungDesLassos!.y - aktuellerOrtDerLassos!.y
+                        Color
+                            .blue
+                            .opacity(0.3)
+                            .cornerRadius(5)
+                            .overlay(RoundedRectangle(cornerRadius: 5).stroke(.blue, lineWidth: 1))
+                            .frame(width: abs(breite), height: abs(hoehe))
+                            .offset(x: ursprungDesLassos!.x - breite / 2, y: ursprungDesLassos!.y - hoehe / 2)
+                    }
+                    
+                    // Bindungen der Canvas Objekte
+                    ForEach(canvasBindungen) { bindung in
+                        bindungAufCanvas(bindung)
+                    }
+                    
+                    // Gezogene Bindungen
+                    if aktuellerOrtDesElektrons != nil {
+                        temporaereBindungWegenGezogenemElektron()
+                    }
+                    
+                    // Canvas Objekte
+                    ForEach(canvasObjekte) { objekt in
+                        elementAufCanvas(objekt)
+                            .offset(x: objekt.ort.x, y: objekt.ort.y)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged({ value in
+                                        if (aktuelleAktion == nil || aktuelleAktion == .verschiebtElemente){
+                                            aktuelleAktion = .verschiebtElemente
+                                            if !ausgewaelteObjekte.contains(objekt.id) {
+                                                if ausgewaeltesWerkzeug == .lasso {
+                                                    ausgewaelteObjekte.append(objekt.id)
+                                                } else {
+                                                    ausgewaelteObjekte = [objekt.id]
+                                                }
+                                            }
+                                            for i in ausgewaelteObjekte {
+                                                guard let objektIndex = canvasObjekte.firstIndex(where: { x in x.id == i}) else { continue }
+                                                let neueXPos = canvasObjekte[objektIndex].ort.x + (value.translation.width - aktuelleVerschiebung.width)
+                                                let neueYPos = canvasObjekte[objektIndex].ort.y + (value.translation.height - aktuelleVerschiebung.height)
+                                                if abs(neueXPos) < canvasGroesse / 2 - 60 {
+                                                    canvasObjekte[objektIndex].ort.x = neueXPos
+                                                }
+                                                if abs(neueYPos) < canvasGroesse / 2 - 60 {
+                                                    canvasObjekte[objektIndex].ort.y = neueYPos
+                                                }
+                                            }
+                                            aktuelleVerschiebung = value.translation
+                                        }
+                                    })
+                                    .onEnded({ _ in
+                                        aktuelleVerschiebung = .zero
+                                        if aktuelleAktion == .verschiebtElemente {
+                                            aktuelleAktion = nil
+                                        }
+                                    })
+                            )
                     }
                     
                 }
-                .position(x: geo.size.width / 2, y: (geo.size.height - 50) / 2)
-                // Verschiebung des Canvas
-                .offset(ortDesCanvas)
-                .frame(height: abs(geo.size.height - 50)) // abs()-Funktion, da sonst der Compiler rumheult
-                .scaleEffect(zoom)
-                .gesture(
-                    ausgewaeltesWerkzeug == .zeichnen ? nil :
-                        DragGesture()
-                            .onChanged({ value in
-                                if (aktuelleAktion == nil || aktuelleAktion == .verschiebtCanvasOderLasso){
-                                    aktuelleAktion = .verschiebtCanvasOderLasso
-                                    // Falls das Lasso ausgewählt ist, soll ein Auswahlbereich entstehen
-                                    if ausgewaeltesWerkzeug == .lasso {
-                                        // Die tatsächliche Position auf dem Canvas
-                                        let x = (value.location.x - geo.size.width / 2) / zoom - ortDesCanvas.width
-                                        let y = (value.location.y - (geo.size.height - 50) / 2) / zoom - ortDesCanvas.height
-                                        
-                                        aktuellerOrtDerLassos = CGPointMake(x, y)
-                                        
-                                        // Falls der Ursprung noch nicht definiert ist, soll er definiert werden als die aktuelle Position
-                                        if ursprungDesLassos == nil {
-                                            ursprungDesLassos = CGPointMake(x, y)
-                                        }
-                                    } else {
-                                        // Sonst soll der Canvas verschoben werden
-                                        let x = ortDesCanvas.width + (value.translation.width - aktuelleVerschiebung.width) / zoom
-                                        let y = ortDesCanvas.height + (value.translation.height - aktuelleVerschiebung.height) / zoom
-                                        if abs(x) + geo.size.width / 2 < canvasGroesse / 2 {
-                                            ortDesCanvas.width = x
-                                        }
-                                        if abs(y) + (geo.size.height - 50) / 2 < canvasGroesse / 2 {
-                                            ortDesCanvas.height = y
-                                        }
-                                        aktuelleVerschiebung = value.translation
-                                    }
+                    .frame(width: canvasGroesse, height: canvasGroesse)
+                    .zIndex(0.5)
+            }
+            .position(x: geo.size.width / 2, y: geo.size.height / 2)
+            .offset(ortDesCanvas)
+            .scaleEffect(zoom)
+            .frame(width: geo.size.width, height: geo.size.height)
+            .gesture(
+                ausgewaeltesWerkzeug == .zeichnen ? nil :
+                    DragGesture()
+                    .onChanged({ value in
+                        if (aktuelleAktion == nil || aktuelleAktion == .verschiebtCanvasOderLasso){
+                            aktuelleAktion = .verschiebtCanvasOderLasso
+                            // Falls das Lasso ausgewählt ist, soll ein Auswahlbereich entstehen
+                            if ausgewaeltesWerkzeug == .lasso {
+                                // Die tatsächliche Position auf dem Canvas
+                                let x = (value.location.x - geo.size.width / 2) / zoom - ortDesCanvas.width
+                                let y = (value.location.y - geo.size.height / 2) / zoom - ortDesCanvas.height
+                                
+                                aktuellerOrtDerLassos = CGPointMake(x, y)
+                                
+                                // Falls der Ursprung noch nicht definiert ist, soll er definiert werden als die aktuelle Position
+                                if ursprungDesLassos == nil {
+                                    ursprungDesLassos = CGPointMake(x, y)
                                 }
-                            })
-                            .onEnded({ _ in
-                                if ausgewaeltesWerkzeug == .lasso {
-                                    markiereAlleImAusgewaeltenBereich()
-                                    ursprungDesLassos = nil
-                                    aktuellerOrtDerLassos = nil
+                            } else {
+                                // Sonst soll der Canvas verschoben werden
+                                let x = ortDesCanvas.width + (value.translation.width - aktuelleVerschiebung.width) / zoom
+                                let y = ortDesCanvas.height + (value.translation.height - aktuelleVerschiebung.height) / zoom
+                                if abs(x) + geo.size.width / (2*zoom) < canvasGroesse / 2 {
+                                    ortDesCanvas.width = x
                                 }
-                                if aktuelleAktion == .verschiebtCanvasOderLasso {
-                                    aktuelleAktion = nil
+                                if abs(y) + geo.size.height / (2*zoom) < canvasGroesse / 2 {
+                                    ortDesCanvas.height = y
                                 }
-                                aktuelleVerschiebung = .zero
-                            })
-                )
-                .gesture(MagnificationGesture(minimumScaleDelta: 0.05)
-                    .onChanged { neuerZoom in
-                        if (aktuelleAktion == nil || aktuelleAktion == .vergroessern) {
-                            aktuelleAktion = .vergroessern
-                            let delta = neuerZoom / letzterZoom
-                            let neuerZoomAusgerechnet = min(max(zoom * delta, 0.5), 2.0)
-                            zoom = neuerZoomAusgerechnet
-                            letzterZoom = neuerZoom
-                        }
-                    }
-                    .onEnded({ _ in
-                        if aktuelleAktion == .vergroessern {
-                            letzterZoom = 1.0
-                            aktuelleAktion = nil
-                            UserDefaults.standard.setValue(zoom, forKey: "zoom")
+                                aktuelleVerschiebung = value.translation
+                            }
                         }
                     })
-                        .simultaneously(with: RotationGesture()
-                            .onChanged({ gesture in
-                                if (aktuelleAktion == nil || aktuelleAktion == .drehen) && ausgewaelteObjekte.count != 0 {
-                                    aktuelleAktion = .drehen
-                                    dreheAuswahl(um: gesture)
+                    .onEnded({ _ in
+                        if ausgewaeltesWerkzeug == .lasso {
+                            markiereAlleImAusgewaeltenBereich()
+                            ursprungDesLassos = nil
+                            aktuellerOrtDerLassos = nil
+                        }
+                        if aktuelleAktion == .verschiebtCanvasOderLasso {
+                            aktuelleAktion = nil
+                        }
+                        aktuelleVerschiebung = .zero
+                    })
+            )
+            .gesture(MagnificationGesture(minimumScaleDelta: 0.05)
+                .onChanged { neuerZoom in
+                    if (aktuelleAktion == nil || aktuelleAktion == .vergroessern) {
+                        aktuelleAktion = .vergroessern
+                        let delta = neuerZoom / letzterZoom
+                        let neuerZoomAusgerechnet = min(max(zoom * delta, 0.5), 2.0)
+                        zoom = neuerZoomAusgerechnet
+                        letzterZoom = neuerZoom
+                        if delta < 1 {
+                            // Rausgezoomt
+                            // Prüfen, ob der Canvas verschoben werden muss, um  in seinen Grenzen zu bleiben
+                            let xDelta = canvasGroesse / 2 - (abs(ortDesCanvas.width) + geo.size.width / (2*zoom))
+                            if xDelta < 0 {
+                                if ortDesCanvas.width < 0 {
+                                    ortDesCanvas.width -= xDelta
+                                } else {
+                                    ortDesCanvas.width += xDelta
                                 }
-                            })
+                            }
+                            let yDelta = canvasGroesse / 2 - (abs(ortDesCanvas.height) + geo.size.height / (2*zoom))
+                            if yDelta < 0 {
+                                if ortDesCanvas.height < 0 {
+                                    ortDesCanvas.height -= yDelta
+                                } else {
+                                    ortDesCanvas.height += yDelta
+                                }
+                            }
+                        }
+                    }
+                }
+                .onEnded({ _ in
+                    if aktuelleAktion == .vergroessern {
+                        letzterZoom = 1.0
+                        aktuelleAktion = nil
+                    }
+                })
+                    .simultaneously(with: RotationGesture()
+                        .onChanged({ gesture in
+                            if (aktuelleAktion == nil || aktuelleAktion == .drehen) && ausgewaelteObjekte.count != 0 {
+                                aktuelleAktion = .drehen
+                                dreheAuswahl(um: gesture)
+                            }
+                        })
                             .onEnded({ _ in
                                 initialeDrehungen = nil
                                 initialePositionen = nil
@@ -246,173 +334,344 @@ struct Molekuelzeichner: View {
                                     aktuelleAktion = nil
                                 }
                             })))
-                .onTapGesture {
-                    ausgewaelteObjekte = []
-                    ausgehendesElektron = nil
+            .onTapGesture {
+                ausgewaelteObjekte = []
+                ausgehendesElektron = nil
+            }.clipped()
+        }
+    }
+    
+    var einstellungen: some View {
+        NavigationStack {
+            Form {
+                Section("Einblenden"){
+                    Toggle("Oxidationszahlen einblenden", isOn: $oxzahlenEinblenden)
+                    Toggle("Keile einblenden", isOn: $keileEinblenden)
+                    Toggle("Bindungswinkel einblenden", isOn: $winkelEinblenden)
                 }
-                .cornerRadius(10)
-                .padding(.top, 50)
-                // Buttons für zusätzliche Funktionen
-                HStack (spacing: 10){
+                Section("Darstellung") {
+                    Toggle("Reduzierte Schreibweise", isOn: $reduzierteSchreibweise)
+                    if !reduzierteSchreibweise {
+                        Picker("Atom-Darstellung", selection: $atomDarstellung) {
+                            Text("Kreis mit Hintergrund")
+                                .tag("hintergrund")
+                            Text("Kreis mit Umrandung")
+                                .tag("umrandung")
+                            Text("Nur Symbol")
+                                .tag("symbol")
+                        }
+                    }
+                    VStack(alignment: .leading, spacing: 20){
+                        Text("Hintergrundmuster")
+                        HStack(spacing: 20){
+                            hintergrundMusterButton("karo")
+                            hintergrundMusterButton("liniert")
+                        }
+                        HStack(spacing: 20){
+                            hintergrundMusterButton("punkt_gross")
+                            hintergrundMusterButton("punkt_klein")
+                        }
+                        HStack {
+                            Text("Kein Hintergrund")
+                        }
+                        .frame(width: 320, height: 30)
+                            .cornerRadius(10)
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(hintergrund == "" ? .green : .prim, lineWidth: 1))
+                            .onTapGesture {
+                                hintergrund = ""
+                            }
+                    }
+                }
+                Section("Zoom") {
+                    Slider(value: $zoom, in: 0.5...2.0)
+                    Text("Aktuell: \(zoom * 100, specifier: "%.0f")%")
+                        .font(.caption2)
+                }
+            }
+            .formStyle(.grouped)
+            #if os(iOS) || os(visionOS)
+            .navigationTitle(UIDevice.current.userInterfaceIdiom == .phone ? "Darstellung" : "")
+            #endif
+        }
+        .frame(minWidth: 400, minHeight: 700)
+    }
+    
+    @MainActor
+    var iPadControlls: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 15){
+                Spacer()
+                    .frame(height: 0)
+                VStack(alignment: .leading, spacing: 8){
+                    Text("Hinzufügen")
+                    Divider()
+                    HStack {
+                        Button {
+                            if !zeigeEinstellungen {
+                                zeigeHinzufuegen = true
+                            }
+                        } label: {
+                            labelButton("Atom hinzufügen", "plus.circle", commands: ["command.square.fill", "n.square.fill"], .indigo)
+                        }.keyboardShortcut("n", modifiers: .command)
+                            .sheet(isPresented: $zeigeHinzufuegen) {
+                                ElementAuswahlListe(hinzufuegen: { element in
+                                    withAnimation {
+                                        let objekt = CanvasObjekt(element)
+                                        canvasObjekte.append(objekt)
+                                        ausgewaelteObjekte = [objekt.id]
+                                        ausgehendesElektron = nil
+                                        letztesAtomSymbol = element.symbol
+                                    }
+                                }).environment(elemente)
+                            }
+                            .buttonStyle(.plain)
+                        Button {
+                            withAnimation {
+                                guard let element = elemente.alleElemente.first(where: { $0.symbol == letztesAtomSymbol }) else { return }
+                                let objekt = CanvasObjekt(element)
+                                canvasObjekte.append(objekt)
+                                ausgewaelteObjekte = [objekt.id]
+                                ausgehendesElektron = nil
+                            }
+                        } label: {
+                            Text(letztesAtomSymbol)
+                                .foregroundStyle(.white)
+                                .frame(width: 45, height: 45)
+                                .background(.indigo.gradient)
+                                .cornerRadius(22.5)
+                        }.buttonStyle(.plain)
+                    }
+                    Button {} label: {
+                        VStack(alignment: .leading, spacing: 0){
+                            labelButton("Molekül hinzufügen", "plus.circle", commands: ["command.square.fill", "shift.fill", "n.square.fill"], .gray)
+                            Text("Bald verfügbar :)")
+                                .font(.caption)
+                                .padding(4)
+                        }
+                        .background(.gray.opacity(0.4))
+                        .cornerRadius(10)
+                        .foregroundStyle(.white)
+                    }
+                    .disabled(true)
+                    .buttonStyle(.plain)
+                    .keyboardShortcut("n", modifiers: [.command, .shift])
+                }
+                VStack(alignment: .leading, spacing: 8){
+                    VStack(alignment: .leading, spacing: 4){
+                        Text("Werkzeuge")
+                        Divider()
+                    }.padding(.top)
+                    toolButton("hand.point.up.left", .blue, .fingerOderZeiger, "Verschieben")
+                    toolButton("app.connected.to.app.below.fill", .cyan, .bindung, "Bindung aufbauen")
+                    toolButton("lasso", .green, .lasso, "Lasso")
+                    #if os(iOS) || os(visionOS)
+                    toolButton("pencil.and.outline", .orange, .zeichnen, "Zeichnen")
+                    #endif
+                }
+                VStack(alignment: .leading, spacing: 8){
+                    Text("Aktionen")
+                    Divider()
+                    Button {
+                        loescheElemente()
+                    } label: {
+                        labelButton("Auswahl löschen", "trash", commands: ["command.square.fill", "delete.left.fill"], ausgewaelteObjekte.isEmpty ? .gray : .red)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(ausgewaelteObjekte.isEmpty)
+                    .keyboardShortcut(.delete)
+                    Button {
+                        kopieren()
+                    } label: {
+                        labelButton("Auswahl kopieren", "doc.on.doc", commands: ["command.square.fill", "c.square.fill"], ausgewaelteObjekte.isEmpty ? .gray : .indigo)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(ausgewaelteObjekte.isEmpty)
+                    .keyboardShortcut("c", modifiers: .command)
+                    Button {
+                        einfuegen()
+                    } label: {
+                        labelButton("Kopiertes einfügen", "doc.on.clipboard", commands: ["command.square.fill", "v.square.fill"], zwischenSpeicherObjekte.isEmpty ? .gray : .indigo)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(zwischenSpeicherObjekte.isEmpty)
+                    .keyboardShortcut("v", modifiers: .command)
+                }
+            }
+            .padding(.horizontal)
+        }
+        .frame(width: 350)
+    }
+    
+    #if os(iOS)
+    var iPhoneControlls: some View {
+        ScrollView([.horizontal]){
+            VStack {
+                Spacer()
+                HStack(alignment: .center, spacing: 10){
                     Button {
                         if !zeigeEinstellungen {
                             zeigeHinzufuegen = true
                         }
                     } label: {
-                        ZStack{
-                            Circle()
-                                .fill(.white)
-                            Image(systemName: "plus.circle.fill")
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(.green)
-                        }
+                        Circle()
+                            .fill(.green)
+                            .frame(width: 40, height: 40)
+                            .overlay {
+                                Image(systemName: "plus")
+                                    .foregroundStyle(.white)
+                                    .font(.title3)
+                            }
                     }.sheet(isPresented: $zeigeHinzufuegen) {
                         ElementAuswahlListe(hinzufuegen: { element in
                             withAnimation {
-                                canvasObjekte.append(CanvasObjekt(element))
-                                ausgewaelteObjekte = []
+                                let objekt = CanvasObjekt(element)
+                                canvasObjekte.append(objekt)
+                                ausgewaelteObjekte = [objekt.id]
                                 ausgehendesElektron = nil
+                                letztesAtomSymbol = element.symbol
                             }
                         }).environment(elemente)
                     }
+                    Divider()
+                        .background(.prim)
+                    toolButton("hand.point.up.left", .blue, .fingerOderZeiger)
+                    toolButton("app.connected.to.app.below.fill", .cyan, .bindung)
+                    toolButton("lasso", .green, .lasso)
+                    toolButton("pencil.and.outline", .orange, .zeichnen)
+                    Divider()
+                        .background(.prim)
                     Button {
                         loescheElemente()
                     } label: {
-                        ZStack{
-                            Circle()
-                                .fill(.white)
-                            Image(systemName: "trash.circle.fill")
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(ausgewaelteObjekte.first == nil ? .gray : .red)
-                        }
-                    }.disabled(ausgewaelteObjekte.first == nil)
-                        .keyboardShortcut(.delete)
-                    Divider()
-                    Button {
-                        withAnimation {
-                            ausgewaeltesWerkzeug = .fingerOderZeiger
-                            ausgewaelteObjekte = []
-                            ausgehendesElektron = nil
-                        }
-                    } label: {
-                        Image(systemName: "hand.point.up.left")
+                        Circle()
+                            .fill(ausgewaelteObjekte.isEmpty ? .gray : .red)
                             .frame(width: 40, height: 40)
-                            .foregroundColor(.white)
-                            .background(Circle().fill(.cyan))
-                            .overlay(ausgewaeltesWerkzeug == .fingerOderZeiger ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
-                    }
+                            .overlay {
+                                Image(systemName: "trash")
+                                    .foregroundStyle(.white)
+                                    .font(.title3)
+                            }
+                    }.disabled(ausgewaelteObjekte.isEmpty)
                     Button {
-                        withAnimation {
-                            ausgewaeltesWerkzeug = .bindung
-                            ausgewaelteObjekte = []
-                        }
+                        kopieren()
                     } label: {
-                        Image(systemName: "app.connected.to.app.below.fill")
+                        Circle()
+                            .fill(ausgewaelteObjekte.isEmpty ? .gray : .blue)
                             .frame(width: 40, height: 40)
-                            .foregroundColor(.white)
-                            .background(Circle().fill(.cyan))
-                            .overlay(ausgewaeltesWerkzeug == .bindung ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
-                    }
+                            .overlay {
+                                Image(systemName: "doc.on.doc")
+                                    .foregroundStyle(.white)
+                                    .font(.title3)
+                            }
+                    }.disabled(ausgewaelteObjekte.isEmpty)
                     Button {
-                        withAnimation {
-                            ausgewaeltesWerkzeug = .lasso
-                            ausgewaelteObjekte = []
-                            ausgehendesElektron = nil
-                        }
+                        einfuegen()
                     } label: {
-                        Image(systemName: "lasso")
+                        Circle()
+                            .fill(zwischenSpeicherObjekte.isEmpty ? .gray : .blue)
                             .frame(width: 40, height: 40)
-                            .foregroundColor(.white)
-                            .background(Circle().fill(.blue))
-                            .overlay(ausgewaeltesWerkzeug == .lasso ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
-                    }
-                    Button {
-                        withAnimation {
-                            ausgewaeltesWerkzeug = .zeichnen
-                            ausgewaelteObjekte = []
-                            ausgehendesElektron = nil
-                        }
-                    } label: {
-                        Image(systemName: "pencil.line")
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.white)
-                            .background(Circle().fill(.orange))
-                            .overlay(ausgewaeltesWerkzeug == .zeichnen ? Circle().stroke(lineWidth: 2).foregroundStyle(.bgr).frame(width: 34, height: 34) : nil)
-                    }
-                    if geo.size.width > 500 {
-                        Divider()
-                        Button {
-                            kopieren()
-                        } label: {
-                            Image(systemName: "doc.on.doc")
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(.white)
-                                .background(Circle().fill(ausgewaelteObjekte.isEmpty ? .gray : .pink))
-                        }.disabled(ausgewaelteObjekte.isEmpty)
-                            .keyboardShortcut("c", modifiers: .command)
-                        Button {
-                            einfuegen()
-                        } label: {
-                            Image(systemName: "doc.on.clipboard")
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(.white)
-                                .background(Circle().fill(zwischenSpeicherObjekte.isEmpty ? .gray : .pink))
-                        }.disabled(zwischenSpeicherObjekte.isEmpty)
-                            .keyboardShortcut("v", modifiers: .command)
-                    }
+                            .overlay {
+                                Image(systemName: "doc.on.clipboard")
+                                    .foregroundStyle(.white)
+                                    .font(.title3)
+                            }
+                    }.disabled(zwischenSpeicherObjekte.isEmpty)
                 }
                 .frame(height: 40)
+                .padding(.horizontal, 9)
+                Spacer()
             }
         }
-        .padding(.bottom, 10)
-        .padding(.horizontal, 20)
-        .navigationTitle("Molekülzeichner")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing){
-                Button {
-                    zeigeEinstellungen = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                }.popover(isPresented: $zeigeEinstellungen) {
-                    NavigationStack {
-                        Form {
-                            Section("Ausblenden"){
-                                Toggle("Wasserstoffatome einblenden", isOn: $wasserstoffEinblenden)
-                                    .onChange(of: wasserstoffEinblenden) { _, neuerWert in
-                                        UserDefaults.standard.set(!neuerWert, forKey: "wasserstoffAusblenden")
-                                    }
-                                Toggle("Oxidationszahlen einblenden", isOn: $oxidationszahlenEinblenden)
-                                    .onChange(of: oxidationszahlenEinblenden) { _, neuerWert in
-                                        UserDefaults.standard.set(!neuerWert, forKey: "oxidationszahlenAusblenden")
-                                    }
-                            }
-                            Section("Anzeige") {
-                                VStack (alignment: .leading, spacing: 0){
-                                    Slider(value: $zoom, in: 0.5...2.0)
-                                    Text("Aktuell: \(zoom * 100, specifier: "%.0f")%")
-                                        .font(.caption2)
-                                }.onChange(of: zoom) {
-                                    UserDefaults.standard.setValue(zoom, forKey: "zoom")
-                                }
-                            }
-                            //Text("Bindungswinkel einblenden")
-                        }.navigationTitle(UIDevice.current.userInterfaceIdiom == .phone ? "Darstellung" : "")
-                    }.frame(minWidth: 350, minHeight: 275)
+        .frame(height: 60)
+        .background(.bgr)
+    }
+    #endif
+    
+    func HOrVStack(_ content: some View) -> some View {
+#if os(iOS)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return AnyView(VStack(spacing: 0){content})
+        } else {
+            return AnyView(HStack(spacing: 0){content})
+        }
+#else
+        return HStack(spacing: 0){content}
+#endif
+    }
+    
+    private func labelButton(_ titel: String, _ sysImage: String, commands: [String], _ bg: Color) -> some View {
+        HStack {
+            Image(systemName: sysImage)
+            Text(titel)
+            Spacer()
+            if GCKeyboard.coalesced != nil {
+                HStack(spacing: 0){
+                    ForEach(commands, id: \.self) { c in Image(systemName: c) }
+                }
+                .onAppear {
+                    print(GCKeyboard.coalesced!.description)
                 }
             }
-        }
-        .onAppear {
-            if zoom == 0.0 {
-                zoom = 1.0
-                UserDefaults.standard.setValue(1.0, forKey: "zoom")
+        }.padding()
+            .background(bg.gradient)
+            .foregroundStyle(.white)
+            .cornerRadius(10)
+    }
+    
+    private func toolButton(_ sysImage: String, _ accent: Color, _ state: Werkzeug, _ titel: String? = nil) -> some View {
+        Button {
+            if ausgewaeltesWerkzeug != state {
+                withAnimation {
+                    ausgewaeltesWerkzeug = state
+                }
             }
-        }
-        .onDisappear {
-            // Reste löschen
-            canvasView.drawing = PKDrawing()
-        }
+        } label: {
+            if let titel {
+                HStack {
+                    if ausgewaeltesWerkzeug == state {
+                        accent.frame(width: 7)
+                    }
+                    HStack {
+                        Image(systemName: sysImage)
+                        Text(titel)
+                    }.padding(10)
+                    Spacer()
+                }
+                .foregroundStyle(ausgewaeltesWerkzeug == state ? accent : .prim)
+                .cornerRadius(7.5)
+                .frame(height: 41)
+                .background(Color.clear.contentShape(Rectangle()))
+            } else {
+                Circle()
+                    .fill(accent)
+                    .frame(width: 40, height: 40)
+                    .overlay {
+                        Image(systemName: sysImage)
+                            .foregroundStyle(.white)
+                            .font(.title3)
+                    }
+                    .overlay {
+                        if ausgewaeltesWerkzeug == state {
+                            Circle()
+                                .stroke(.white, lineWidth: 2)
+                                .frame(width: 36, height: 36)
+                        }
+                    }
+            }
+        }.buttonStyle(.plain)
+    }
+    
+    private func hintergrundMusterButton(_ muster: String) -> some View {
+        Image(muster)
+            .renderingMode(.template)
+            .resizable(resizingMode: .tile)
+            .foregroundStyle(.gray.opacity(0.3))
+            .frame(width: 150, height: 75)
+            .cornerRadius(10)
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(hintergrund == muster ? .green : .prim, lineWidth: 1))
+            .onTapGesture {
+                hintergrund = muster
+            }
     }
     
     private func kopieren(){
@@ -431,6 +690,7 @@ struct Molekuelzeichner: View {
     }
     
     private func einfuegen(){
+        //TODO: Fehler beheben, dass Elektronen despawnen wenn sie davor in einer Bindung waren
         var neueIDs = [UUID: UUID]()
         wieOftEingefuegtOhneNeuZuKopieren += 1
         for i in zwischenSpeicherObjekte {
@@ -457,11 +717,11 @@ struct Molekuelzeichner: View {
         guard let startPunkt, let aktuellerOrtDesElektrons else { return AnyView?.none }
         
         let vektor = Vektor(vom: startPunkt, zum: aktuellerOrtDesElektrons)
-                     
+        
         let vektorLaenge = sqrt(pow(vektor.x, 2) + pow(vektor.y, 2))
-         
+        
         let winkel = vektor.winkel()
-         
+        
         return AnyView(
             ZStack {
                 Color
@@ -476,29 +736,26 @@ struct Molekuelzeichner: View {
                             .rotationEffect(-winkel)
                             .popover(isPresented: $elektronWurdeZuendeGezogen) {
                                 ElementAuswahlGrid(hinzufuegen: { element in
-                                    withAnimation {
-                                        var neuesObjekt = CanvasObjekt(element)
-                                        neuesObjekt.ort = aktuellerOrtDesElektrons
-                                        canvasObjekte.append(neuesObjekt)
-                                        
-                                        var freiesElektron = 0
-                                        for i in 1...min(neuesObjekt.element.valenzElektronen, 4) {
-                                            if !neuesObjekt.valenzelektronen.contains(i+4) {
-                                                freiesElektron = i
-                                                break
-                                            }
+                                    var neuesObjekt = CanvasObjekt(element)
+                                    neuesObjekt.ort = aktuellerOrtDesElektrons
+                                    canvasObjekte.append(neuesObjekt)
+                                    
+                                    var freiesElektron = 0
+                                    for i in 1...min(neuesObjekt.element.valenzElektronen, 4) {
+                                        if !neuesObjekt.valenzelektronen.contains(i+4) {
+                                            freiesElektron = i
+                                            break
                                         }
-                                        
-                                        if freiesElektron != 0 {
-                                            baueBindungAuf(neuesObjekt, vonElektron: freiesElektron)
-                                        }
-                                        
-                                        ausgewaelteObjekte = []
-                                        ausgehendesElektron = nil
                                     }
+                                    
+                                    if freiesElektron != 0 {
+                                        baueBindungAuf(neuesObjekt, vonElektron: freiesElektron)
+                                    }
+                                    
+                                    ausgewaelteObjekte = []
+                                    ausgehendesElektron = nil
                                 })
                                 .environment(elemente)
-                                .frame(minWidth: 450, minHeight: 350)
                                 .onDisappear() {
                                     withAnimation{
                                         self.startPunkt = nil
@@ -513,7 +770,7 @@ struct Molekuelzeichner: View {
                     .rotationEffect(winkel, anchor: .top)
                     .offset(x: startPunkt.x, y: startPunkt.y + vektorLaenge / 2)
             }
-         )
+        )
     }
     
     private func bindungAufCanvas(_ bindung: CanvasBindung) -> (some View)? {
@@ -524,26 +781,35 @@ struct Molekuelzeichner: View {
             let zweitesObjekt = canvasObjekte[zweiterIndex]
             
             let vektor = Vektor(vom: erstesObjekt.ort, zum: zweitesObjekt.ort)
-                        
+            
             let vektorLaenge = sqrt(pow(vektor.x, 2) + pow(vektor.y, 2))
             let vektorLaengeMitAbstaenden = vektorLaenge - 50
             
             let winkel = vektor.winkel()
             
             return AnyView(
-                HStack (spacing: 2){
-                    ForEach(0 ..< bindung.wertigkeit, id: \.self) { _ in
-                        VStack(spacing: 0){
-                            Color
-                                .primary
-                                .frame(width: 6 - CGFloat(bindung.wertigkeit), height: vektorLaengeMitAbstaenden > 0 ? vektorLaengeMitAbstaenden : 0)
-                                .cornerRadius(5)
-                            
+                ZStack {
+                    if keileEinblenden && abs((erstesObjekt.element.elektroNegativität ?? 0) - (zweitesObjekt.element.elektroNegativität ?? 0)) >= 0.4 {
+                        Dreieck()
+                            .fill(.blue)
+                            .cornerRadius(5)
+                            .frame(width: 24, height: vektorLaengeMitAbstaenden > 0 ? vektorLaengeMitAbstaenden : 0)
+                            .rotationEffect((erstesObjekt.element.elektroNegativität ?? 0) > (zweitesObjekt.element.elektroNegativität ?? 0) ? Angle(degrees: 180) : .zero)
+                    }
+                    HStack (spacing: 2){
+                        ForEach(0 ..< bindung.wertigkeit, id: \.self) { _ in
+                            VStack(spacing: 0){
+                                Color
+                                    .primary
+                                    .frame(width: 6 - CGFloat(bindung.wertigkeit), height: vektorLaengeMitAbstaenden > 0 ? vektorLaengeMitAbstaenden : 0)
+                                    .cornerRadius(5)
+                                
+                            }
                         }
                     }
                 }
-                .rotationEffect(winkel, anchor: .top)
-                .offset(x: erstesObjekt.ort.x + (vektor.x / vektorLaenge)*25, y: erstesObjekt.ort.y + vektorLaengeMitAbstaenden / 2 + (vektor.y / vektorLaenge)*25)
+                    .rotationEffect(winkel, anchor: .top)
+                    .offset(x: erstesObjekt.ort.x + (vektor.x / vektorLaenge)*25, y: erstesObjekt.ort.y + vektorLaengeMitAbstaenden / 2 + (vektor.y / vektorLaenge)*25)
             )
         } else {
             return AnyView?.none // Workaround, da nil als Rückgabe ungültig ist
@@ -553,28 +819,35 @@ struct Molekuelzeichner: View {
     private func elementAufCanvas(_ objekt: CanvasObjekt) -> some View {
         ZStack {
             Text(objekt.element.symbol)
-                .foregroundColor(.white)
+                .foregroundColor(atomDarstellung == "hintergrund" ? .white : .prim)
                 .fontWeight(.bold)
                 .frame(width: 35, height: 35)
-                .background(Color(objekt.element.klassifikation))
+                .background(atomDarstellung == "hintergrund" ? Color(objekt.element.klassifikation).contentShape(Circle()) : Color.clear.contentShape(Circle()))
+                .overlay { atomDarstellung == "umrandung" ? Circle().stroke(.prim, lineWidth: 1).frame(width: 35, height: 35) : nil }
                 .cornerRadius(17.5)
                 .overlay(ausgewaelteObjekte.contains(objekt.id) && ausgewaeltesWerkzeug != .bindung ? RoundedRectangle(cornerRadius: 17.5).stroke(Color.blue, style: StrokeStyle(lineWidth: 2, dash: [3])) : nil)
                 .onTapGesture {
-                    switch ausgewaeltesWerkzeug {
-                        case .fingerOderZeiger:
-                            ausgewaelteObjekte = ausgewaelteObjekte.first == objekt.id ? [] : [objekt.id]
-                            
-                        case .lasso:
-                            if let index = ausgewaelteObjekte.firstIndex(of: objekt.id) {
-                                ausgewaelteObjekte.remove(at: index)
-                            } else {
-                                ausgewaelteObjekte.append(objekt.id)
-                            }
-                        
-                        default:
-                            break
-                            
+                    #if os(macOS)
+                    if NSEvent.modifierFlags.contains(.shift) || ausgewaeltesWerkzeug == .lasso {
+                        if let index = ausgewaelteObjekte.firstIndex(of: objekt.id) {
+                            ausgewaelteObjekte.remove(at: index)
+                        } else {
+                            ausgewaelteObjekte.append(objekt.id)
+                        }
+                    } else {
+                        ausgewaelteObjekte = ausgewaelteObjekte.first == objekt.id ? [] : [objekt.id]
                     }
+                    #else
+                    if ausgewaeltesWerkzeug == .fingerOderZeiger {
+                        ausgewaelteObjekte = ausgewaelteObjekte.first == objekt.id ? [] : [objekt.id]
+                    } else if ausgewaeltesWerkzeug == .lasso {
+                        if let index = ausgewaelteObjekte.firstIndex(of: objekt.id) {
+                            ausgewaelteObjekte.remove(at: index)
+                        } else {
+                            ausgewaelteObjekte.append(objekt.id)
+                        }
+                    }
+                    #endif
                 }
                 .contextMenu {
                     Group {
@@ -638,7 +911,7 @@ struct Molekuelzeichner: View {
                                 .frame(width: 20, height: 5)
                                 .rotationEffect(Angle(degrees: xOffS != 0 ? 90 : 0))
                                 .offset(x: CGFloat(xOffS), y: CGFloat(yOffS))
-
+                            
                         } else if !(objekt.element.kernladungszahl - objekt.ladung < 3 && i == 2) {
                             // Punkt oben
                             let scale = ausgewaeltesWerkzeug == .bindung ? 1.28 : 1.0
@@ -662,7 +935,7 @@ struct Molekuelzeichner: View {
                                                     
                                                     let s = sin(objekt.drehung.radians)
                                                     let c = cos(objekt.drehung.radians)
-
+                                                    
                                                     let xnew: Double = startPunktLokal.x * c - startPunktLokal.y * s
                                                     let ynew: Double = startPunktLokal.x * s + startPunktLokal.y * c
                                                     
@@ -673,7 +946,7 @@ struct Molekuelzeichner: View {
                                                 
                                                 let s = sin(objekt.drehung.radians)
                                                 let c = cos(objekt.drehung.radians)
-
+                                                
                                                 let xnew: Double = value.translation.width * c - value.translation.height * s
                                                 let ynew: Double = value.translation.width * s + value.translation.height * c
                                                 
@@ -708,17 +981,19 @@ struct Molekuelzeichner: View {
                                 .rotationEffect(-objekt.drehung)
                         }.frame(width: 15, height: 15)
                     }
-                    if let oxidationZahl = oxidationsZahl(von: objekt), oxidationszahlenEinblenden {
+                    if let oxidationZahl = oxidationsZahl(von: objekt), oxzahlenEinblenden {
                         Text(oxidationZahl)
-                            .frame(height: 15)
+                            .minimumScaleFactor(0.2)
+                            .frame(width: 15, height: 15)
+                            .background(Circle().fill(.bgr))
                             .rotationEffect(-objekt.drehung)
                     }
                 }
-                .offset(x: !(oxidationsZahl(von: objekt) != nil && objekt.ladung != 0 && oxidationszahlenEinblenden) ? 25 : 35, y: -25)
+                .offset(x: !(oxidationsZahl(von: objekt) != nil && objekt.ladung != 0 && oxzahlenEinblenden) ? 25 : 35, y: -25)
             }
-                .rotationEffect(objekt.drehung)
+            .rotationEffect(objekt.drehung)
         }
-            .frame(width: 65, height: 65)
+        .frame(width: 65, height: 65)
     }
     
     private func punkt(_ id: UUID, _ nummer: Int) -> some View {
@@ -840,7 +1115,7 @@ struct Molekuelzeichner: View {
         self.ausgehendesElektron = nil
         self.ausgewaelteObjekte = []
     }
-        
+    
     private func oxidationsZahl(von objekt: CanvasObjekt) -> String? {
         // Falls das Atom eine Ladung hat, so wird diese erstmal zur Oxidationszahl
         var ergebnis = objekt.ladung
@@ -925,10 +1200,10 @@ struct Molekuelzeichner: View {
             
             posX -= drehAnkerPunkt.x;
             posY -= drehAnkerPunkt.y;
-
+            
             let xneu = posX * c - posY * s;
             let yneu = posX * s + posY * c;
-
+            
             posX = xneu + drehAnkerPunkt.x;
             posY = yneu + drehAnkerPunkt.y;
             
@@ -950,55 +1225,77 @@ struct Molekuelzeichner: View {
         case verschiebtCanvasOderLasso
         case verbindetElektron
     }
-}
-
-struct ZeichenFlaeche: UIViewRepresentable {
-    @Binding var canvasView: PKCanvasView
-    let picker = PKToolPicker()
-
-    func makeUIView(context: Context) -> PKCanvasView {
-        // Auch mit Finger zeichnen ist erlaubt
-        canvasView.drawingPolicy = .anyInput
-        
-        // Zuvor wurde die Interaktion bei der „InaktivenZeichenFlaeche“ eingeschränkt, deshalb müssen sie hier reaktiviert werden
-        canvasView.isUserInteractionEnabled = true
-        
-        // Damit der Toolpicker angezeigt wird
-        canvasView.becomeFirstResponder()
-        return canvasView
-    }
-
-    func updateUIView(_ canvasView: PKCanvasView, context: Context) {
-        // Damit der Toolpicker angezeigt wird
-        picker.addObserver(canvasView)
-        picker.setVisible(true, forFirstResponder: canvasView)
-        DispatchQueue.main.async {
-            canvasView.becomeFirstResponder()
+    
+    private struct Dreieck: Shape {
+        func path(in rect: CGRect) -> Path {
+            var path = Path()
+            path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
+            return path
         }
     }
-}
-
-struct InaktiveZeichenFlaeche: UIViewRepresentable {
-    @Binding var canvasView: PKCanvasView
-
-    func makeUIView(context: Context) -> PKCanvasView {
-        // Wird von beiden Zeichenflächen als erste angezeigt, deshalb muss hier die Hintergrundfarbe definiert werden
-        canvasView.backgroundColor = .clear
-        
-        // Damit nicht aus Versehen interagiert werden kann
-        canvasView.isUserInteractionEnabled = false
-        
-        // Damit der Toolpicker nicht mehr angezeigt wird
-        canvasView.resignFirstResponder()
-        return canvasView
+    
+    private func raumWinkel(von id: UUID) -> Int? {
+        guard let objekt = canvasObjekte.first(where: {$0.id == id}) else { return nil }
+        let bindungspartner = canvasBindungen.filter({$0.erstesCanvasObjekt == id || $0.zweitesCanvasObjekt == id}).count
+        if bindungspartner < 2 { return nil }
+        let freieElektronen = objekt.valenzelektronen.count - objekt.bestehendeBindungen.count
+        if bindungspartner == 2 {
+            if freieElektronen == 4 {
+                // Gewinkelt, wie H2O
+                return 105
+            } else {
+                // Linear, wie CO2
+                return 180
+            }
+        } else if bindungspartner == 3 {
+            if freieElektronen == 2 {
+                // Pyramidal, wie NH3
+                return 107
+            } else {
+                // Trigonal-Planar, wie HCOOH
+                return 120
+            }
+        } else {
+            // Bindungspartner == 4
+            // Tetraedisch wie NH4+
+            return 109
+        }
     }
-
-    func updateUIView(_ canvasView: PKCanvasView, context: Context) {}
+    
+    private func formattieren() {
+        
+    }
 }
+
+#if os(iOS) || os(visionOS)
+struct ZeichenFlaeche: UIViewRepresentable {
+    let aktiv: Bool
+    var zeichenflaeche: PKCanvasView
+    var picker: PKToolPicker
+    
+    func makeUIView(context: Context) -> PKCanvasView {
+        zeichenflaeche.backgroundColor = .clear
+        picker.addObserver(zeichenflaeche)
+        return zeichenflaeche
+    }
+    
+    func updateUIView(_ canvasView: PKCanvasView, context: Context) {
+        if aktiv {
+            zeichenflaeche.becomeFirstResponder()
+        } else {
+            zeichenflaeche.resignFirstResponder()
+        }
+        zeichenflaeche.isUserInteractionEnabled = aktiv
+        picker.setVisible(aktiv, forFirstResponder: zeichenflaeche)
+    }
+}
+#endif
 
 
 // Wichtig: Wenn im Bereich eines anderen Elektron losgelassen wird, muss zu diesem Verbunden werden
-// Letztes Element nochmal einfügen (als extra-Button)
 // Räumliche Struktur des Moleküls
 
 // Es muss zwei zoom Optionen geben. Einmal, wenn man etwas ausgewält hat, das man das größer oder kleiner macht (jedes Objekt könnte noch einen scale-Faktor haben). Der Andere Zoom faktor ist wenn man nichts ausgewält hat der generelle zoom

@@ -13,6 +13,7 @@ struct LizenzenKaufen: View {
     @Environment(NeoStore.self)     var store
     @Environment(NeoAuth.self)      var auth
     @Environment(\.dismiss)         var schliessen
+    @Environment(\.purchase) private var purchase
     
     @State private var anzahl = 1
     @State private var auswahl: Product? = nil
@@ -61,7 +62,9 @@ struct LizenzenKaufen: View {
                         }
                     }
                     .padding(.horizontal)
+                    #if !os(visionOS)
                     .sensoryFeedback(.selection, trigger: auswahl)
+                    #endif
                     .task {
                         withAnimation {
                             auswahl = lz[1]
@@ -97,7 +100,7 @@ struct LizenzenKaufen: View {
                                 guard let auswahl else { return }
                                 do {
                                     buttonMussLaden = true
-                                    if try await store.kauf(auswahl, anzahl: anzahl) {
+                                    if try await store.kauf(auswahl, purchase, anzahl: anzahl) {
                                         try await auth.ladeLizenzen()
                                         schliessen()
                                     }

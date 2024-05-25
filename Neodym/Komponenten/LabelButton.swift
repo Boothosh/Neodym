@@ -20,19 +20,21 @@ struct LabelButton: View {
         Button(role: role) {
             Task {
                 progress = true
-                await action()
-                progress = false
+                Task.detached(priority: .userInitiated) {
+                    await self.action()
+                    self.progress = false
+                }
             }
         } label: {
             Label {
                 Text(text)
             } icon: {
                 if !progress {
-                    Image(symbol)
-                        .resizable()
-                        .scaledToFit()
+                    Image(systemName: symbol)
+                        .foregroundStyle(role == .destructive ? .red : .accent)
                 } else {
                     ProgressView()
+                        .controlSize(.small)
                         .tint(.pink)
                 }
             }

@@ -120,7 +120,10 @@ struct IonengruppenBilden: View {
                 
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("Ionengruppen bilden")
+        #if os(iOS) || os(visionOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }

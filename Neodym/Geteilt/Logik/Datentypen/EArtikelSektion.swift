@@ -16,7 +16,7 @@ struct EArtikelSektion: Identifiable, Codable {
     let text: String
     let bildPfad: String?
     
-    func bild() -> UIImage? {
+    func bild() -> CrossPlatformImage? {
         return nil
     }
 }

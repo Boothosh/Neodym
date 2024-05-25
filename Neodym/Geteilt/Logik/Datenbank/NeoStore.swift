@@ -6,6 +6,7 @@
 //
 
 import StoreKit
+import SwiftUI
 
 @Observable class NeoStore {
     
@@ -45,8 +46,8 @@ import StoreKit
         }
     }
     
-    func kauf(_ produkt: Product, anzahl: Int = 1) async throws -> Bool {
-        let ergebnis = try await produkt.purchase(options: [.quantity(anzahl), .appAccountToken(UUID())])
+    func kauf(_ produkt: Product, _ purchaseAction: PurchaseAction, anzahl: Int = 1) async throws -> Bool {
+        let ergebnis = try await purchaseAction(produkt, options: [.quantity(anzahl), .appAccountToken(UUID())])
         switch ergebnis {
             case .success(let verifizierungsErgebnis):
                 let transaktion = try checkVerified(verifizierungsErgebnis)

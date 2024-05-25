@@ -442,7 +442,7 @@
           "orbitale": "[Ar]4s2 3d6"
         },
         {
-          "name": "Cobalt",
+          "name": "Kobalt",
           "symbol": "Co",
           "kernladungszahl": 27,
           "atommasse": 58.93319,
@@ -556,7 +556,7 @@
           "klassifikation": "Nichtmetall",
           "valenzElektronen": 6,
           "elektroNegativität": 2.55,
-          "elektronenBisEdelgas": 2,
+          "elektronenBisEdelgas": null,
           "entdeckt": 1817,
           "radius": 190,
           "orbitale": "[Ar]4s2 3d10 4p4"

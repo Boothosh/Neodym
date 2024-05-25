@@ -6,9 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseAuth
-import FirebaseStorage
-import PhotosUI
 
 struct Einstellungen: View {
     
@@ -27,29 +24,36 @@ struct Einstellungen: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            Form {
                 Section {
                     HStack {
                         if auth.angemeldet == true {
-                            Image((auth.email != nil) ? "lehrer" : "schueler")
-                                .resizable()
-                                .frame(width: 40, height: 40)
+                            if auth.email != nil {
+                                Image("lehrer")
+                                    .foregroundStyle(.primary, .green, .teal)
+                            } else {
+                                Image(systemName: "graduationcap.fill")
+                                    .foregroundStyle(.green)
+                            }
                         }
                         Text(store.hatBerechtigung == true ? "Neodym +" : auth.email != nil ? "Lehrer:in" : " Schüler:in")
-                            .font(.largeTitle)
                             .foregroundStyle(.linearGradient(colors: [.green, .blue, .indigo,], startPoint: .topLeading, endPoint: .bottomTrailing))
                         Spacer()
                         Image(systemName: store.hatBerechtigung == true ? "crown.fill" : "checkmark.seal.fill")
                             .foregroundStyle(store.hatBerechtigung == true ? .yellow :
                                     .white, .green)
-                            .font(.largeTitle)
                             .frame(width: 30, height: 30)
-                    }
+                    }.font(.largeTitle)
                     if store.hatAbo {
                         Button {
                             zeigeBearbeiteAbonnement = true
                         } label: {
-                            FTLabel("Abonnement bearbeiten", bild: "abo")
+                            Label {
+                                Text("Abonnement bearbeiten")
+                            } icon: {
+                                Image(systemName: "creditcard")
+                                    .foregroundStyle(.indigo)
+                            }
                         }.foregroundStyle(.prim)
                     } else if store.hatBerechtigung == true {
                         Text("Vollversion lebenslang")
@@ -71,19 +75,22 @@ struct Einstellungen: View {
                                 }
                             }
                         }.navigationTitle("Darstellung")
+                            .formStyle(.grouped)
+                        #if !os(macOS)
                         .navigationBarTitleDisplayMode(.inline)
+                        #endif
                     } label: {
-                        FTLabel("Darstellung", bild: "darstellung")
+                        Label("Darstellung", systemImage: "sparkles")
                     }
                     NavigationLink {
                         Form {
                             Section {
                                 if elemente.spotlightEintraegeVorhanden {
-                                    LabelButton(text: "Alle Spotlight-Sucheinträge löschen", symbol: "loeschen", action: {
+                                    LabelButton(text: "Alle Spotlight-Sucheinträge löschen", symbol: "trash.fill", action: {
                                         await elemente.loescheSpotlightEintraege()
                                     }, role: .destructive)
                                 } else {
-                                    LabelButton(text: "Spotlight-Sucheinträge wiederherstellen", symbol: "zurueck", action: {
+                                    LabelButton(text: "Spotlight-Sucheinträge wiederherstellen", symbol: "arrow.uturn.backward", action: {
                                         await elemente.indexeFuerSpotlight()
                                     })
                                 }
@@ -95,27 +102,30 @@ struct Einstellungen: View {
                                 Text("rückgängig gemacht werden")
                             }
                         }.navigationTitle("Speicher")
+                            .formStyle(.grouped)
+                        #if os(iOS) || os(visionOS)
                         .navigationBarTitleDisplayMode(.inline)
+                        #endif
                     } label: {
-                        FTLabel("Speicher", bild: "speicher")
+                        Label("Speicher", systemImage: "server.rack")
                     }
                 }
                 Section {
                     NavigationLink {
                         Credits()
                     } label: {
-                        FTLabel("Credits", bild: "credits")
+                        Label("Credits", systemImage: "heart.circle")
                     }
                     DisclosureGroup("Rechtliches") {
-                        link("AGB", bild: "agb", ziel: "https://neodym.app/rechtliches#agb")
-                        link("Datenschutz", bild: "datenschutz", ziel: "https://neodym.app/rechtliches#datenschutz")
-                        link("Impressum", bild: "impressum", ziel: "https://neodym.app/rechtliches#impressum")
+                        link("AGB", bild: "scroll", ziel: "https://neodym.app/rechtliches#agb")
+                        link("Datenschutz", bild: "lock.shield", ziel: "https://neodym.app/rechtliches#datenschutz")
+                        link("Impressum", bild: "person.text.rectangle", ziel: "https://neodym.app/rechtliches#impressum")
                     }
                 }
                 if auth.verifiziert == true {
                     Section {
                         if auth.email != nil {
-                            LabelButton(text: "Abmelden", symbol: "abmelden", action: {
+                            LabelButton(text: "Abmelden", symbol: "rectangle.portrait.and.arrow.forward", action: {
                                 do {
                                     try await auth.abmelden()
                                     schliessen()
@@ -126,7 +136,7 @@ struct Einstellungen: View {
                                 }
                             }, role: .destructive)
                         }
-                        LabelButton(text: "Abmelden und Konto löschen", symbol: "loeschen", action: {
+                        LabelButton(text: "Abmelden und Konto löschen", symbol: "trash.fill", action: {
                             do {
                                 try await auth.abmelden(loeschen: true)
                             } catch {
@@ -139,21 +149,24 @@ struct Einstellungen: View {
                     }
                 }
                 Section {
-                    link("Feedback", bild: "feedback", ziel: "https://apps.apple.com/app/id6466750604?action=write-review")
-                    link("Website", bild: "website", ziel: "https://neodym.app")
+                    link("Feedback", bild: "bubble.left.and.exclamationmark.bubble.right", ziel: "https://apps.apple.com/app/id6466750604?action=write-review")
+                    link("Website", bild: "globe", ziel: "https://neodym.app")
                     link("Instagram", bild: "insta", ziel: "https://instagram.com/neodym_app")
                 } footer: {
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 0) {
                         if store.hatBerechtigung != true {
                             Text("Benutzer ID: \(auth.id ?? "Fehler")")
                         }
-                        Text("Version: 1.2")
+                        Text("Version: 1.3")
                         Text("© 2024 Bromedia GbR")
+                        HStack {
+                            Spacer()
+                        }
                     }
                 }
             }
+            .formStyle(.grouped)
             .navigationTitle("Einstellungen")
-            .listStyle(.insetGrouped)
             .alert(titel, isPresented: $zeigeAlert, actions: {
                 Button {
                     zeigeAlert = false
@@ -161,10 +174,13 @@ struct Einstellungen: View {
                     Text("Okay")
                 }
             }, message: {Text(nachricht)})
+            #if os(iOS) || os(visionOS)
+            .listStyle(.insetGrouped)
             .manageSubscriptionsSheet(
                 isPresented: $zeigeBearbeiteAbonnement,
                 subscriptionGroupID: "21424638"
             )
+            #endif
         }
     }
     
@@ -173,10 +189,20 @@ struct Einstellungen: View {
         if let url = URL(string: ziel) {
             Link(destination: url) {
                 HStack {
-                    FTLabel(text, bild: bild)
-                        .foregroundStyle(.prim)
+                    Label {
+                        Text(text)
+                            .foregroundStyle(.prim)
+                    } icon: {
+                        if bild == "insta" {
+                            Image("insta")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                        } else {
+                            Image(systemName: bild)
+                        }
+                    }
                     Spacer()
-                    Image(systemName: "arrow.up.right")
+                    Image(systemName: "link")
                 }
             }
         }

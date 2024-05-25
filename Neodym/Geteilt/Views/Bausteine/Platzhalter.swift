@@ -13,7 +13,8 @@ struct Platzhalter: AnimatableModifier {
     @Binding var isLoading: Bool
 
     @State private var isAnim: Bool = false
-    private var center = (UIScreen.main.bounds.width / 2) + 110
+    // TODO: Wieder fixen: Center war davor = (UIScreen.main.bounds.width / 2) + 110
+    private var center = 10.0
     private let animation: Animation = .linear(duration: 1.5)
 
     init(isLoading: Binding<Bool>) {

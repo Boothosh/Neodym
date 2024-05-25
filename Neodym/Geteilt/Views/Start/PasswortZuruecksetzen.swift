@@ -40,8 +40,18 @@ struct PasswortZuruecksetzen: View {
             
         }
     }
-    
+        
+
     var body: some View {
+        let emailFeld = TextField("Deine E-Mail", text: $email)
+            .textContentType(.emailAddress)
+            .modifier(CustomTextFeld(error: $fehlendeEmail))
+            .onChange(of: email) {
+                fehlendeEmail = false
+            }
+            .onSubmit {
+                passwortZuruecksetzen()
+            }
         NavigationStack {
             VStack {
                 HStack {
@@ -51,16 +61,12 @@ struct PasswortZuruecksetzen: View {
                         .underline()
                     Spacer()
                 }
-                TextField("Deine E-Mail", text: $email)
-                    .textContentType(.emailAddress)
+#if os(iOS) || os(visionOS)
+                emailFeld
                     .keyboardType(.emailAddress)
-                    .modifier(CustomTextFeld(error: $fehlendeEmail))
-                    .onChange(of: email) {
-                        fehlendeEmail = false
-                    }
-                    .onSubmit {
-                        passwortZuruecksetzen()
-                    }
+#else
+                emailFeld
+#endif
                 Spacer()
                 Button {
                     passwortZuruecksetzen()
@@ -73,7 +79,7 @@ struct PasswortZuruecksetzen: View {
                             .multilineTextAlignment(.center)
                         Spacer()
                         if !ladeVorgang {
-                            Image(.weiterPfeil)
+                            Image("")
                                 .resizable()
                                 .frame(width: 35, height:35)
                         } else {

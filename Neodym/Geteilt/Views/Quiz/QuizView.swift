@@ -82,12 +82,13 @@ struct QuizView: View {
         }
         .edgesIgnoringSafeArea(.horizontal)
         .navigationTitle("Quiz")
-        .toolbarBackground(Color("quizBg"), for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
-        .fullScreenCover(item: $ausgewaeltesQuiz) { quiz in
-            QuizSeitenView(quiz: $themen[themenIndex].quizes[quizIndex])
-        }
+        // Short
+//        .toolbarBackground(Color("quizBg"), for: .navigationBar)
+//        .toolbarBackground(.visible, for: .navigationBar)
+//        .toolbarColorScheme(.dark, for: .navigationBar)
+//        .fullScreenCover(item: $ausgewaeltesQuiz) { quiz in
+//            QuizSeitenView(quiz: $themen[themenIndex].quizes[quizIndex])
+//        }
         .task {
             await ladeRemoteConfig()
         }
@@ -113,7 +114,7 @@ struct Begrenzung: ViewModifier {
 struct QuizKachel: View {
     
     let quiz: Quiz
-    @State var bild: UIImage?
+    @State var bild: CrossPlatformImage?
     
     var body: some View {
         GeometryReader { geo in
@@ -127,9 +128,19 @@ struct QuizKachel: View {
                         Spacer()
                     }.frame(width: geo.size.width / 2)
                     if let bild {
-                        Image(uiImage: bild)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
+                        #if os(iOS) || os(visionOS)
+                        if let uiBild = (bild.image as? UIImage) {
+                            Image(uiImage: uiBild)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        }
+                        #else
+                        if let nsBild = (bild.image as? NSImage) {
+                            Image(nsImage: nsBild)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        }
+                        #endif
                     } else {
                         Spacer()
                         ProgressView()

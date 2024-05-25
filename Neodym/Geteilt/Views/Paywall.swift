@@ -11,6 +11,7 @@ import StoreKit
 struct Paywall: View {
     
     @Environment(NeoStore.self) private var store
+    @Environment(\.purchase) private var purchase
     @State private var auswahl: Product? = nil
     @State private var bounceCounter: [Product: Int] = [:]
     
@@ -84,10 +85,12 @@ struct Paywall: View {
                             }
                         }
                         .padding(.horizontal)
+                        .task{
+                            await setup()
+                        }
+                        #if !os(visionOS)
                         .sensoryFeedback(.selection, trigger: auswahl)
-                            .task{
-                                await setup()
-                            }
+                        #endif
                     } else {
                         ProgressView()
                     }
@@ -99,7 +102,7 @@ struct Paywall: View {
                     Task {
                         guard let auswahl else { return }
                         do {
-                            let _ = try await store.kauf(auswahl)
+                            let _ = try await store.kauf(auswahl, purchase)
                         } catch {
                             
                         }
@@ -126,6 +129,7 @@ struct Paywall: View {
                         .foregroundColor(.white)
                         .cornerRadius(15)
                 }
+                .buttonStyle(.plain)
                 .keyboardShortcut(.defaultAction)
                 .padding(.horizontal)
                 HStack {

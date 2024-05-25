@@ -13,40 +13,48 @@ struct Werkzeuge: View {
     
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 350), spacing: 20)], spacing: 20) {
-                kachel(titel: "Moleküle\nzeichnen", symbol: "pencil.and.ruler", farbe: .mint, ziel: Molekuelzeichner().environment(elemente))
-                kachel(titel: "Molekülmasse\nausrechnen", symbol: "scalemass", farbe: .green, ziel: MolekuelmasseRechner().environment(elemente))
-                kachel(titel: "Ionengruppe\nbilden", symbol: "circle.grid.3x3", farbe: .yellow, ziel: IonengruppenBilden().environment(elemente))
-                kachel(titel: "Gleichungen\nausgleichen", symbol: "arrow.left.arrow.right.circle", farbe: .blue, ziel: GleichungenAusgleichen(), verfuegbar: false)
-                kachel(titel: "Unbekannte\nGröße bestimmen", symbol: "sum", farbe: .orange, ziel: GroesseBestimmen(), verfuegbar: false)
-            }.padding()
+            werkzeugVorschauKachel("Moleküle\nzeichnen", "canvas", .mint, ziel: Molekuelzeichner(columnVisibility: .constant(.detailOnly)).environment(elemente) , eigenesIcon: true)
+            werkzeugVorschauKachel("Molekülmasse\nausrechnen", "scalemass", .green, ziel: MolekuelmasseRechner().environment(elemente))
+            werkzeugVorschauKachel("Ionengruppe\nbilden", "salz", .yellow, ziel: IonengruppenBilden().environment(elemente), eigenesIcon: true)
+            werkzeugVorschauKachel("Gleichungen\nausgleichen", "arrow.left.arrow.right.circle", .blue, ziel: GleichungenAusgleichen(), verfuegbar: false)
+            werkzeugVorschauKachel("Unbekannte\nGröße bestimmen", "sum", .orange, ziel: GroesseBestimmen(), verfuegbar: false)
         }
             .navigationTitle("Werkzeuge")
     }
     
-    func kachel(titel: String, symbol: String, farbe: Color, ziel: some View, verfuegbar: Bool = true) -> some View {
+    func werkzeugVorschauKachel(_ titel: String, _ symbol: String, _ farbe: Color, ziel: some View, verfuegbar: Bool = true, eigenesIcon: Bool = false) -> some View {
         NavigationLink(destination: ziel){
-            VStack(alignment: .leading){
-                Spacer()
+            VStack(alignment: .leading, spacing: 0){
+                if !verfuegbar {
+                    Text("Kommt bald!")
+                        .frame(height: 24)
+                        .padding(.horizontal, 5)
+                        .background(.green)
+                        .foregroundStyle(.white)
+                        .cornerRadius(5)
+                        .offset(x: 15, y: 15)
+                        .zIndex(1)
+                }
                 HStack {
                     Text(titel)
                         .font(.system(size: 32, weight: .black))
                         .multilineTextAlignment(.leading)
                     Spacer()
-                    Image(systemName: symbol)
-                        .font(.system(size: 64, weight: .thin))
+                    if !eigenesIcon {
+                        Image(systemName: symbol)
+                            .font(.system(size: 64))
+                    } else {
+                        Image(symbol)
+                            .font(.system(size: 64))
+                    }
                 }
-                    .foregroundColor(.white)
-                if !verfuegbar {
-                    Text("Kommt bald!")
-                        .foregroundColor(.white)
-                }
-                Spacer()
+                .foregroundColor(.white)
+                .padding()
+                .background(verfuegbar ? farbe.gradient : Color.gray.gradient)
+                .cornerRadius(25)
+                .zIndex(0.1)
             }
-            .padding(.horizontal)
-            .background(verfuegbar ? farbe.gradient : Color.gray.gradient)
-            .aspectRatio(CGSize(width: 2, height: 1), contentMode: .fill)
-            .cornerRadius(25)
         }.disabled(!verfuegbar)
+        .padding(.horizontal)
     }
 }

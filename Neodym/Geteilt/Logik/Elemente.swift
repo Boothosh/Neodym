@@ -65,9 +65,7 @@ import SwiftUI
         }
         
         // Alle Elemente zur Spotlight-Suche hinzufügen, falls noch keine hinzugefügt wurden
-        if !spotlightEintraegeVorhanden {
-            // Sichergehen, dass tatsächlich keine Objekte vorhanden sind
-            await loescheSpotlightEintraege()
+        if !spotlightEintraegeVorhanden && !willkeinSpotlight {
             await indexeFuerSpotlight()
         }
     }
@@ -80,7 +78,11 @@ import SwiftUI
             attributeSet.displayName = $0.name
             attributeSet.contentDescription = "\($0.name) (\($0.symbol)) ist ein \($0.klassifikation) und hat die Ordnungszahl \($0.kernladungszahl). Erfahre mehr in der Neodym App ↗️"
             attributeSet.keywords = [$0.klassifikation, $0.name, $0.symbol]
+            #if os(iOS) || os(visionOS)
             attributeSet.thumbnailData = UIImage(named: $0.symbol)?.pngData()
+            #else
+            attributeSet.thumbnailData = NSImage(named: $0.symbol)?.tiffRepresentation
+            #endif
             // Create searchable item
             let searchableItem = CSSearchableItem(uniqueIdentifier: $0.name, domainIdentifier: "de.max.eckstein.Neodym", attributeSet: attributeSet)
             searchableItem.expirationDate = Date.distantFuture
@@ -102,7 +104,8 @@ import SwiftUI
         do {
             try await CSSearchableIndex.default().deleteAllSearchableItems()
             spotlightEintraegeVorhanden = false
-            UserDefaults.standard.set(false, forKey: "willkeinSpotlight")
+            UserDefaults.standard.set(true, forKey: "willkeinSpotlight")
+            UserDefaults.standard.set(false, forKey: "spotlight")
         } catch {
             print(error)
         }

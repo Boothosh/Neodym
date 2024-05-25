@@ -12,7 +12,7 @@ struct ElementAuswahlListe: View {
     @Environment(Elemente.self) private var elemente
     @Environment(\.dismiss) var schließen
     
-    @State var suchBegriff = ""
+    @State private var suchBegriff = ""
     let hinzufuegen: (Element)->(Void)
     
     var body: some View {
@@ -47,9 +47,16 @@ struct ElementAuswahlListe: View {
                     }
                 }
             }
-            .searchable(text: $suchBegriff)
             .navigationTitle("Element auswählen")
+            #if !os(macOS)
+            .searchable(text: $suchBegriff)
             .navigationBarTitleDisplayMode(.inline)
+            #else
+            // Searchable Modifier funktioniert nicht in Modals, sondern nur in Windows auf MacOS
+            #endif
         }
+        #if os(macOS)
+        .frame(minWidth: 500, minHeight: 500)
+        #endif
     }
 }

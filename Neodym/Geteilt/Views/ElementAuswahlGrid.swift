@@ -37,9 +37,16 @@ struct ElementAuswahlGrid: View {
                     }
                 }.padding()
             }
-            .searchable(text: $suchBegriff)
+            .searchable(text: $suchBegriff, placement: .navigationBarDrawer(displayMode: .always), prompt: "Suchen...")
             .navigationTitle("Element auswählen")
+            #if os(iOS) || os(visionOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
+        #if os(iOS)
+        .frame(minWidth: UIDevice.current.userInterfaceIdiom == .phone ? 0 : 450, minHeight: UIDevice.current.userInterfaceIdiom == .phone ? 0 : 350)
+        #else
+        .frame(minWidth: 450, minHeight: 350)
+        #endif
     }
 }

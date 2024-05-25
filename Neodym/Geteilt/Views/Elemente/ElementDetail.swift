@@ -96,7 +96,8 @@ struct ElementDetail: View {
                         .foregroundStyle(.white)
                         .background(.blue.gradient)
                         .cornerRadius(10)
-                    }.quickLookPreview($url)
+                    }.buttonStyle(.plain)
+                    .quickLookPreview($url)
                 }
             } else {
                 Color.gray
@@ -121,7 +122,15 @@ struct ElementDetail: View {
                     ForEach(artikelSektionen) { sektion in
                         Section(sektion.titel) {
                             if let bild = sektion.bild() {
-                                Image(uiImage: bild)
+                                #if os(iOS) || os(visionOS)
+                                if let bild = (bild.image as? UIImage) {
+                                    Image(uiImage: bild)
+                                }
+                                #else
+                                if let bild = (bild.image as? NSImage) {
+                                    Image(nsImage: bild)
+                                }
+                                #endif
                             }
                             Text(sektion.text)
                         }.task {
@@ -167,7 +176,7 @@ struct ElementDetail: View {
                     geladeneInhalte["texte"] = element.name
                 }
             }
-            if let wikiURL = konstruiereWikipediaURL(), UIApplication.shared.canOpenURL(konstruiereWikipediaURL() ?? URL.userDirectory) {
+            if let wikiURL = konstruiereWikipediaURL() {
                 Section {
                     Link(destination: wikiURL) {
                         HStack {
@@ -181,6 +190,7 @@ struct ElementDetail: View {
                 }
             }
         }
+        .formStyle(.grouped)
         .navigationTitle(element.name)
     }
     
@@ -194,6 +204,11 @@ struct ElementDetail: View {
         if element.name == "Titan" {
             return URL(string: "https://de.m.wikipedia.org/wiki/Titan_(Element)")
         }
+        #if os(iOS) || os(visionOS)
+        guard let url, UIApplication.shared.canOpenURL(url) else { return nil }
+        #endif
+        // Bei macOS Benutzern wird impliziert, dass sie Web Urls öffnen können.
+        // Dies liegt auch daran, dass es kein NSWorkspace.shared.canOpenURL gibt.
         return url
     }
 }

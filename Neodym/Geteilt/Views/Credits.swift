@@ -73,10 +73,8 @@ struct Credits: View {
                 Text("Wikipedia (alle Artikel zu den chemischen Elementen)")
             }
         }.navigationTitle("Credits")
+        #if os(iOS) || os(visionOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
-}
-
-#Preview {
-    Credits()
 }

@@ -29,7 +29,7 @@ struct MolekuelmasseRechner: View {
     @State private var zeigeHinzufuegenPopUp = false
     
     var body: some View {
-        List {
+        Form {
             Section("Ergebnis"){
                 Text("\(molekuelmasse, specifier: "%.0f") g/mol")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -114,6 +114,19 @@ struct MolekuelmasseRechner: View {
             if elementeAlsArray.count != 0 {
                 Section("Anteil am Gesamtgewicht"){
                     if elementeAlsArray.count > 1 {
+                        let ipadAnsicht = HStack(spacing: 30){
+                            gewichtChart
+                            VStack {
+                                List(elementeAlsArray) { element in
+                                    HStack{
+                                        Text(element.name)
+                                        Spacer()
+                                        Text("\(100*(Float(elementeMitAnzahl[element] ?? 0)*element.atommasse) / molekuelmasse, specifier: "%.2f") %")
+                                    }
+                                }
+                            }
+                        }
+                        #if os(iOS) || os(visionOS)
                         if UIDevice.current.userInterfaceIdiom == .phone {
                             gewichtChart
                             ForEach(elementeAlsArray) { element in
@@ -124,17 +137,11 @@ struct MolekuelmasseRechner: View {
                                 }
                             }
                         } else {
-                            HStack(spacing: 30){
-                                gewichtChart
-                                List(elementeAlsArray) { element in
-                                    HStack{
-                                        Text(element.name)
-                                        Spacer()
-                                        Text("\((Float(elementeMitAnzahl[element] ?? 0)*element.atommasse) / molekuelmasse, specifier: "%.2f") %")
-                                    }
-                                }.cornerRadius(15)
-                            }
+                            ipadAnsicht
                         }
+                        #else
+                        ipadAnsicht
+                        #endif
                     } else if elementeAlsArray.count == 1 {
                         Text("100% \(elementeAlsArray[0].name)...")
                     }
@@ -161,8 +168,12 @@ struct MolekuelmasseRechner: View {
                 }
             }
             
-        }.navigationTitle("Molekülmasse berechnen")
+        }
+            .navigationTitle("Molekülmasse berechnen")
+            .formStyle(.grouped)
+        #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+        #endif
             .sheet(isPresented: $zeigeHinzufuegenPopUp) {
                 ElementAuswahlListe(hinzufuegen: { element in
                     if let vorherigeAnzahl = elementeMitAnzahl[element] {

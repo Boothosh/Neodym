@@ -33,17 +33,32 @@ struct Willkommen: View {
                             .foregroundStyle(.indigo)
                     }
                     .font(.system(size: 42, weight: .bold, design: .rounded))
-                    HStack {
-                        Image("Logo")
-                            .resizable()
-                            .frame(width: 120, height: 120)
-                            .rotation3DEffect(.degrees(7.5), axis: (x: 1, y: 1, z: 0))
-                            .shadow(radius: 10)
-                        Spacer()
-                            .frame(maxWidth: 50)
-                        Text("Alle Werkzeuge, die man für den Chemieunterricht braucht.\nIn einer App.")
-                    }.padding(.top, 8)
-                        .frame(maxWidth: 500)
+                    if geo.size.height > 750 {
+                        VStack(spacing: 25){
+                            Image("Logo")
+                                .resizable()
+                                .frame(width: 120, height: 120)
+                                .rotation3DEffect(.degrees(7.5), axis: (x: 1, y: 1, z: 0))
+                                .shadow(radius: 10)
+                            Text("Alle Werkzeuge, die man für den Chemieunterricht braucht.") +
+                            Text("\nIn einer App.")
+                                .bold()
+                        }.multilineTextAlignment(.center)
+                        .padding(.top, 8)
+                            .frame(maxWidth: 500)
+                    } else {
+                        HStack {
+                            Image("Logo")
+                                .resizable()
+                                .frame(width: 120, height: 120)
+                                .rotation3DEffect(.degrees(7.5), axis: (x: 1, y: 1, z: 0))
+                                .shadow(radius: 10)
+                            Spacer()
+                                .frame(maxWidth: 50)
+                            Text("Alle Werkzeuge, die man für den Chemieunterricht braucht.\nIn einer App.")
+                        }.padding(.top, 8)
+                            .frame(maxWidth: 500)
+                    }
                     Spacer()
                     Spacer()
                     if let szene {
@@ -75,6 +90,8 @@ struct Willkommen: View {
                         .background(.blue)
                         .cornerRadius(15)
                     }.keyboardShortcut(.defaultAction)
+                        .buttonStyle(.plain)
+                    #if os(iOS) || os(visionOS)
                     if UIDevice.current.userInterfaceIdiom == .phone {
                         Button {
                             zeigeAnmeldeAlternativenSheet.toggle()
@@ -99,24 +116,48 @@ struct Willkommen: View {
                             .overlay {
                                 Text("Anmeldealternativen")
                                     .font(.caption2)
-                                    .padding(10)
-                                    .background(.background)
+                                    .padding(5)
+                                    .background(.bgr)
                             }.padding(.vertical, 10)
                         HStack(spacing: 20){
                             schuelerButton
                             lehrerButton
                         }.frame(width: 500)
                     }
+                    #else
+                    Divider()
+                        .background(.indigo)
+                        .frame(maxWidth: 350)
+                        .overlay {
+                            Text("Anmeldealternativen")
+                                .font(.caption2)
+                                .padding(5)
+                                .background(.bgr)
+                        }.padding(.vertical, 10)
+                    HStack(spacing: 20){
+                        schuelerButton
+                            .buttonStyle(.plain)
+                        lehrerButton
+                            .buttonStyle(.plain)
+                    }.frame(width: 500)
+                    #endif
                 }
                 .padding()
                 .task {
                     Task.detached(priority: .high) {
                         let szene = SCNScene(named: "Neodym.usdz") ?? SCNScene()
-                        szene.background.contents = UIColor.systemBackground
+                        self.szene = szene
+                        #if os(iOS) || os(visionOS)
+                        szene.background.contents = UIColor.bgr
+                        #else
+                        szene.background.contents = NSColor.bgr
+                        #endif
                         await MainActor.run {
                             szene.rootNode.simdScale = simd_float3(1.8, 1.8, 1.8)
-                            szene.rootNode.childNodes[0].rotation = SCNVector4(0.15, 0, 0, 0.2)
+                            szene.rootNode.childNodes[0].rotation = SCNVector4(1, 0, 0, 0.3)
+                            szene.rootNode.animationPlayer(forKey: "a")
                             self.szene = szene
+                            self.szene!.rootNode.childNode(withName: "Neodym", recursively: true)!.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 5)))
                         }
                     }
                 }
@@ -142,6 +183,7 @@ struct Willkommen: View {
             LehrerVerifizierungsStatus()
                 .environment(auth)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     var schuelerButton: some View {
@@ -150,15 +192,15 @@ struct Willkommen: View {
             zeigeAnmeldeAlternativenSheet.toggle()
         } label: {
             HStack {
-                Image("schueler")
-                    .resizable()
-                    .frame(width: 35, height: 35)
+                Image(systemName: "graduationcap.fill")
+                    .foregroundStyle(.white)
+                    .font(.largeTitle)
                 Text("Als Schüler:in fortfahren")
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer()
-                Image("weiterPfeil")
-                    .resizable()
-                    .frame(width: 35, height: 35)
+                Image(systemName: "chevron.forward")
+                    .foregroundStyle(.white)
+                    .font(.largeTitle)
             }
             .foregroundStyle(.white)
             .padding()
@@ -174,15 +216,15 @@ struct Willkommen: View {
             zeigeAnmeldeAlternativenSheet.toggle()
         } label: {
             HStack {
-                Image("lehrer")
-                    .resizable()
-                    .frame(width: 35, height: 35)
+                Image(.lehrer)
+                    .foregroundStyle(.white, .green, .green)
+                    .font(.largeTitle)
                 Text("Als Lehrer:in fortfahren")
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer()
-                Image("weiterPfeil")
-                    .resizable()
-                    .frame(width: 35, height: 35)
+                Image(systemName: "chevron.forward")
+                    .foregroundStyle(.white)
+                    .font(.largeTitle)
             }
             .foregroundStyle(.white)
             .padding()

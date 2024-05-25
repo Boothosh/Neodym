@@ -53,25 +53,3 @@ extension Int {
         }
     }
 }
-
-extension UIImage {
-    /// Für neue Quadratische Größen
-    func groesseAnpassen(zielLaenge l: CGFloat) {
-        let groesse = self.size
-        let widthRatio  = l / groesse.width
-        let heightRatio = l / groesse.height
-        
-        var neueGroesse: CGSize
-        if(widthRatio > heightRatio) {
-            neueGroesse = CGSize(width: groesse.width * heightRatio, height: groesse.height * heightRatio)
-        } else {
-            neueGroesse = CGSize(width: groesse.width * widthRatio, height: groesse.height * widthRatio)
-        }
-        
-        let rect = CGRect(origin: .zero, size: neueGroesse)
-        
-        // Actually do the resizing to the rect using the ImageContext stuff
-        UIGraphicsBeginImageContextWithOptions(neueGroesse, false, 1.0)
-        self.draw(in: rect)
-    }
-}

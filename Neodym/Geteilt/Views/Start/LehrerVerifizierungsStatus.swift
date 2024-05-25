@@ -82,7 +82,3 @@ struct LehrerVerifizierungsStatus: View {
         }
     }
 }
-
-#Preview {
-    LehrerVerifizierungsStatus()
-}

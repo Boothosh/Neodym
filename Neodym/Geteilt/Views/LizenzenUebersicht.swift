@@ -63,7 +63,9 @@ struct LizenzenUebersicht: View {
                                         Text("Ablaufdatum: \(ablaufdatum.formatted())")
                                     }
                                 }
-                            }.navigationTitle("Lizenz-Info")
+                            }
+                            .formStyle(.grouped)
+                            .navigationTitle("Lizenz-Info")
                         } label: {
                             HStack {
                                 if lz.aktiv {

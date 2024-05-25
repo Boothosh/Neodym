@@ -24,7 +24,7 @@ struct AnmeldeButton: View {
                     .font(.title3)
                 Spacer()
                 if !laden {
-                    Image(.weiterPfeil)
+                    Image("")
                         .resizable()
                         .frame(width: 35, height:35)
                 } else {
