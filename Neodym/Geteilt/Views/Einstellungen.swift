@@ -27,43 +27,54 @@ struct Einstellungen: View {
             Form {
                 Section {
                     HStack {
-                        if auth.angemeldet == true {
-                            if auth.email != nil {
-                                Image("lehrer")
-                                    .foregroundStyle(.primary, .green, .teal)
-                            } else {
-                                Image(systemName: "graduationcap.fill")
-                                    .foregroundStyle(.green)
-                            }
-                        }
-                        Text(store.hatBerechtigung == true ? "Neodym +" : auth.email != nil ? "Lehrer:in" : " Schüler:in")
+                        Text("Neodym")
                             .foregroundStyle(.linearGradient(colors: [.green, .blue, .indigo,], startPoint: .topLeading, endPoint: .bottomTrailing))
                         Spacer()
-                        Image(systemName: store.hatBerechtigung == true ? "crown.fill" : "checkmark.seal.fill")
-                            .foregroundStyle(store.hatBerechtigung == true ? .yellow :
-                                    .white, .green)
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundStyle(.white, .green)
                             .frame(width: 30, height: 30)
                     }.font(.largeTitle)
-                    if store.hatAbo {
-                        Button {
-                            zeigeBearbeiteAbonnement = true
-                        } label: {
-                            Label {
-                                Text("Abonnement bearbeiten")
-                            } icon: {
-                                Image(systemName: "creditcard")
-                                    .foregroundStyle(.indigo)
-                            }
-                        }.foregroundStyle(.prim)
-                    } else if store.hatBerechtigung == true {
-                        Text("Vollversion lebenslang")
-                    } else if let email = auth.email {
-                        Text("E-Mail: \(email)")
-                    } else if let lizenz = auth.lizenzSchluessel, let ablaufdatum = auth.lizenzEndDatum {
-                        Text("Lizenz: \(lizenz)")
-                        Text("Ablaufdatum: \(ablaufdatum.formatted())")
-                    }
+                    Text("Kostenlose Vollversion")
                 }
+//                Section {
+//                    HStack {
+//                        if auth.angemeldet == true {
+//                            if auth.email != nil {
+//                                Image("lehrer")
+//                                    .foregroundStyle(.primary, .green, .teal)
+//                            } else {
+//                                Image(systemName: "graduationcap.fill")
+//                                    .foregroundStyle(.green)
+//                            }
+//                        }
+//                        Text(store.hatBerechtigung == true ? "Neodym +" : auth.email != nil ? "Lehrer:in" : " Schüler:in")
+//                            .foregroundStyle(.linearGradient(colors: [.green, .blue, .indigo,], startPoint: .topLeading, endPoint: .bottomTrailing))
+//                        Spacer()
+//                        Image(systemName: store.hatBerechtigung == true ? "crown.fill" : "checkmark.seal.fill")
+//                            .foregroundStyle(store.hatBerechtigung == true ? .yellow :
+//                                    .white, .green)
+//                            .frame(width: 30, height: 30)
+//                    }.font(.largeTitle)
+//                    if store.hatAbo {
+//                        Button {
+//                            zeigeBearbeiteAbonnement = true
+//                        } label: {
+//                            Label {
+//                                Text("Abonnement bearbeiten")
+//                            } icon: {
+//                                Image(systemName: "creditcard")
+//                                    .foregroundStyle(.indigo)
+//                            }
+//                        }.foregroundStyle(.prim)
+//                    } else if store.hatBerechtigung == true {
+//                        Text("Vollversion lebenslang")
+//                    } else if let email = auth.email {
+//                        Text("E-Mail: \(email)")
+//                    } else if let lizenz = auth.lizenzSchluessel, let ablaufdatum = auth.lizenzEndDatum {
+//                        Text("Lizenz: \(lizenz)")
+//                        Text("Ablaufdatum: \(ablaufdatum.formatted())")
+//                    }
+//                }
                 Section {
                     NavigationLink {
                         Form {
@@ -122,32 +133,32 @@ struct Einstellungen: View {
                         link("Impressum", bild: "person.text.rectangle", ziel: "https://neodym.app/rechtliches#impressum")
                     }
                 }
-                if auth.verifiziert == true {
-                    Section {
-                        if auth.email != nil {
-                            LabelButton(text: "Abmelden", symbol: "rectangle.portrait.and.arrow.forward", action: {
-                                do {
-                                    try await auth.abmelden()
-                                    schliessen()
-                                } catch {
-                                    titel = "Abmeldevorgang fehlgeschlagen"
-                                    nachricht = error.localizedDescription
-                                    zeigeAlert = true
-                                }
-                            }, role: .destructive)
-                        }
-                        LabelButton(text: "Abmelden und Konto löschen", symbol: "trash.fill", action: {
-                            do {
-                                try await auth.abmelden(loeschen: true)
-                            } catch {
-                                titel = "Abmeldevorgang fehlgeschlagen"
-                                nachricht = error.localizedDescription
-                                zeigeAlert = true
-                                schliessen()
-                            }
-                        }, role: .destructive)
-                    }
-                }
+//                if auth.verifiziert == true {
+//                    Section {
+//                        if auth.email != nil {
+//                            LabelButton(text: "Abmelden", symbol: "rectangle.portrait.and.arrow.forward", action: {
+//                                do {
+//                                    try await auth.abmelden()
+//                                    schliessen()
+//                                } catch {
+//                                    titel = "Abmeldevorgang fehlgeschlagen"
+//                                    nachricht = error.localizedDescription
+//                                    zeigeAlert = true
+//                                }
+//                            }, role: .destructive)
+//                        }
+//                        LabelButton(text: "Abmelden und Konto löschen", symbol: "trash.fill", action: {
+//                            do {
+//                                try await auth.abmelden(loeschen: true)
+//                            } catch {
+//                                titel = "Abmeldevorgang fehlgeschlagen"
+//                                nachricht = error.localizedDescription
+//                                zeigeAlert = true
+//                                schliessen()
+//                            }
+//                        }, role: .destructive)
+//                    }
+//                }
                 Section {
                     link("Feedback", bild: "bubble.left.and.exclamationmark.bubble.right", ziel: "https://apps.apple.com/app/id6466750604?action=write-review")
                     link("Website", bild: "globe", ziel: "https://neodym.app")
@@ -176,10 +187,10 @@ struct Einstellungen: View {
             }, message: {Text(nachricht)})
             #if os(iOS) || os(visionOS)
             .listStyle(.insetGrouped)
-            .manageSubscriptionsSheet(
-                isPresented: $zeigeBearbeiteAbonnement,
-                subscriptionGroupID: "21424638"
-            )
+//            .manageSubscriptionsSheet(
+//                isPresented: $zeigeBearbeiteAbonnement,
+//                subscriptionGroupID: "21424638"
+//            )
             #endif
         }
     }

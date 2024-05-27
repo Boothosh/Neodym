@@ -75,10 +75,11 @@ struct NeodymApp: App {
     @State private var auth = NeoAuth()
     @State private var elemente = Elemente()
     @State private var konfetti = 0
+    @AppStorage("anmeldungGeskippt") private var anmeldungGeskippt = false
     
     var body: some Scene {
         WindowGroup {
-            if auth.verifiziert == true || store.hatBerechtigung == true {
+            if auth.verifiziert == true || store.hatBerechtigung == true || anmeldungGeskippt {
 #if os(iOS)
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     // iPhone

@@ -56,5 +56,6 @@ struct Werkzeuge: View {
             }
         }.disabled(!verfuegbar)
         .padding(.horizontal)
+        .buttonStyle(.plain)
     }
 }

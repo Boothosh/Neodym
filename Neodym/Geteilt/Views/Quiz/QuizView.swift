@@ -39,59 +39,66 @@ struct QuizView: View {
     }
     
     var body: some View {
-        GeometryReader { geo in
-            ScrollView {
-                Image(.quizHintergundStreifen)
-                    .resizable()
-                    .frame(width: geo.size.width)
-                    .aspectRatio(10, contentMode: .fit)
-                ForEach(themen) { thema in
-                    VStack{
-                        HStack{
-                            Text(thema.titel)
-                                .fontWeight(.bold)
-                            Spacer()
-                        }.padding(.horizontal)
-                        Color.primary
-                            .frame(height: 2)
-                            .padding(.horizontal)
-                    }.padding(.vertical)
-                    LazyVGrid(columns: gridItems, alignment: .leading, spacing: 30) {
-                        ForEach(thema.quizes) { quiz in
-                            QuizKachel(quiz: quiz)
-                                .onTapGesture {
-                                    for i in themen.enumerated() {
-                                        for j in i.element.quizes.enumerated() {
-                                            if j.element == quiz {
-                                                themenIndex = i.offset
-                                                quizIndex = j.offset
+#if !os(macOS)
+        if UIDevice.current.userInterfaceIdiom != .phone {
+            GeometryReader { geo in
+                ScrollView {
+                    Image(.quizHintergundStreifen)
+                        .resizable()
+                        .frame(width: geo.size.width)
+                        .aspectRatio(10, contentMode: .fit)
+                    ForEach(themen) { thema in
+                        VStack{
+                            HStack{
+                                Text(thema.titel)
+                                    .fontWeight(.bold)
+                                Spacer()
+                            }.padding(.horizontal)
+                            Color.primary
+                                .frame(height: 2)
+                                .padding(.horizontal)
+                        }.padding(.vertical)
+                        LazyVGrid(columns: gridItems, alignment: .leading, spacing: 30) {
+                            ForEach(thema.quizes) { quiz in
+                                QuizKachel(quiz: quiz)
+                                    .onTapGesture {
+                                        for i in themen.enumerated() {
+                                            for j in i.element.quizes.enumerated() {
+                                                if j.element == quiz {
+                                                    themenIndex = i.offset
+                                                    quizIndex = j.offset
+                                                }
                                             }
                                         }
+                                        ausgewaeltesQuiz = quiz
                                     }
-                                    ausgewaeltesQuiz = quiz
-                                }
+                            }
                         }
+                        .padding(.horizontal)
+                        .padding(.top, 5)
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 5)
+                    // Spacer
+                    HStack {}
+                        .frame(height: 25)
                 }
-                // Spacer
-                HStack {}
-                    .frame(height: 25)
             }
+            .edgesIgnoringSafeArea(.horizontal)
+            .navigationTitle("Quiz")
+            .toolbarBackground(Color("quizBg"), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .fullScreenCover(item: $ausgewaeltesQuiz) { quiz in
+                QuizSeitenView(quiz: $themen[themenIndex].quizes[quizIndex])
+            }
+            .task {
+                await ladeRemoteConfig()
+            }
+        } else {
+            Text("Das Quiz ist momentan nicht auf dem iPhone verfügbar.")
         }
-        .edgesIgnoringSafeArea(.horizontal)
-        .navigationTitle("Quiz")
-        // Short
-//        .toolbarBackground(Color("quizBg"), for: .navigationBar)
-//        .toolbarBackground(.visible, for: .navigationBar)
-//        .toolbarColorScheme(.dark, for: .navigationBar)
-//        .fullScreenCover(item: $ausgewaeltesQuiz) { quiz in
-//            QuizSeitenView(quiz: $themen[themenIndex].quizes[quizIndex])
-//        }
-        .task {
-            await ladeRemoteConfig()
-        }
+#else
+        Text("Das Quiz ist momentan nicht auf dem Mac verfügbar.")
+#endif
     }
 }
 

@@ -49,10 +49,10 @@ struct iPadRoot: View {
                 })
                 Label("Quiz", systemImage: "brain.fill")
                     .tag(SideBarAppBereich.quiz)
-                if auth.email != nil {
-                    Label("Lizenzen", systemImage: "key.fill")
-                        .tag(SideBarAppBereich.lizenzen)
-                }
+//                if auth.email != nil {
+//                    Label("Lizenzen", systemImage: "key.fill")
+//                        .tag(SideBarAppBereich.lizenzen)
+//                }
             }
             .frame(minWidth: 175)
             #if os(iOS)

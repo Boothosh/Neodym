@@ -37,9 +37,9 @@ struct ElementAuswahlGrid: View {
                     }
                 }.padding()
             }
-            .searchable(text: $suchBegriff, placement: .navigationBarDrawer(displayMode: .always), prompt: "Suchen...")
             .navigationTitle("Element auswählen")
             #if os(iOS) || os(visionOS)
+            .searchable(text: $suchBegriff, placement: .navigationBarDrawer(displayMode: .always), prompt: "Suchen...")
             .navigationBarTitleDisplayMode(.inline)
             #endif
         }

@@ -41,9 +41,7 @@ struct iPhoneRoot: View {
                     }
                 case .quiz:
                     NavigationStack {
-                        LizenzenUebersicht()
-                            .environment(store)
-                            .environment(auth)
+                        QuizView()
                     }
                 case .einstellungen:
                     Einstellungen()
